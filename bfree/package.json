@@ -1,0 +1,23 @@
+{
+  "name": "bfree",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "start": "NEXT_TELEMETRY_DISABLED=1 next start",
+    "prettier": "prettier --write './{pages,components}/**/*.{ts,tsx}'"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "next": "9.5.5",
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.11.10",
+    "@types/react": "^16.9.53",
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.3"
+  }
+}
