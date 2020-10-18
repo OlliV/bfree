@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run build",
-    "prettier": "prettier --write './{src,test}/**/*.ts' && prettier --write './lib/*.js'"
+    "prettier": "prettier --write './{src,test}/**/*.ts'"
   },
   "engines": {
     "node": ">= 12.0.0"
