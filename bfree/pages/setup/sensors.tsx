@@ -1,4 +1,8 @@
 import Alert, {Color} from '@material-ui/lab/Alert';
+import IconOfflineBolt from '@material-ui/icons/OfflineBolt';
+import IconDirectionsBike from '@material-ui/icons/DirectionsBike';
+import IconHeart from '@material-ui/icons/Favorite';
+import IconSpeed from '@material-ui/icons/Speed';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -35,6 +39,10 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		setupCard: {
 			height: "15em"
+		},
+		inlineIcon: {
+			'vertical-align': 'center',
+			'font-size': '18px !important',
 		}
 	}),
 );
@@ -59,7 +67,7 @@ function SensorStatus({wait, severity, msg}: { wait?: boolean, severity: Color, 
 	);
 }
 
-function Sensor(props: { title: string, srv: string }) {
+function Sensor(props: { children: any, srv: string }) {
 	const [ wait, setWait ] = useState(false);
 	let [ message, setMessage ] = useState('Not configured');
 	// @ts-ignore
@@ -102,7 +110,7 @@ function Sensor(props: { title: string, srv: string }) {
 		<Grid item xs={4}>
 			<Card variant="outlined">
 				<CardContent className={classes.setupCard}>
-					<Typography gutterBottom variant="h5" component="h2">{props.title}</Typography>
+					<Typography gutterBottom variant="h5" component="h2">{props.children}</Typography>
 					<ScanButton wait={wait} onClick={scanDevices}>Scan</ScanButton>
 					<SensorStatus wait={wait} severity={severity} msg={message}/>
 				</CardContent>
@@ -112,6 +120,8 @@ function Sensor(props: { title: string, srv: string }) {
 }
 
 export default function Setup() {
+	const classes = useStyles();
+
 	return (
 		<Container maxWidth="md">
 			<Head>
@@ -125,10 +135,10 @@ export default function Setup() {
 				</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<Sensor title="🧠 Smart Trainer" srv="???"/>
-					<Sensor title="⚡️ Power" srv="cycling_power"/>
-					<Sensor title="🚴 Speed &amp; Cadence" srv="cycling_speed_and_cadence"/>
-					<Sensor title="❤️ HRM" srv="heart_rate"/>
+					<Sensor srv="???"><IconDirectionsBike className={classes.inlineIcon}/> Smart Trainer</Sensor>
+					<Sensor srv="cycling_power"><IconOfflineBolt className={classes.inlineIcon}/> Power</Sensor>
+					<Sensor srv="cycling_speed_and_cadence"><IconSpeed className={classes.inlineIcon}/> Speed &amp; Cadence</Sensor>
+					<Sensor srv="heart_rate"><IconHeart className={classes.inlineIcon}/> HRM</Sensor>
 				</Grid>
 			</Box>
 		</Container>

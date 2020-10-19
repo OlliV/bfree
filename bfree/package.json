@@ -12,6 +12,7 @@
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
     "@material-ui/core": "5.0.0-alpha.13",
+    "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "5.0.0-alpha.13",
     "next": "9.5.5",
     "react": "16.14.0",
