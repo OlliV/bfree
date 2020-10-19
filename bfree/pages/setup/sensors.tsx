@@ -18,6 +18,8 @@ import clsx from 'clsx';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {green} from '@material-ui/core/colors';
 import {useState} from 'react';
+import { pairDevice, readBatteryLevel } from '../../lib/ble';
+import BatteryLevel from '../../components/batteryLevel';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -43,6 +45,11 @@ const useStyles = makeStyles((theme: Theme) =>
 		inlineIcon: {
 			'vertical-align': 'center',
 			'font-size': '18px !important',
+		},
+		batteryLevel: {
+			position: 'relative',
+			left: '89%',
+			bottom: '87%',
 		}
 	}),
 );
@@ -67,29 +74,33 @@ function SensorStatus({wait, severity, msg}: { wait?: boolean, severity: Color, 
 	);
 }
 
+
 function Sensor(props: { children: any, srv: string }) {
 	const [ wait, setWait ] = useState(false);
 	let [ message, setMessage ] = useState('Not configured');
 	// @ts-ignore
 	const [ severity, setSeverity ]: [Color, (s: Color) => void] = useState('info');
+	const [ btServer, setBtServer ]: [any, any] = useState();
+	const [ batteryLevel, setBatteryLevel ] = useState(-1);
 
 	const scanDevices = () => {
-		const options = {
-			//acceptAllDevices: true,
-			filters: [ { services: [props.srv] } ]
-		};
-
 		setWait(true);
 		setSeverity('info');
 		setTimeout(async () => {
 			try {
 				setMessage('Requesting BLE Device...');
+				// FIXME
 				// @ts-ignore
-				const device = await navigator.bluetooth.requestDevice(options);
+				const { device, server }= await pairDevice(props.srv);
 
-				setMessage(`> Name: ${device.name}\n` +
-					`> Id: ${device.id}\n` +
-					`> Connected: ${device.gatt.connected}`);
+				console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
+				setMessage(`${device.name} paired`);
+				setBtServer(server);
+				try {
+					setBatteryLevel(await readBatteryLevel(server));
+				} catch (err) {
+					console.log(`Device ${device.name} doesn't support battery_level`);
+				}
 			} catch(error)  {
 				const msg = `${error}`;
 				if (msg.startsWith('NotFoundError: User cancelled')) {
@@ -110,9 +121,14 @@ function Sensor(props: { children: any, srv: string }) {
 		<Grid item xs={4}>
 			<Card variant="outlined">
 				<CardContent className={classes.setupCard}>
-					<Typography gutterBottom variant="h5" component="h2">{props.children}</Typography>
+					<Typography gutterBottom variant="h5" component="h2">
+						{props.children}
+					</Typography>
 					<ScanButton wait={wait} onClick={scanDevices}>Scan</ScanButton>
 					<SensorStatus wait={wait} severity={severity} msg={message}/>
+					<div className={classes.batteryLevel}>
+						{batteryLevel >= 0 ? (<BatteryLevel batteryLevel={batteryLevel}/>) : ''}
+					</div>
 				</CardContent>
 			</Card>
 		</Grid>
