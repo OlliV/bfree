@@ -16,7 +16,8 @@
     "@material-ui/lab": "5.0.0-alpha.13",
     "next": "9.5.5",
     "react": "16.14.0",
-    "react-dom": "16.14.0"
+    "react-dom": "16.14.0",
+    "react-hooks-global-state": "1.0.1"
   },
   "devDependencies": {
     "@types/node": "14.11.10",

@@ -14,7 +14,15 @@ async function connect(device) {
 	}
 }
 
-export async function pairDevice(service: 'cycling_power' | 'cycling_speed_and_cadence' | 'heart_rate') {
+interface BtDevice {
+	device: any;
+	server: any;
+}
+
+/*
+ * @param connectCb is called on the initial connect as well as on reconnects. This allows restarting the notifications.
+ */
+export async function pairDevice(service: 'cycling_power' | 'cycling_speed_and_cadence' | 'heart_rate', connectCb: (dev: BtDevice) => Promise<void>) {
 	const options = {
 		//acceptAllDevices: true,
 		filters: [ { services: [service] } ],
@@ -24,17 +32,25 @@ export async function pairDevice(service: 'cycling_power' | 'cycling_speed_and_c
 	// @ts-ignore
 	const device = await navigator.bluetooth.requestDevice(options);
 	const onDisconnected = () => {
-	  console.log('> Bluetooth Device disconnected');
-	  connect(device).catch(console.error);
+		console.log('> Bluetooth Device disconnected');
+		connect(device).then(async (server) => {
+			const btDevice = {
+				device,
+				server,
+			};
+
+			await connectCb(btDevice);
+		}).catch(console.error);
 	}
 
 	device.addEventListener('gattserverdisconnected', onDisconnected);
 	const server = await connect(device);
-
-	return {
+	connectCb({
 		device,
-		server,
-	};
+		server
+	});
+
+	return device;
 }
 
 export async function readBatteryLevel(server) {
@@ -46,28 +62,64 @@ export async function readBatteryLevel(server) {
 	return value.getUint8(0);
 }
 
-export async function startNotifications(server, serviceName: string, characteristicName: string, setValue) {
+export async function startHRMNotifications(server, cb) {
+	return startNotifications(server, 'heart_rate', 'heart_rate_measurement', cb)
+}
+
+export async function startNotifications(server, serviceName: string, characteristicName: string, cb) {
 	// @ts-ignore
 	const service = await server.getPrimaryService(serviceName);
 	const characteristic = await service.getCharacteristic(characteristicName);
 
 	if (characteristicName === 'battery_level') {
 		characteristic.addEventListener('characteristicvaluechanged', (event) => {
-			setValue(event.target.value.getUint8(0));
+			cb(event.target.value.getUint8(0));
 		});
-	} else if (service === 'heart_rate') {
-		// TODO
-		// @ts-ignore
-		//const hrmService = await server.getPrimaryService(service);
-		//const hrm = await hrmService.getCharacteristic('heart_rate_measurement');
-		//console.log('hr bpm"' + await hrm.readValue());
+		await characteristic.readValue();
+	} else if (characteristicName === 'heart_rate_measurement') {
+		characteristic.addEventListener('characteristicvaluechanged', (event) => {
+			const value = event.target.value;
+			const flags = value.getUint8(0);
+			let rate16Bits = flags & 0x1;
+			const result: { heartRate: number, contactDetected?: boolean, energyExpended?: number, rrIntervals?: number[] } = {
+				heartRate: 0
+			};
+
+			let index = 1;
+			if (rate16Bits) {
+				result.heartRate = value.getUint16(index, /*littleEndian=*/true);
+				index += 2;
+			} else {
+				result.heartRate = value.getUint8(index);
+				index += 1;
+			}
+			const contactDetected = flags & 0x2;
+			const contactSensorPresent = flags & 0x4;
+			if (contactSensorPresent) {
+				result.contactDetected = !!contactDetected;
+			}
+			const energyPresent = flags & 0x8;
+			if (energyPresent) {
+				result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
+				index += 2;
+			}
+			let rrIntervalPresent = flags & 0x10;
+			if (rrIntervalPresent) {
+				let rrIntervals = [];
+				for (; index + 1 < value.byteLength; index += 2) {
+					rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
+				}
+				result.rrIntervals = rrIntervals;
+			}
+
+			cb(result);
+		});
 	} else {
 		characteristic.addEventListener('characteristicvaluechanged', (event) => {
 			// TODO Just pass the raw thing?
-			setValue(event);
+			cb(event);
 		});
 	}
-	await characteristic.readValue();
 	characteristic.startNotifications();
 
 	return characteristic;
