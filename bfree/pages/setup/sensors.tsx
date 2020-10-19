@@ -1,4 +1,4 @@
-import Alert, {Color} from '@material-ui/core/Alert';
+import Alert, { Color } from '@material-ui/core/Alert';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -17,9 +17,9 @@ import Title from '../../components/title';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { createGlobalState } from 'react-hooks-global-state';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import {green} from '@material-ui/core/colors';
-import {useState} from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
+import { useState } from 'react';
 import { pairDevice, readBatteryLevel, startHRMNotifications } from '../../lib/ble';
 import BatteryLevel from '../../components/batteryLevel';
 
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			marginLeft: -12,
 		},
 		setupCard: {
-			height: "15em"
+			height: '15em',
 		},
 		inlineIcon: {
 			verticalAlign: 'center',
@@ -62,48 +62,44 @@ const useStyles = makeStyles((theme: Theme) =>
 		batteryLevel: {
 			position: 'relative',
 			float: 'right',
-			display:' inline-block',
+			display: ' inline-block',
 			marginBottom: '1em',
 		},
 		sensorValue: {
 			position: 'relative',
 			float: 'left',
-			display:' inline-block',
+			display: ' inline-block',
 			marginBottom: '1em',
-		}
-	}),
+		},
+	})
 );
 
-function ScanButton({wait, onClick}: { wait: boolean, onClick?: () => void }) {
+function ScanButton({ wait, onClick }: { wait: boolean; onClick?: () => void }) {
 	const classes = useStyles();
 
 	return (
 		<div>
-			<Button disabled={wait} variant="contained" onClick={onClick}>Scan
+			<Button disabled={wait} variant="contained" onClick={onClick}>
+				Scan
 				{wait && <CircularProgress size={24} className={classes.buttonProgress} />}
 			</Button>
 		</div>
 	);
 }
 
-function SensorStatus({wait, severity, msg}: { wait?: boolean, severity: Color, msg: string }) {
-	return (
-		<Paper>
-			{ wait ? (<span>{msg}</span>) : (<Alert severity={severity}>{msg}</Alert>) }
-		</Paper>
-	);
+function SensorStatus({ wait, severity, msg }: { wait?: boolean; severity: Color; msg: string }) {
+	return <Paper>{wait ? <span>{msg}</span> : <Alert severity={severity}>{msg}</Alert>}</Paper>;
 }
 
-
-function Sensor(props: { children: any, srv: string, unit: string }) {
-	const [ wait, setWait ] = useState(false);
+function Sensor(props: { children: any; srv: string; unit: string }) {
+	const [wait, setWait] = useState(false);
 	// @ts-ignore
-	const [ severity, setSeverity ]: [Color, (s: Color) => void] = useState('info');
-	const [ btDevice, setBtDevice ] = useGlobalState('btDevice');
-	let [ message, setMessage ] = useState(btDevice ? `${btDevice.name}` : 'Not configured');
-	const [ batteryLevel, setBatteryLevel ] = useState(-1);
+	const [severity, setSeverity]: [Color, (s: Color) => void] = useState('info');
+	const [btDevice, setBtDevice] = useGlobalState('btDevice');
+	let [message, setMessage] = useState(btDevice ? `${btDevice.name}` : 'Not configured');
+	const [batteryLevel, setBatteryLevel] = useState(-1);
 	// @ts-ignore
-	const [ sensorValue, setSensorValue ] = useGlobalState(props.srv);
+	const [sensorValue, setSensorValue] = useGlobalState(props.srv);
 
 	const scanDevices = () => {
 		setWait(true);
@@ -118,7 +114,7 @@ function Sensor(props: { children: any, srv: string, unit: string }) {
 				setMessage('Requesting BLE Device...');
 				// FIXME
 				// @ts-ignore
-				const device = await pairDevice(props.srv, async ({device, server}) => {
+				const device = await pairDevice(props.srv, async ({ device, server }) => {
 					// Get battery level just once
 					try {
 						setBatteryLevel(await readBatteryLevel(server));
@@ -132,7 +128,7 @@ function Sensor(props: { children: any, srv: string, unit: string }) {
 				console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
 				setMessage(`Paired with ${device.name}`);
 				setBtDevice(device);
-			} catch(error)  {
+			} catch (error) {
 				const msg = `${error}`;
 				if (msg.startsWith('NotFoundError: User cancelled')) {
 					setSeverity('warning');
@@ -144,7 +140,7 @@ function Sensor(props: { children: any, srv: string, unit: string }) {
 				setWait(false);
 			}
 		}, 0);
-	}
+	};
 
 	const classes = useStyles();
 
@@ -155,14 +151,20 @@ function Sensor(props: { children: any, srv: string, unit: string }) {
 					<Typography gutterBottom variant="h5" component="h2">
 						{props.children}
 					</Typography>
-					<Typography className={classes.sensorValue}>{btDevice ? sensorValue : 'N/A'}&nbsp;{props.unit}</Typography>
-					<div className={classes.batteryLevel}>{batteryLevel >= 0 ? (<BatteryLevel batteryLevel={batteryLevel}/>) : ''}</div>
+					<Typography className={classes.sensorValue}>
+						{btDevice ? sensorValue : 'N/A'}&nbsp;{props.unit}
+					</Typography>
+					<div className={classes.batteryLevel}>
+						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
+					</div>
 					<div className={classes.sensorStatus}>
-						<SensorStatus wait={wait} severity={severity} msg={message}/>
+						<SensorStatus wait={wait} severity={severity} msg={message} />
 					</div>
 				</CardContent>
 				<CardActions>
-					<ScanButton wait={wait} onClick={scanDevices}>Scan</ScanButton>
+					<ScanButton wait={wait} onClick={scanDevices}>
+						Scan
+					</ScanButton>
 				</CardActions>
 			</Card>
 		</Grid>
@@ -180,15 +182,21 @@ export default function Setup() {
 			</Head>
 			<Box>
 				<Title>Sensors</Title>
-				<p>
-					Connect your smart trainer, HRM, and other sensors using BLE.
-				</p>
+				<p>Connect your smart trainer, HRM, and other sensors using BLE.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<Sensor srv="smart_todo"><IconDirectionsBike className={classes.inlineIcon}/> Smart Trainer</Sensor>
-					<Sensor srv="cycling_power" unit="W"><IconOfflineBolt className={classes.inlineIcon}/> Power</Sensor>
-					<Sensor srv="cycling_speed_and_cadence"><IconSpeed className={classes.inlineIcon}/> Speed &amp; Cadence</Sensor>
-					<Sensor srv="heart_rate" unit="BPM"><IconHeart className={classes.inlineIcon}/> HRM</Sensor>
+					<Sensor srv="smart_todo">
+						<IconDirectionsBike className={classes.inlineIcon} /> Smart Trainer
+					</Sensor>
+					<Sensor srv="cycling_power" unit="W">
+						<IconOfflineBolt className={classes.inlineIcon} /> Power
+					</Sensor>
+					<Sensor srv="cycling_speed_and_cadence">
+						<IconSpeed className={classes.inlineIcon} /> Speed &amp; Cadence
+					</Sensor>
+					<Sensor srv="heart_rate" unit="BPM">
+						<IconHeart className={classes.inlineIcon} /> HRM
+					</Sensor>
 				</Grid>
 			</Box>
 		</Container>

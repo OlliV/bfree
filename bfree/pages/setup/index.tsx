@@ -4,11 +4,11 @@ import Card from '@material-ui/core/Card';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Head from 'next/head';
-import Link from 'next/link'
+import Link from 'next/link';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import {CardContent} from '@material-ui/core';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import { CardContent } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -17,10 +17,10 @@ const useStyles = makeStyles((theme: Theme) =>
 				backgroundColor: 'lightgrey',
 			},
 		},
-	}),
+	})
 );
 
-function MenuCard({ title, href, children }: { title: string, href: string, children?: any }) {
+function MenuCard({ title, href, children }: { title: string; href: string; children?: any }) {
 	const classes = useStyles();
 
 	return (
@@ -29,7 +29,9 @@ function MenuCard({ title, href, children }: { title: string, href: string, chil
 				<a>
 					<Card variant="outlined" className={classes.menuCard}>
 						<CardContent>
-							<Typography gutterBottom variant="h5" component="h2">{title}&nbsp;&rarr;</Typography>
+							<Typography gutterBottom variant="h5" component="h2">
+								{title}&nbsp;&rarr;
+							</Typography>
 							<Typography variant="body2" color="textSecondary" component="p">
 								{children || ''}
 							</Typography>
@@ -50,9 +52,7 @@ export default function Setup() {
 			</Head>
 			<Box>
 				<Title>Setup</Title>
-				<p>
-					Configure your trainer setup here.
-				</p>
+				<p>Configure your trainer setup here.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<MenuCard title="Bike Setup" href="">
