@@ -1,41 +1,110 @@
+import Alert, {Color} from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
-import {CardContent} from '@material-ui/core';
-import {Props} from 'react';
+import Paper from '@material-ui/core/CardContent';
+import Title from '../../components/title';
+import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import {green} from '@material-ui/core/colors';
+import {useState} from 'react';
 
-async function scanDevices() {
-	const log = (line: string) => console.log(line);
-	let options = {
-		acceptAllDevices: true
-	};
+const useStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		root: {
+			display: 'flex',
+			alignItems: 'center',
+		},
+		wrapper: {
+			margin: theme.spacing(1),
+			position: 'relative',
+		},
+		buttonProgress: {
+			color: green[500],
+			position: 'absolute',
+			top: '50%',
+			left: '50%',
+			marginTop: -12,
+			marginLeft: -12,
+		},
+		setupCard: {
+			height: "15em"
+		}
+	}),
+);
 
-	try {
-		log('Requesting Bluetooth Device...');
-		log('with ' + JSON.stringify(options));
-		// @ts-ignore
-		const device = await navigator.bluetooth.requestDevice(options);
+function ScanButton({wait, onClick}: { wait: boolean, onClick?: () => void }) {
+	const classes = useStyles();
 
-		log('> Name:             ' + device.name);
-		log('> Id:               ' + device.id);
-		log('> Connected:        ' + device.gatt.connected);
-	} catch(error)  {
-		log('Argh! ' + error);
-	}
+	return (
+		<div>
+			<Button disabled={wait} variant="contained" onClick={onClick}>Scan
+				{wait && <CircularProgress size={24} className={classes.buttonProgress} />}
+			</Button>
+		</div>
+	);
+}
+
+function SensorStatus({wait, severity, msg}: { wait?: boolean, severity: Color, msg: string }) {
+	return (
+		<Paper>
+			{ wait ? (<span>{msg}</span>) : (<Alert severity={severity}>{msg}</Alert>) }
+		</Paper>
+	);
 }
 
 function Sensor(props: { title: string, srv: string }) {
+	const [ wait, setWait ] = useState(false);
+	let [ message, setMessage ] = useState('Not configured');
+	// @ts-ignore
+	const [ severity, setSeverity ]: [Color, (s: Color) => void] = useState('info');
+
+	const scanDevices = () => {
+		const options = {
+			//acceptAllDevices: true,
+			filters: [ { services: [props.srv] } ]
+		};
+
+		setWait(true);
+		setSeverity('info');
+		setTimeout(async () => {
+			try {
+				setMessage('Requesting BLE Device...');
+				// @ts-ignore
+				const device = await navigator.bluetooth.requestDevice(options);
+
+				setMessage(`> Name: ${device.name}\n` +
+					`> Id: ${device.id}\n` +
+					`> Connected: ${device.gatt.connected}`);
+			} catch(error)  {
+				const msg = `${error}`;
+				if (msg.startsWith('NotFoundError: User cancelled')) {
+					setSeverity('warning');
+				} else {
+					setSeverity('error');
+				}
+				setMessage(`${error}`);
+			} finally {
+				setWait(false);
+			}
+		}, 0);
+	}
+
+	const classes = useStyles();
+
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardContent>
+				<CardContent className={classes.setupCard}>
 					<Typography gutterBottom variant="h5" component="h2">{props.title}</Typography>
-					<Button variant="contained" onClick={scanDevices}>Scan</Button>
+					<ScanButton wait={wait} onClick={scanDevices}>Scan</ScanButton>
+					<SensorStatus wait={wait} severity={severity} msg={message}/>
 				</CardContent>
 			</Card>
 		</Grid>
@@ -50,8 +119,8 @@ export default function Setup() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Box>
-				<h1 className={styles.title}>Sensors</h1>
-				<p className={styles.description}>
+				<Title>Sensors</Title>
+				<p>
 					Connect your smart trainer, HRM, and other sensors using BLE.
 				</p>
 
