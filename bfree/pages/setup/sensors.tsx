@@ -102,12 +102,9 @@ function Sensor(props: { children: any, srv: string, unit: string }) {
 	const [ btDevice, setBtDevice ] = useGlobalState('btDevice');
 	let [ message, setMessage ] = useState(btDevice ? `${btDevice.name}` : 'Not configured');
 	const [ batteryLevel, setBatteryLevel ] = useState(-1);
+	// @ts-ignore
 	const [ sensorValue, setSensorValue ] = useGlobalState(props.srv);
 
-	const conn = async (device, server) => {
-		if (device && server) {
-		}
-	}
 	const scanDevices = () => {
 		setWait(true);
 		setSeverity('info');
