@@ -198,6 +198,26 @@ export async function startCyclingPowerMeasurementNotifications(server, cb) {
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
 		const value = event.target.value;
 		console.log('powah', value);
+
+		const flags = value.getUint16(0, true);
+		const wheelRevolutionDataPresent = !!(flags & 0x10) && feature.wheelRevolutionData;
+		const crankRevolutionDataPresent = !!(flags & 0x20) && feature.crankRevolutionData;
+		console.log('wheelRevolutionData', wheelRevolutionDataPresent);
+		console.log('crankRevolutionData', crankRevolutionDataPresent);
+
+		const instantneusPower = value.getUint16(2, true);
+		cb({ power: instantneusPower });
+
+		/*
+		// TODO Not sure about this
+		if (wheelRevolutionDataPresent) {
+			const wheelRevolutions = value.getUint16(6, true);
+		}
+		// TODO Not sure about this
+		if (crankRevolutionDataPresent) {
+			const crankRevolutions = value.getUint16(4, true);
+		}
+		*/
 	});
 	characteristic.startNotifications();
 

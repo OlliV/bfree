@@ -140,7 +140,7 @@ function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
 					if (props.srv === 'heart_rate') {
 						startHRMNotifications(server, (result) => setSensorValue(result.heartRate));
 					} else if (props.srv === 'cycling_power') {
-						startCyclingPowerMeasurementNotifications(server, () => {});
+						startCyclingPowerMeasurementNotifications(server, (result) => setSensorValue(result.power));
 					}
 				});
 
@@ -172,7 +172,7 @@ function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
 						{props.children}
 					</Typography>
 					<Typography className={classes.sensorValue}>
-						{btDevice ? sensorValue : 'N/A'}&nbsp;{props.unit}
+						{btDevice ? sensorValue : '--'}&nbsp;{props.unit}
 					</Typography>
 					<div className={classes.batteryLevel}>
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
