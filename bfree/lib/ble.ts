@@ -31,8 +31,8 @@ export async function pairDevice(service: 'cycling_power' | 'cycling_speed_and_c
 
 	// @ts-ignore
 	const device = await navigator.bluetooth.requestDevice(options);
-	const onDisconnected = () => {
-		console.log('> Bluetooth Device disconnected');
+	const onDisconnected = (e) => {
+		console.log('> Bluetooth Device disconnected'); // TODO Show the name
 		connect(device).then(async (server) => {
 			const btDevice = {
 				device,
@@ -47,10 +47,17 @@ export async function pairDevice(service: 'cycling_power' | 'cycling_speed_and_c
 	const server = await connect(device);
 	connectCb({
 		device,
-		server
+		server,
 	});
 
-	return device;
+	return {
+		device,
+		disconnect: () => {
+			console.log(`> Disconnecting ${device.name}`);
+			device.removeEventListener('gattserverdisconnected', onDisconnected);
+			device.gatt.disconnect();
+		}
+	};
 }
 
 export async function readBatteryLevel(server) {
@@ -62,64 +69,136 @@ export async function readBatteryLevel(server) {
 	return value.getUint8(0);
 }
 
-export async function startHRMNotifications(server, cb) {
-	return startNotifications(server, 'heart_rate', 'heart_rate_measurement', cb)
+export async function startBatteryLevelNotifications(server, cb) {
+	// @ts-ignore
+	const service = await server.getPrimaryService('battery_service');
+	const characteristic = await service.getCharacteristic('battery_level');
+
+	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		cb(event.target.value.getUint8(0));
+	});
+
+	await characteristic.readValue();
+	characteristic.startNotifications();
+
+	return characteristic;
 }
 
-export async function startNotifications(server, serviceName: string, characteristicName: string, cb) {
+export async function startHRMNotifications(server, cb) {
 	// @ts-ignore
-	const service = await server.getPrimaryService(serviceName);
-	const characteristic = await service.getCharacteristic(characteristicName);
+	const service = await server.getPrimaryService('heart_rate');
+	const characteristic = await service.getCharacteristic('heart_rate_measurement');
 
-	if (characteristicName === 'battery_level') {
-		characteristic.addEventListener('characteristicvaluechanged', (event) => {
-			cb(event.target.value.getUint8(0));
-		});
-		await characteristic.readValue();
-	} else if (characteristicName === 'heart_rate_measurement') {
-		characteristic.addEventListener('characteristicvaluechanged', (event) => {
-			const value = event.target.value;
-			const flags = value.getUint8(0);
-			let rate16Bits = flags & 0x1;
-			const result: { heartRate: number, contactDetected?: boolean, energyExpended?: number, rrIntervals?: number[] } = {
-				heartRate: 0
-			};
+	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		const value = event.target.value;
+		const flags = value.getUint8(0);
+		const rate16Bits = flags & 0x1;
+		const result: {
+			heartRate: number;
+			contactDetected?: boolean;
+			energyExpended?: number;
+			rrIntervals?: number[]
+		} = {
+			heartRate: 0,
+		};
 
-			let index = 1;
-			if (rate16Bits) {
-				result.heartRate = value.getUint16(index, /*littleEndian=*/true);
-				index += 2;
-			} else {
-				result.heartRate = value.getUint8(index);
-				index += 1;
+		let index = 1;
+		if (rate16Bits) {
+			result.heartRate = value.getUint16(index, /*littleEndian=*/true);
+			index += 2;
+		} else {
+			result.heartRate = value.getUint8(index);
+			index += 1;
+		}
+		const contactDetected = flags & 0x2;
+		const contactSensorPresent = flags & 0x4;
+		if (contactSensorPresent) {
+			result.contactDetected = !!contactDetected;
+		}
+		const energyPresent = flags & 0x8;
+		if (energyPresent) {
+			result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
+			index += 2;
+		}
+		const rrIntervalPresent = flags & 0x10;
+		if (rrIntervalPresent) {
+			let rrIntervals = [];
+			for (; index + 1 < value.byteLength; index += 2) {
+				rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
 			}
-			const contactDetected = flags & 0x2;
-			const contactSensorPresent = flags & 0x4;
-			if (contactSensorPresent) {
-				result.contactDetected = !!contactDetected;
-			}
-			const energyPresent = flags & 0x8;
-			if (energyPresent) {
-				result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
-				index += 2;
-			}
-			let rrIntervalPresent = flags & 0x10;
-			if (rrIntervalPresent) {
-				let rrIntervals = [];
-				for (; index + 1 < value.byteLength; index += 2) {
-					rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
-				}
-				result.rrIntervals = rrIntervals;
-			}
+			result.rrIntervals = rrIntervals;
+		}
 
-			cb(result);
-		});
-	} else {
-		characteristic.addEventListener('characteristicvaluechanged', (event) => {
-			// TODO Just pass the raw thing?
-			cb(event);
-		});
-	}
+		cb(result);
+	});
+
+	characteristic.startNotifications();
+
+	return characteristic;
+}
+
+export async function readCyclingPowerFeature(service) {
+	const characteristic = await service.getCharacteristic('cycling_power_feature');
+
+	const value = await characteristic.readValue();
+	const flags = value.getUint32(0, true);
+	const feature: {
+		pedalPowerBalance: boolean;
+		accumulatedTorque: boolean;
+		wheelRevolutionData: boolean;
+		crankRevolutionData: boolean;
+		extremeMagnitudes: boolean;
+		extremeAngles: boolean;
+		deadSpotAngles: boolean; /* Top Dead Spot Present and Bottom Dead Spot Present bits of the Cycling Power Measurement characteristic */
+		accumulatedEnergy: boolean;
+		offsetCompensationIndicator: boolean;
+		sensorMeasurementContext: 'force' | 'torque';
+		instantaneousMeasurementDirection: boolean;
+		offsetCompensation: boolean;
+		cyclingPowerMeasurementContentMasking: boolean;
+		multipleSensorLocations: boolean;
+		crankLengthAdjustment: boolean;
+		chainLengthAdjustment: boolean;
+		chainWeightAdjustment: boolean;
+		spanLengthAdjustment: boolean;
+		factoryCalibration: boolean;
+		enhancedOffsetCompensation: boolean;
+	} = {
+		pedalPowerBalance: !!(flags & 0x001),
+		accumulatedTorque: !!(flags & 0x002),
+		wheelRevolutionData: !!(flags & 0x004),
+		crankRevolutionData: !!(flags & 0x008),
+		extremeMagnitudes: !!(flags & 0x010),
+		extremeAngles: !!(flags & 0x020),
+		deadSpotAngles: !!(flags & 0x040),
+		accumulatedEnergy: !!(flags & 0x080),
+		offsetCompensationIndicator: !!(flags & 0x100),
+		sensorMeasurementContext: !(flags & 0x10000) ? 'force' : 'torque',
+		instantaneousMeasurementDirection: !!(flags & 0x20000),
+		offsetCompensation: false, // TODO Where is this bit???
+		cyclingPowerMeasurementContentMasking: false, // TODO Where is this bit???
+		multipleSensorLocations: false, // TODO Where is this bit???
+		crankLengthAdjustment: false, // TODO Where is this bit???
+		chainLengthAdjustment: false, // TODO Where is this bit???
+		chainWeightAdjustment: false, // TODO Where is this bit???
+		spanLengthAdjustment: false, // TODO Where is this bit???
+		factoryCalibration: false, // TODO Where is this bit???
+		enhancedOffsetCompensation: false, // TODO Where is this bit???
+	};
+
+	return feature;
+}
+
+export async function startCyclingPowerMeasurementNotifications(server, cb) {
+	// @ts-ignore
+	const service = await server.getPrimaryService('cycling_power');
+	const feature = await readCyclingPowerFeature(service);
+
+	const characteristic = await service.getCharacteristic('cycling_power_measurement');
+	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		const value = event.target.value;
+		console.log('powah', value);
+	});
 	characteristic.startNotifications();
 
 	return characteristic;

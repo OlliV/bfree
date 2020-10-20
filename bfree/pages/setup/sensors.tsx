@@ -16,20 +16,20 @@ import Paper from '@material-ui/core/CardContent';
 import Title from '../../components/title';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import { createGlobalState } from 'react-hooks-global-state';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import { useState } from 'react';
-import { pairDevice, readBatteryLevel, startHRMNotifications } from '../../lib/ble';
+import {
+	pairDevice,
+	readBatteryLevel,
+	startHRMNotifications,
+	startCyclingPowerMeasurementNotifications,
+} from '../../lib/ble';
 import BatteryLevel from '../../components/batteryLevel';
-
-const { useGlobalState } = createGlobalState({
-	btDevice: null,
-	cycling_power: null,
-	cycling_speed_and_cadence: null,
-	heart_rate: null,
-	smart_todo: null, // FIXME
-});
+import {
+	useGlobalState,
+	SensorType
+} from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -74,13 +74,13 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function ScanButton({ wait, onClick }: { wait: boolean; onClick?: () => void }) {
+function ActionButton({ wait, onClick, disabled, children }: { wait: boolean; onClick?: () => void; disabled: boolean; chilren: any; }) {
 	const classes = useStyles();
 
 	return (
 		<div>
-			<Button disabled={wait} variant="contained" onClick={onClick}>
-				Scan
+			<Button disabled={wait || disabled} variant="contained" onClick={onClick}>
+				{children}
 				{wait && <CircularProgress size={24} className={classes.buttonProgress} />}
 			</Button>
 		</div>
@@ -91,22 +91,37 @@ function SensorStatus({ wait, severity, msg }: { wait?: boolean; severity: Color
 	return <Paper>{wait ? <span>{msg}</span> : <Alert severity={severity}>{msg}</Alert>}</Paper>;
 }
 
-function Sensor(props: { children: any; srv: string; unit: string }) {
+function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
+	const NOT_CONFIGURED = 'Not configured';
 	const [wait, setWait] = useState(false);
 	// @ts-ignore
 	const [severity, setSeverity]: [Color, (s: Color) => void] = useState('info');
-	const [btDevice, setBtDevice] = useGlobalState('btDevice');
-	let [message, setMessage] = useState(btDevice ? `${btDevice.name}` : 'Not configured');
+	// @ts-ignore
+	const [btDevice, setBtDevice] = useGlobalState(`btDevice_${props.srv}`);
+	let [message, setMessage] = useState(btDevice ? `${btDevice.name}` : NOT_CONFIGURED);
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	// @ts-ignore
 	const [sensorValue, setSensorValue] = useGlobalState(props.srv);
 
+
+	const unpairDevice = () => {
+		if (btDevice) {
+			if (btDevice.device.gatt.connected) {
+				btDevice.disconnect();
+			}
+			setBtDevice(null);
+			setMessage(NOT_CONFIGURED);
+			setBatteryLevel(-1);
+			setSensorValue(0);
+			setWait(false);
+		}
+	};
 	const scanDevices = () => {
 		setWait(true);
 		setSeverity('info');
 
-		if (btDevice && btDevice.gatt.connected) {
-			btDevice.gatt.disconnect();
+		if (btDevice && btDevice.device.gatt.connected) {
+			unpairDevice();
 		}
 
 		setTimeout(async () => {
@@ -114,7 +129,7 @@ function Sensor(props: { children: any; srv: string; unit: string }) {
 				setMessage('Requesting BLE Device...');
 				// FIXME
 				// @ts-ignore
-				const device = await pairDevice(props.srv, async ({ device, server }) => {
+				const newBtDevice = await pairDevice(props.srv, async ({ device, server }) => {
 					// Get battery level just once
 					try {
 						setBatteryLevel(await readBatteryLevel(server));
@@ -122,12 +137,17 @@ function Sensor(props: { children: any; srv: string; unit: string }) {
 						console.log(`Device ${device.name} doesn't support battery_level`);
 					}
 
-					startHRMNotifications(server, (result) => setSensorValue(result.heartRate));
+					if (props.srv === 'heart_rate') {
+						startHRMNotifications(server, (result) => setSensorValue(result.heartRate));
+					} else if (props.srv === 'cycling_power') {
+						startCyclingPowerMeasurementNotifications(server, () => {});
+					}
 				});
 
+				const { device } = newBtDevice;
 				console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
 				setMessage(`Paired with ${device.name}`);
-				setBtDevice(device);
+				setBtDevice(newBtDevice);
 			} catch (error) {
 				const msg = `${error}`;
 				if (msg.startsWith('NotFoundError: User cancelled')) {
@@ -162,9 +182,12 @@ function Sensor(props: { children: any; srv: string; unit: string }) {
 					</div>
 				</CardContent>
 				<CardActions>
-					<ScanButton wait={wait} onClick={scanDevices}>
+					<ActionButton wait={wait} onClick={scanDevices}>
 						Scan
-					</ScanButton>
+					</ActionButton>
+					<ActionButton wait={false} disabled={!btDevice} onClick={unpairDevice}>
+						Unpair
+					</ActionButton>
 				</CardActions>
 			</Card>
 		</Grid>
