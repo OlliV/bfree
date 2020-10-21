@@ -111,13 +111,13 @@ function SensorValue({ sensorType, sensorValue }) {
 			<Typography className={classes.sensorValue}>
 				{sensorValue ? sensorValue.instantaneousPower : '--'}&nbsp;W
 				<br />
-				{(sensorValue && sensorValue.instantaneousSpeed !== null) ? sensorValue.instantaneousSpeed : '--'}&nbsp;km/h
+				{(sensorValue && sensorValue.instantaneousSpeed !== null) ? sensorValue.instantaneousSpeed.toFixed(1) : '--'}&nbsp;km/h
 	</Typography>
 		);
 	} else if (sensorType === 'cycling_speed') {
 		return (
 			<Typography className={classes.sensorValue}>
-				{sensorValue ? sensorValue.instantaneousSpeed : '--'}&nbsp;km/h
+				{sensorValue ? sensorValue.instantaneousSpeed.toFixed(1) : '--'}&nbsp;km/h
 			</Typography>
 		);
 	} else if (sensorType === 'heart_rate') {
@@ -170,28 +170,27 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 			let instantaneousSpeed = null;
 
 			if (result.feature.wheelRevolutionData && sensorValue) {
-				const prevRevs = result.cumulativeWheelRevolutions;
 				// @ts-ignore sensorValue is never undefined here
-				const curRevs = sensorValue.cumulativeWheelRevolutions;
+				const prevRevs = sensorValue.cumulativeWheelRevolutions;
+				const curRevs = result.cumulativeWheelRevolutions;
 				const deltaRevs = curRevs - prevRevs;
 
 				// @ts-ignore sensorValue is never undefined here
 				const prevLastWheelEvent = sensorValue.lastWheelEvent;
 				const curLastWheelEvent = result.lastWheelEvent;
-				const deltaWheelEvents = curLastWheelEvent > prevLastWheelEvent
+				const deltaWheelEvents = curLastWheelEvent >= prevLastWheelEvent
 					? curLastWheelEvent - prevLastWheelEvent
 					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
 
-				console.log({
-					curRevs,
-					prevLastWheelEvent,
-					deltaRevs,
-					deltaWheelEvents
-				});
-
 				// TODO This should be configurable!
-				const circumferenceMm = 2097;
-				instantaneousSpeed = ((circumferenceMm * 0.001) * deltaRevs) / (deltaWheelEvents * 2.048);
+				// mm => m
+				const circumferenceM = 2097 / 1000;
+				// 2048 = as per CPS_v1.1:
+				// > The ‘wheel event time’ is a free-running-count of
+				// > 1/2048 second units and it represents the time when the wheel
+				// > revolution was detected by the wheel rotation sensor.
+				// 3.6 = m/s => km/h
+				instantaneousSpeed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 2048) * 3.6) || 0;
 			}
 
 			setSensorValue({
