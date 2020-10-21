@@ -61,7 +61,6 @@ export async function pairDevice(service: 'cycling_power' | 'cycling_speed_and_c
 }
 
 export async function readBatteryLevel(server) {
-	// @ts-ignore
 	const batteryService = await server.getPrimaryService('battery_service');
 	const characteristic = await batteryService.getCharacteristic('battery_level');
 
@@ -70,7 +69,6 @@ export async function readBatteryLevel(server) {
 }
 
 export async function startBatteryLevelNotifications(server, cb) {
-	// @ts-ignore
 	const service = await server.getPrimaryService('battery_service');
 	const characteristic = await service.getCharacteristic('battery_level');
 
@@ -85,7 +83,6 @@ export async function startBatteryLevelNotifications(server, cb) {
 }
 
 export async function startHRMNotifications(server, cb) {
-	// @ts-ignore
 	const service = await server.getPrimaryService('heart_rate');
 	const characteristic = await service.getCharacteristic('heart_rate_measurement');
 
@@ -190,23 +187,39 @@ export async function readCyclingPowerFeature(service) {
 }
 
 export async function startCyclingPowerMeasurementNotifications(server, cb) {
-	// @ts-ignore
 	const service = await server.getPrimaryService('cycling_power');
 	const feature = await readCyclingPowerFeature(service);
 
 	const characteristic = await service.getCharacteristic('cycling_power_measurement');
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
 		const value = event.target.value;
-		console.log('powah', value);
 
 		const flags = value.getUint16(0, true);
 		const wheelRevolutionDataPresent = !!(flags & 0x10) && feature.wheelRevolutionData;
 		const crankRevolutionDataPresent = !!(flags & 0x20) && feature.crankRevolutionData;
-		console.log('wheelRevolutionData', wheelRevolutionDataPresent);
-		console.log('crankRevolutionData', crankRevolutionDataPresent);
 
-		const instantneusPower = value.getUint16(2, true);
-		cb({ power: instantneusPower });
+		// This field is mandatory and in the first position
+		const instantaneousPower = value.getUint16(2, true);
+
+		let cumulativeWheelRevolutions = 0;
+		let lastWheelEvent = 0;
+
+		if (feature.wheelRevolutionData) {
+			// The field index may change if there are other fields present.
+			// See CPS_v1.1 3.2
+			// @ts-ignore TS doesn't like number + bool
+			const iWheelRevolutionDataFieldPair = 4 + feature.pedalPowerBalance + feature.accumulatedTorque;
+
+			cumulativeWheelRevolutions = value.getUint32(iWheelRevolutionDataFieldPair, true);
+			lastWheelEvent = value.getUint16(iWheelRevolutionDataFieldPair + 4, true);
+		}
+
+		cb({
+			feature,
+			instantaneousPower,
+			cumulativeWheelRevolutions,
+			lastWheelEvent,
+		});
 
 		/*
 		// TODO Not sure about this
@@ -224,6 +237,12 @@ export async function startCyclingPowerMeasurementNotifications(server, cb) {
 	return characteristic;
 }
 
+export async function startCyclingSpeedMeasurementNotifications(server, cb) {
+	//const service = await server.getPrimaryService('cycling_speed_and_cadence');
+	// TODO
+}
+
+// RFE is this ever needed? We can just unpair and throwaway everything.
 export async function stopNotifications(characteristic) {
 	characteristic.stopNotifications();
 }

@@ -19,12 +19,17 @@ import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import { useState } from 'react';
+import {
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import {
 	pairDevice,
 	readBatteryLevel,
 	startHRMNotifications,
 	startCyclingPowerMeasurementNotifications,
+	startCyclingSpeedMeasurementNotifications,
 } from '../../lib/ble';
 import BatteryLevel from '../../components/batteryLevel';
 import {
@@ -75,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function ActionButton({ wait, onClick, disabled, children }: { wait: boolean; onClick?: () => void; disabled: boolean; chilren: any; }) {
+function ActionButton({ wait, onClick, disabled, children }: { wait: boolean; onClick?: () => void; disabled?: boolean; children: any; }) {
 	const classes = useStyles();
 
 	return (
@@ -92,9 +97,48 @@ function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: 
 	return <Paper><Alert severity={severity}>{children}</Alert></Paper>;
 }
 
-function Sensor(props: { children: any; sensorType: SensorType; unit: string; }) {
+function SensorValue({ sensorType, sensorValue }) {
+	const classes = useStyles();
+
+	if (sensorType === 'cycling_cadence') {
+		return (
+			<Typography className={classes.sensorValue}>
+				{sensorValue ? sensorValue.cadence : '--'}&nbsp;RPM
+			</Typography>
+		);
+	} else if (sensorType === 'cycling_power') {
+		return (
+			<Typography className={classes.sensorValue}>
+				{sensorValue ? sensorValue.instantaneousPower : '--'}&nbsp;W
+				<br />
+				{(sensorValue && sensorValue.instantaneousSpeed !== null) ? sensorValue.instantaneousSpeed : '--'}&nbsp;km/h
+	</Typography>
+		);
+	} else if (sensorType === 'cycling_speed') {
+		return (
+			<Typography className={classes.sensorValue}>
+				{sensorValue ? sensorValue.instantaneousSpeed : '--'}&nbsp;km/h
+			</Typography>
+		);
+	} else if (sensorType === 'heart_rate') {
+		return (
+			<Typography className={classes.sensorValue}>
+				{sensorValue ? sensorValue.heartRate : '--'}&nbsp;BPM
+			</Typography>
+		);
+	} else if (sensorType === 'smart_trainer') {
+		// TODO Smart trainer values
+		return (
+			<Typography className={classes.sensorValue}>
+				--
+			</Typography>
+		);
+	}
+}
+
+function Sensor(props: { children: any; sensorType: SensorType; }) {
 	const pairedWithMessage = (btd) => btd ? `Paired with\n${btd.device.name}` : 'Not configured';
-	const [wait, setWait] = useState(false);
+	const [isPairing, setIsPairing] = useState(false);
 	// @ts-ignore
 	const [severity, setSeverity]: [Color, (s: Color) => void] = useState('info');
 	// @ts-ignore
@@ -102,6 +146,9 @@ function Sensor(props: { children: any; sensorType: SensorType; unit: string; })
 	let [message, setMessage] = useState(pairedWithMessage(btDevice));
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
+	const sensorValueRef = useRef();
+
+	sensorValueRef.current = sensorValue;
 
 	const unpairDevice = () => {
 		if (btDevice) {
@@ -111,61 +158,106 @@ function Sensor(props: { children: any; sensorType: SensorType; unit: string; })
 			setBtDevice(null);
 			setMessage(pairedWithMessage(null));
 			setBatteryLevel(-1);
-			setSensorValue(0);
-			setWait(false);
+			setSensorValue(null);
+			setIsPairing(false);
 		}
 	};
-	const scanDevices = () => {
-		setWait(true);
-		setSeverity('info');
 
-		if (btDevice && btDevice.device.gatt.connected) {
-			unpairDevice();
+	useEffect(() => {
+		function updateCyclingPower(result) {
+			const sensorValue = sensorValueRef.current;
+			let instantaneousSpeed = null;
+
+			if (result.feature.wheelRevolutionData && sensorValue) {
+				const prevRevs = result.cumulativeWheelRevolutions;
+				// @ts-ignore sensorValue is never undefined here
+				const curRevs = sensorValue.cumulativeWheelRevolutions;
+				const deltaRevs = curRevs - prevRevs;
+
+				// @ts-ignore sensorValue is never undefined here
+				const prevLastWheelEvent = sensorValue.lastWheelEvent;
+				const curLastWheelEvent = result.lastWheelEvent;
+				const deltaWheelEvents = curLastWheelEvent > prevLastWheelEvent
+					? curLastWheelEvent - prevLastWheelEvent
+					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
+
+				// TODO This should be configurable!
+				const circumferenceMm = 2097;
+				instantaneousSpeed = ((circumferenceMm * 0.001) * deltaRevs) / (deltaWheelEvents * 2.048);
+			}
+
+			setSensorValue({
+				ts: Date.now(),
+				instantaneousPower: result.instantaneousPower,
+				instantaneousSpeed,
+				cumulativeWheelRevolutions: result.cumulativeWheelRevolutions,
+				lastWheelEvent: result.lastWheelEvent,
+			})
+		}
+		function updateHeartRate(result) {
+			setSensorValue({
+				ts: Date.now(),
+				heartRate: result.heartRate,
+			});
 		}
 
-		setTimeout(async () => {
-			try {
-				setMessage('Requesting BLE Device...');
-
-				/* Map internal sensor type to Bt service name */
-				const srvMap: { [key: string]: BluetoothServiceType } = {
-					cycling_cadence: 'cycling_speed_and_cadence',
-					cycling_power: 'cycling_power',
-					cycling_speed: 'cycling_speed_and_cadence',
-					heart_rate: 'heart_rate',
-				};
-
-				const newBtDevice = await pairDevice(srvMap[props.sensorType], async ({ device, server }) => {
-					// Get battery level just once
-					try {
-						setBatteryLevel(await readBatteryLevel(server));
-					} catch (err) {
-						console.log(`Device ${device.name} doesn't support battery_level`);
-					}
-
-					if (props.sensorType === 'heart_rate') {
-						startHRMNotifications(server, (result) => setSensorValue(result.heartRate));
-					} else if (props.sensorType === 'cycling_power') {
-						startCyclingPowerMeasurementNotifications(server, (result) => setSensorValue(result.power));
-					}
-				});
-
-				const { device } = newBtDevice;
-				console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
-				setMessage(pairedWithMessage(newBtDevice));
-				setBtDevice(newBtDevice);
-			} catch (error) {
-				const msg = `${error}`;
-				if (msg.startsWith('NotFoundError: User cancelled')) {
-					setSeverity('warning');
-				} else {
-					setSeverity('error');
-				}
-				setMessage(`${error}`);
-			} finally {
-				setWait(false);
+		if (isPairing) {
+			setSeverity('info');
+			if (btDevice && btDevice.device.gatt.connected) {
+				unpairDevice();
 			}
-		}, 0);
+
+			(async () => {
+				try {
+					setMessage('Requesting BLE Device...');
+
+					/* Map internal sensor type to Bt service name */
+					const srvMap: { [key: string]: BluetoothServiceType } = {
+						cycling_cadence: 'cycling_speed_and_cadence',
+						cycling_power: 'cycling_power',
+						cycling_speed: 'cycling_speed_and_cadence',
+						heart_rate: 'heart_rate',
+					};
+
+					const newBtDevice = await pairDevice(srvMap[props.sensorType], async ({ device, server }) => {
+						// Get battery level just once
+						try {
+							setBatteryLevel(await readBatteryLevel(server));
+						} catch (err) {
+							console.log(`Device ${device.name} doesn't support battery_level`);
+						}
+
+						if (props.sensorType === 'cycling_power') {
+							startCyclingPowerMeasurementNotifications(server, updateCyclingPower);
+						} else if (props.sensorType === 'cycling_speed') {
+							// TODO
+							//startCyclingSpeedMeasurementNotifications(server, (result) => setSensorValue());
+						} else if (props.sensorType === 'heart_rate') {
+							startHRMNotifications(server, updateHeartRate);
+						}
+					});
+
+					const { device } = newBtDevice;
+					console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
+					setMessage(pairedWithMessage(newBtDevice));
+					setBtDevice(newBtDevice);
+				} catch (error) {
+					const msg = `${error}`;
+					if (msg.startsWith('NotFoundError: User cancelled')) {
+						setSeverity('warning');
+					} else {
+						setSeverity('error');
+					}
+					setMessage(`${error}`);
+				} finally {
+					setIsPairing(false);
+				}
+			})();
+		}
+	})
+
+	const scanDevices = () => {
+		setIsPairing(true);
 	};
 
 	const classes = useStyles();
@@ -177,20 +269,18 @@ function Sensor(props: { children: any; sensorType: SensorType; unit: string; })
 					<Typography gutterBottom variant="h5" component="h2">
 						{props.children}
 					</Typography>
-					<Typography className={classes.sensorValue}>
-						{btDevice ? sensorValue : '--'}&nbsp;{props.unit}
-					</Typography>
+					<SensorValue sensorType={props.sensorType} sensorValue={sensorValue} />
 					<div className={classes.batteryLevel}>
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
 					</div>
 					<div className={classes.sensorStatus}>
-						<SensorStatus wait={wait} severity={severity}>
+						<SensorStatus wait={isPairing} severity={severity}>
 							{message.split('\n').map((line, i) => (<span key={i}>{`${line}`}<br /></span>))}
 						</SensorStatus>
 					</div>
 				</CardContent>
 				<CardActions>
-					<ActionButton wait={wait} onClick={scanDevices}>
+					<ActionButton wait={isPairing} onClick={scanDevices}>
 						Scan
 					</ActionButton>
 					<ActionButton wait={false} disabled={!btDevice} onClick={unpairDevice}>
@@ -219,7 +309,7 @@ export default function Setup() {
 					<Sensor sensorType="smart_trainer">
 						<IconBike className={classes.inlineIcon} /> Smart Trainer
 					</Sensor>
-					<Sensor sensorType="cycling_power" unit="W">
+					<Sensor sensorType="cycling_power">
 						<IconPower className={classes.inlineIcon} /> Power
 					</Sensor>
 					<Sensor sensorType="cycling_cadence">
@@ -228,7 +318,7 @@ export default function Setup() {
 					<Sensor sensorType="cycling_speed">
 						<IconSpeed className={classes.inlineIcon} /> Speed
 					</Sensor>
-					<Sensor sensorType="heart_rate" unit="BPM">
+					<Sensor sensorType="heart_rate">
 						<IconHeart className={classes.inlineIcon} /> HRM
 					</Sensor>
 				</Grid>
