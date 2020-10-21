@@ -8,9 +8,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Head from 'next/head';
-import IconDirectionsBike from '@material-ui/icons/DirectionsBike';
+import IconBike from '@material-ui/icons/DirectionsBike';
+import IconCadence from '@material-ui/icons/FlipCameraAndroid';
 import IconHeart from '@material-ui/icons/Favorite';
-import IconOfflineBolt from '@material-ui/icons/OfflineBolt';
+import IconPower from '@material-ui/icons/OfflineBolt';
 import IconSpeed from '@material-ui/icons/Speed';
 import Paper from '@material-ui/core/CardContent';
 import Title from '../../components/title';
@@ -28,7 +29,8 @@ import {
 import BatteryLevel from '../../components/batteryLevel';
 import {
 	useGlobalState,
-	SensorType
+	SensorType,
+	BluetoothServiceType,
 } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -53,7 +55,6 @@ const useStyles = makeStyles((theme: Theme) =>
 			height: '15em',
 		},
 		inlineIcon: {
-			verticalAlign: 'center',
 			fontSize: '18px !important',
 		},
 		sensorStatus: {
@@ -87,22 +88,20 @@ function ActionButton({ wait, onClick, disabled, children }: { wait: boolean; on
 	);
 }
 
-function SensorStatus({ wait, severity, msg }: { wait?: boolean; severity: Color; msg: string }) {
-	return <Paper>{wait ? <span>{msg}</span> : <Alert severity={severity}>{msg}</Alert>}</Paper>;
+function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Color; children: any }) {
+	return <Paper><Alert severity={severity}>{children}</Alert></Paper>;
 }
 
-function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
-	const NOT_CONFIGURED = 'Not configured';
+function Sensor(props: { children: any; sensorType: SensorType; unit: string; }) {
+	const pairedWithMessage = (btd) => btd ? `Paired with\n${btd.device.name}` : 'Not configured';
 	const [wait, setWait] = useState(false);
 	// @ts-ignore
 	const [severity, setSeverity]: [Color, (s: Color) => void] = useState('info');
 	// @ts-ignore
-	const [btDevice, setBtDevice] = useGlobalState(`btDevice_${props.srv}`);
-	let [message, setMessage] = useState(btDevice ? `${btDevice.name}` : NOT_CONFIGURED);
+	const [btDevice, setBtDevice] = useGlobalState(`btDevice_${props.sensorType}`);
+	let [message, setMessage] = useState(pairedWithMessage(btDevice));
 	const [batteryLevel, setBatteryLevel] = useState(-1);
-	// @ts-ignore
-	const [sensorValue, setSensorValue] = useGlobalState(props.srv);
-
+	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
 
 	const unpairDevice = () => {
 		if (btDevice) {
@@ -110,7 +109,7 @@ function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
 				btDevice.disconnect();
 			}
 			setBtDevice(null);
-			setMessage(NOT_CONFIGURED);
+			setMessage(pairedWithMessage(null));
 			setBatteryLevel(-1);
 			setSensorValue(0);
 			setWait(false);
@@ -127,9 +126,16 @@ function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
 		setTimeout(async () => {
 			try {
 				setMessage('Requesting BLE Device...');
-				// FIXME
-				// @ts-ignore
-				const newBtDevice = await pairDevice(props.srv, async ({ device, server }) => {
+
+				/* Map internal sensor type to Bt service name */
+				const srvMap: { [key: string]: BluetoothServiceType } = {
+					cycling_cadence: 'cycling_speed_and_cadence',
+					cycling_power: 'cycling_power',
+					cycling_speed: 'cycling_speed_and_cadence',
+					heart_rate: 'heart_rate',
+				};
+
+				const newBtDevice = await pairDevice(srvMap[props.sensorType], async ({ device, server }) => {
 					// Get battery level just once
 					try {
 						setBatteryLevel(await readBatteryLevel(server));
@@ -137,16 +143,16 @@ function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
 						console.log(`Device ${device.name} doesn't support battery_level`);
 					}
 
-					if (props.srv === 'heart_rate') {
+					if (props.sensorType === 'heart_rate') {
 						startHRMNotifications(server, (result) => setSensorValue(result.heartRate));
-					} else if (props.srv === 'cycling_power') {
+					} else if (props.sensorType === 'cycling_power') {
 						startCyclingPowerMeasurementNotifications(server, (result) => setSensorValue(result.power));
 					}
 				});
 
 				const { device } = newBtDevice;
 				console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
-				setMessage(`Paired with ${device.name}`);
+				setMessage(pairedWithMessage(newBtDevice));
 				setBtDevice(newBtDevice);
 			} catch (error) {
 				const msg = `${error}`;
@@ -178,7 +184,9 @@ function Sensor(props: { children: any; srv: SensorType; unit: string; }) {
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
 					</div>
 					<div className={classes.sensorStatus}>
-						<SensorStatus wait={wait} severity={severity} msg={message} />
+						<SensorStatus wait={wait} severity={severity}>
+							{message.split('\n').map((line, i) => (<span key={i}>{`${line}`}<br /></span>))}
+						</SensorStatus>
 					</div>
 				</CardContent>
 				<CardActions>
@@ -208,16 +216,19 @@ export default function Setup() {
 				<p>Connect your smart trainer, HRM, and other sensors using BLE.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<Sensor srv="smart_todo">
-						<IconDirectionsBike className={classes.inlineIcon} /> Smart Trainer
+					<Sensor sensorType="smart_trainer">
+						<IconBike className={classes.inlineIcon} /> Smart Trainer
 					</Sensor>
-					<Sensor srv="cycling_power" unit="W">
-						<IconOfflineBolt className={classes.inlineIcon} /> Power
+					<Sensor sensorType="cycling_power" unit="W">
+						<IconPower className={classes.inlineIcon} /> Power
 					</Sensor>
-					<Sensor srv="cycling_speed_and_cadence">
-						<IconSpeed className={classes.inlineIcon} /> Speed &amp; Cadence
+					<Sensor sensorType="cycling_cadence">
+						<IconCadence className={classes.inlineIcon} /> Cadence
 					</Sensor>
-					<Sensor srv="heart_rate" unit="BPM">
+					<Sensor sensorType="cycling_speed">
+						<IconSpeed className={classes.inlineIcon} /> Speed
+					</Sensor>
+					<Sensor sensorType="heart_rate" unit="BPM">
 						<IconHeart className={classes.inlineIcon} /> HRM
 					</Sensor>
 				</Grid>
