@@ -138,6 +138,7 @@ function SensorValue({ sensorType, sensorValue }) {
 
 function Sensor(props: { children: any; sensorType: SensorType; }) {
 	const pairedWithMessage = (btd) => btd ? `Paired with\n${btd.device.name}` : 'Not configured';
+	const [pairingRequest, setPairingRequest] = useState(false);
 	const [isPairing, setIsPairing] = useState(false);
 	// @ts-ignore
 	const [severity, setSeverity]: [Color, (s: Color) => void] = useState('info');
@@ -181,6 +182,13 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 					? curLastWheelEvent - prevLastWheelEvent
 					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
 
+				console.log({
+					curRevs,
+					prevLastWheelEvent,
+					deltaRevs,
+					deltaWheelEvents
+				});
+
 				// TODO This should be configurable!
 				const circumferenceMm = 2097;
 				instantaneousSpeed = ((circumferenceMm * 0.001) * deltaRevs) / (deltaWheelEvents * 2.048);
@@ -201,7 +209,9 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 			});
 		}
 
-		if (isPairing) {
+		if (pairingRequest) {
+			setPairingRequest(false);
+			setIsPairing(true);
 			setSeverity('info');
 			if (btDevice && btDevice.device.gatt.connected) {
 				unpairDevice();
@@ -239,6 +249,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 
 					const { device } = newBtDevice;
 					console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
+					setSeverity('info');
 					setMessage(pairedWithMessage(newBtDevice));
 					setBtDevice(newBtDevice);
 				} catch (error) {
@@ -257,7 +268,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 	})
 
 	const scanDevices = () => {
-		setIsPairing(true);
+		setPairingRequest(true);
 	};
 
 	const classes = useStyles();
