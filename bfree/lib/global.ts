@@ -3,7 +3,8 @@ import { createGlobalState } from 'react-hooks-global-state';
 export type BluetoothServiceType =
 	'cycling_power' |
 	'cycling_speed_and_cadence' |
-	'heart_rate';
+	'heart_rate' |
+	'6e40fec1-b5a3-f393-e0a9-e50e24dcca9e'; // TACX ANT+ FE-C over BLE
 export type SensorType =
 	'cycling_cadence' |
 	'cycling_power' |

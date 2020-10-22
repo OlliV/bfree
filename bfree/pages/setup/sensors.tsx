@@ -12,11 +12,13 @@ import IconBike from '@material-ui/icons/DirectionsBike';
 import IconCadence from '@material-ui/icons/FlipCameraAndroid';
 import IconHeart from '@material-ui/icons/Favorite';
 import IconPower from '@material-ui/icons/OfflineBolt';
+import IconReportProblem from '@material-ui/icons/ReportProblem';
 import IconSpeed from '@material-ui/icons/Speed';
 import Paper from '@material-ui/core/CardContent';
 import Title from '../../components/title';
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
+import { Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {
@@ -30,6 +32,7 @@ import {
 	startHRMNotifications,
 	startCyclingPowerMeasurementNotifications,
 	startCyclingSpeedAndCadenceMeasurementNotifications,
+	startSmartTrainerNotifications,
 } from '../../lib/ble';
 import BatteryLevel from '../../components/batteryLevel';
 import {
@@ -154,10 +157,40 @@ function SensorValue({ sensorType, sensorValue }) {
 			</Typography>
 		);
 	} else if (sensorType === 'smart_trainer') {
-		// TODO Smart trainer values
+		let power = '--';
+		let calRequired;
+
+		if (sensorValue) {
+			power = sensorValue.power;
+
+			const { calStatus } = sensorValue;
+			if (calStatus) {
+				const warns = [];
+				if (calStatus.powerCalRequired) {
+					warns.push('Power calibration required');
+				}
+				if (calStatus.resistanceCalRequired) {
+					warns.push('Resistance calibration required');
+				}
+				if (calStatus.userConfigRequired) {
+					warns.push('User configuration required');
+				}
+				if (warns.length > 0) {
+					calRequired = warns.join(', ');
+				}
+			}
+		}
+
+
 		return (
 			<Typography className={classes.sensorValue}>
-				--
+				{power}&nbsp;W
+				<br />
+				{(calRequired) ? (
+					<Tooltip title={calRequired}>
+						<IconReportProblem />
+					</Tooltip>
+				) : ''}
 			</Typography>
 		);
 	} else {
@@ -217,6 +250,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 						cycling_speed: 'cycling_speed_and_cadence',
 						cycling_speed_and_cadence: 'cycling_speed_and_cadence',
 						heart_rate: 'heart_rate',
+						smart_trainer: '6e40fec1-b5a3-f393-e0a9-e50e24dcca9e', // TACX ANT+ FE-C over BLE
 					};
 
 					const newBtDevice = await pairDevice(srvMap[props.sensorType], async ({ device, server }) => {
@@ -233,6 +267,8 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 							startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
 						} else if (props.sensorType === 'heart_rate') {
 							startHRMNotifications(server, setSensorValue);
+						} else if (props.sensorType === 'smart_trainer') {
+							startSmartTrainerNotifications(server, setSensorValue);
 						} else {
 							console.error('Invalid sensor type');
 						}
