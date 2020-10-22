@@ -29,11 +29,11 @@ import {
 import {
 	pairDevice,
 	readBatteryLevel,
-	startHRMNotifications,
-	startCyclingPowerMeasurementNotifications,
-	startCyclingSpeedAndCadenceMeasurementNotifications,
-	startSmartTrainerNotifications,
 } from '../../lib/ble';
+import { startCyclingPowerMeasurementNotifications } from '../../lib/ble_cpp';
+import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble_cscp';
+import { startHRMNotifications } from '../../lib/ble_hrm';
+import { startSmartTrainerNotifications } from '../../lib/ble_trainer';
 import BatteryLevel from '../../components/batteryLevel';
 import {
 	useGlobalState,
