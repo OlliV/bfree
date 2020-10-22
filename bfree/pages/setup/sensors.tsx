@@ -36,6 +36,7 @@ import {
 	useGlobalState,
 	SensorType,
 	BluetoothServiceType,
+	speedUnitConv,
 } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -98,6 +99,7 @@ function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: 
 }
 
 function SensorValue({ sensorType, sensorValue }) {
+	const [units] = useGlobalState('units');
 	const classes = useStyles();
 
 	if (sensorType === 'cycling_cadence') {
@@ -115,9 +117,14 @@ function SensorValue({ sensorType, sensorValue }) {
 	</Typography>
 		);
 	} else if (sensorType === 'cycling_speed') {
+		const speedUnit = speedUnitConv[units.speedUnit];
+		const speed = sensorValue
+			? (sensorValue.instantaneousSpeed * speedUnit.mul).toFixed(1)
+			: '--';
+
 		return (
 			<Typography className={classes.sensorValue}>
-				{sensorValue ? sensorValue.instantaneousSpeed.toFixed(1) : '--'}&nbsp;km/h
+				{speed}&nbsp;{speedUnit.name}
 			</Typography>
 		);
 	} else if (sensorType === 'heart_rate') {
@@ -189,15 +196,15 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 				// > The ‘wheel event time’ is a free-running-count of
 				// > 1/2048 second units and it represents the time when the wheel
 				// > revolution was detected by the wheel rotation sensor.
-				// 3.6 = m/s => km/h
-				instantaneousSpeed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 2048) * 3.6) || 0;
+				// The final result is m/s
+				instantaneousSpeed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 2048)) || 0;
 			}
 
 			setSensorValue({
-				ts: Date.now(),
-				instantaneousPower: result.instantaneousPower,
-				instantaneousSpeed,
-				cumulativeWheelRevolutions: result.cumulativeWheelRevolutions,
+				ts: Date.now(), // ms
+				instantaneousPower: result.instantaneousPower, // Watts
+				instantaneousSpeed, // m/s
+				cumulativeWheelRevolutions: result.cumulativeWheelRevolutions, // meters
 				lastWheelEvent: result.lastWheelEvent,
 			})
 		}

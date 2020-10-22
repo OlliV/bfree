@@ -11,7 +11,23 @@ export type SensorType =
 	'heart_rate' |
 	'smart_trainer';
 
+export const speedUnitConv = {
+	kmph: {
+		name: 'km/h',
+		mul: 3.6,
+	},
+	mph: {
+		name: 'mph',
+		mul: 2.237,
+	},
+};
+
 export const { useGlobalState } = createGlobalState({
+	// Config
+	units: {
+		distanceUnit: 'km',
+		speedUnit: 'kmph',
+	},
 	// Sensors
 	btDevice_cycling_cadence: null,
 	btDevice_cycling_power: null,
