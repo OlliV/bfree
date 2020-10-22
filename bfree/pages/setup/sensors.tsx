@@ -29,7 +29,7 @@ import {
 	readBatteryLevel,
 	startHRMNotifications,
 	startCyclingPowerMeasurementNotifications,
-	startCyclingSpeedMeasurementNotifications,
+	startCyclingSpeedAndCadenceMeasurementNotifications,
 } from '../../lib/ble';
 import BatteryLevel from '../../components/batteryLevel';
 import {
@@ -103,23 +103,43 @@ function SensorValue({ sensorType, sensorValue }) {
 	const classes = useStyles();
 
 	if (sensorType === 'cycling_cadence') {
+		const cadence = sensorValue && sensorValue.cadence !== null
+			? Math.round(sensorValue.cadence)
+			: '--';
+
 		return (
 			<Typography className={classes.sensorValue}>
-				{sensorValue ? sensorValue.cadence : '--'}&nbsp;RPM
+				{cadence}&nbsp;RPM
 			</Typography>
 		);
 	} else if (sensorType === 'cycling_power') {
 		return (
 			<Typography className={classes.sensorValue}>
-				{sensorValue ? sensorValue.instantaneousPower : '--'}&nbsp;W
+				{sensorValue ? sensorValue.power : '--'}&nbsp;W
 				<br />
-				{(sensorValue && sensorValue.instantaneousSpeed !== null) ? sensorValue.instantaneousSpeed.toFixed(1) : '--'}&nbsp;km/h
+				{(sensorValue && sensorValue.speed !== null) ? sensorValue.speed.toFixed(1) : '--'}&nbsp;km/h
 	</Typography>
+		);
+	} else if (sensorType === 'cycling_speed_and_cadence') {
+		const speedUnit = speedUnitConv[units.speedUnit];
+		const speed = sensorValue && sensorValue.speed !== null
+			? (sensorValue.speed * speedUnit.mul).toFixed(1)
+			: '--';
+		const cadence = sensorValue && sensorValue.cadence !== null
+			? Math.round(sensorValue.cadence)
+			: '--';
+
+		return (
+			<Typography className={classes.sensorValue}>
+				{speed}&nbsp;{speedUnit.name}
+				<br />
+				{cadence}&nbsp;RPM
+			</Typography>
 		);
 	} else if (sensorType === 'cycling_speed') {
 		const speedUnit = speedUnitConv[units.speedUnit];
 		const speed = sensorValue
-			? (sensorValue.instantaneousSpeed * speedUnit.mul).toFixed(1)
+			? (sensorValue.speed * speedUnit.mul).toFixed(1)
 			: '--';
 
 		return (
@@ -138,6 +158,12 @@ function SensorValue({ sensorType, sensorValue }) {
 		return (
 			<Typography className={classes.sensorValue}>
 				--
+			</Typography>
+		);
+	} else {
+		return (
+			<Typography className={classes.sensorValue}>
+				N/A
 			</Typography>
 		);
 	}
@@ -172,49 +198,6 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 	};
 
 	useEffect(() => {
-		function updateCyclingPower(result) {
-			const sensorValue = sensorValueRef.current;
-			let instantaneousSpeed = null;
-
-			if (result.feature.wheelRevolutionData && sensorValue) {
-				// @ts-ignore sensorValue is never undefined here
-				const prevRevs = sensorValue.cumulativeWheelRevolutions;
-				const curRevs = result.cumulativeWheelRevolutions;
-				const deltaRevs = curRevs - prevRevs;
-
-				// @ts-ignore sensorValue is never undefined here
-				const prevLastWheelEvent = sensorValue.lastWheelEvent;
-				const curLastWheelEvent = result.lastWheelEvent;
-				const deltaWheelEvents = curLastWheelEvent >= prevLastWheelEvent
-					? curLastWheelEvent - prevLastWheelEvent
-					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
-
-				// TODO This should be configurable!
-				// mm => m
-				const circumferenceM = 2097 / 1000;
-				// 2048 = as per CPS_v1.1:
-				// > The ‘wheel event time’ is a free-running-count of
-				// > 1/2048 second units and it represents the time when the wheel
-				// > revolution was detected by the wheel rotation sensor.
-				// The final result is m/s
-				instantaneousSpeed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 2048)) || 0;
-			}
-
-			setSensorValue({
-				ts: Date.now(), // ms
-				instantaneousPower: result.instantaneousPower, // Watts
-				instantaneousSpeed, // m/s
-				cumulativeWheelRevolutions: result.cumulativeWheelRevolutions, // meters
-				lastWheelEvent: result.lastWheelEvent,
-			})
-		}
-		function updateHeartRate(result) {
-			setSensorValue({
-				ts: Date.now(),
-				heartRate: result.heartRate,
-			});
-		}
-
 		if (pairingRequest) {
 			setPairingRequest(false);
 			setIsPairing(true);
@@ -232,6 +215,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 						cycling_cadence: 'cycling_speed_and_cadence',
 						cycling_power: 'cycling_power',
 						cycling_speed: 'cycling_speed_and_cadence',
+						cycling_speed_and_cadence: 'cycling_speed_and_cadence',
 						heart_rate: 'heart_rate',
 					};
 
@@ -244,12 +228,13 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 						}
 
 						if (props.sensorType === 'cycling_power') {
-							startCyclingPowerMeasurementNotifications(server, updateCyclingPower);
-						} else if (props.sensorType === 'cycling_speed') {
-							// TODO
-							//startCyclingSpeedMeasurementNotifications(server, (result) => setSensorValue());
+							startCyclingPowerMeasurementNotifications(server, setSensorValue);
+						} else if (['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(props.sensorType)) {
+							startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
 						} else if (props.sensorType === 'heart_rate') {
-							startHRMNotifications(server, updateHeartRate);
+							startHRMNotifications(server, setSensorValue);
+						} else {
+							console.error('Invalid sensor type');
 						}
 					});
 
@@ -328,6 +313,9 @@ export default function Setup() {
 					</Sensor>
 					<Sensor sensorType="cycling_power">
 						<IconPower className={classes.inlineIcon} /> Power
+					</Sensor>
+					<Sensor sensorType="cycling_speed_and_cadence">
+						<IconCadence className={classes.inlineIcon} /> Speed &amp; Cadence
 					</Sensor>
 					<Sensor sensorType="cycling_cadence">
 						<IconCadence className={classes.inlineIcon} /> Cadence

@@ -91,11 +91,13 @@ export async function startHRMNotifications(server, cb) {
 		const flags = value.getUint8(0);
 		const rate16Bits = flags & 0x1;
 		const result: {
+			ts: number;
 			heartRate: number;
 			contactDetected?: boolean;
 			energyExpended?: number;
 			rrIntervals?: number[]
 		} = {
+			ts: Date.now(),
 			heartRate: 0,
 		};
 
@@ -190,6 +192,9 @@ export async function startCyclingPowerMeasurementNotifications(server, cb) {
 	const service = await server.getPrimaryService('cycling_power');
 	const feature = await readCyclingPowerFeature(service);
 
+	let prevRevs = null;
+	let prevLastWheelEvent = null;
+
 	const characteristic = await service.getCharacteristic('cycling_power_measurement');
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
 		const value = event.target.value;
@@ -201,10 +206,11 @@ export async function startCyclingPowerMeasurementNotifications(server, cb) {
 		// This field is mandatory and in the first position
 		const instantaneousPower = value.getUint16(2, true);
 
-		let cumulativeWheelRevolutions = 0;
-		let lastWheelEvent = 0;
+		let cumulativeWheelRevolutions = null;
+		let lastWheelEvent = null;
+		let instantaneousSpeed = null;
 
-		if (feature.wheelRevolutionData) {
+		if (wheelRevolutionDataPresent) {
 			// The field index may change if there are other fields present.
 			// See CPS_v1.1 3.2
 			// @ts-ignore TS doesn't like number + bool
@@ -212,34 +218,139 @@ export async function startCyclingPowerMeasurementNotifications(server, cb) {
 
 			cumulativeWheelRevolutions = value.getUint32(iWheelRevolutionDataFieldPair, true);
 			lastWheelEvent = value.getUint16(iWheelRevolutionDataFieldPair + 4, true);
+
+			if (prevRevs !== null && prevLastWheelEvent !== null) {
+				const curRevs = cumulativeWheelRevolutions;
+				const deltaRevs = curRevs - prevRevs;
+
+				const curLastWheelEvent = lastWheelEvent;
+				const deltaWheelEvents = curLastWheelEvent >= prevLastWheelEvent
+					? curLastWheelEvent - prevLastWheelEvent
+					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
+
+				// TODO This should be configurable!
+				// mm => m
+				const circumferenceM = 2097 / 1000;
+				// 2048 = as per CPS_v1.1:
+				// > The ‘wheel event time’ is a free-running-count of
+				// > 1/2048 second units and it represents the time when the wheel
+				// > revolution was detected by the wheel rotation sensor.
+				// The final result is m/s
+				instantaneousSpeed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 2048)) || 0;
+			}
+			prevRevs = cumulativeWheelRevolutions;
+			prevLastWheelEvent = lastWheelEvent;
 		}
 
 		cb({
-			feature,
-			instantaneousPower,
+			ts: Date.now(), // ms
 			cumulativeWheelRevolutions,
 			lastWheelEvent,
+			power: instantaneousPower, // Watts
+			speed: instantaneousSpeed, // m/s
 		});
-
-		/*
-		// TODO Not sure about this
-		if (wheelRevolutionDataPresent) {
-			const wheelRevolutions = value.getUint16(6, true);
-		}
-		// TODO Not sure about this
-		if (crankRevolutionDataPresent) {
-			const crankRevolutions = value.getUint16(4, true);
-		}
-		*/
 	});
 	characteristic.startNotifications();
 
 	return characteristic;
 }
 
-export async function startCyclingSpeedMeasurementNotifications(server, cb) {
-	//const service = await server.getPrimaryService('cycling_speed_and_cadence');
-	// TODO
+export async function startCyclingSpeedAndCadenceMeasurementNotifications(server, cb) {
+	const service = await server.getPrimaryService('cycling_speed_and_cadence');
+	const characteristic = await service.getCharacteristic('csc_measurement');
+
+	let prevCumulativeWheelRevolutions = null;
+	let prevLastWheelEvent = null;
+	let prevCumulativeCrankRevolutions = null;
+	let prevLastCrankEvent = null;
+
+	console.log('start events');
+	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		console.log('plip');
+		const value = event.target.value;
+
+		const flags = value.getUint8(0, true);
+		const wheelRevolutionDataPresent = !!(flags & 0x1);
+		const crankRevolutionDataPresent = !!(flags & 0x2);
+
+		let cumulativeWheelRevolutions = null;
+		let lastWheelEvent = null;
+		let cumulativeCrankRevolutions = null;
+		let lastCrankEvent = null;
+		let speed = null;
+		let cadence = null;
+
+		if (wheelRevolutionDataPresent) {
+			cumulativeWheelRevolutions = value.getUint32(1, true);
+			lastWheelEvent = value.getUint16(5, true);
+
+			if (prevCumulativeWheelRevolutions !== null && prevLastWheelEvent !== null) {
+				const prevRevs = prevCumulativeWheelRevolutions;
+				const curRevs = cumulativeWheelRevolutions;
+				const deltaRevs = curRevs - prevRevs;
+
+				// @ts-ignore sensorValue is never undefined here
+				const curLastWheelEvent = lastWheelEvent;
+				const deltaWheelEvents = curLastWheelEvent >= prevLastWheelEvent
+					? curLastWheelEvent - prevLastWheelEvent
+					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
+
+				// TODO This should be configurable!
+				// mm => m
+				const circumferenceM = 2097 / 1000;
+				// 1024 = as per CSCS_SPECv10:
+				// > The ‘wheel event time’ is a free-running-count of
+				// > 1/1024 second units and it represents the time when the
+				// > wheel revolution was detected by the wheel rotation sensor.
+				// The final result is m/s
+				speed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 1024)) || 0;
+			}
+			prevCumulativeWheelRevolutions = cumulativeWheelRevolutions;
+			prevLastWheelEvent = lastWheelEvent;
+		}
+		if (crankRevolutionDataPresent) {
+			cumulativeCrankRevolutions = value.getUint16(wheelRevolutionDataPresent ? 7 : 1, true);
+			lastCrankEvent = value.getUint16(wheelRevolutionDataPresent ? 9 : 3, true);
+
+			if (prevLastCrankEvent !== null && prevLastWheelEvent !== null) {
+				const prevRevs = prevCumulativeCrankRevolutions;
+				const curRevs = cumulativeCrankRevolutions;
+				const deltaRevs = curRevs >= prevRevs
+					? curRevs - prevRevs
+					: 0xffff - prevRevs + curRevs + 1;
+
+				const curLastCrankEvent = lastCrankEvent;
+				const deltaLastCrankEvent = curLastCrankEvent >= prevLastCrankEvent
+					? curLastCrankEvent - prevLastCrankEvent
+					: 0xffff - prevLastCrankEvent + curLastCrankEvent + 1;
+
+				cadence = ((deltaRevs / deltaLastCrankEvent) * 60) || 0;
+			}
+			prevCumulativeCrankRevolutions = cumulativeCrankRevolutions;
+			prevLastCrankEvent = lastCrankEvent;
+		}
+		console.log({
+			wheelRevolutionDataPresent,
+			crankRevolutionDataPresent,
+			cumulativeWheelRevolutions,
+			cumulativeCrankRevolutions,
+			speed,
+			cadence
+		});
+
+		cb({
+			ts: Date.now(),
+			cumulativeWheelRevolutions,
+			lastWheelEvent,
+			cumulativeCrankRevolutions,
+			lastCrankEvent,
+			speed,
+			cadence,
+		});
+	});
+	characteristic.startNotifications();
+
+	return characteristic;
 }
 
 // RFE is this ever needed? We can just unpair and throwaway everything.

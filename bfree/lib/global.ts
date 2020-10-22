@@ -8,6 +8,7 @@ export type SensorType =
 	'cycling_cadence' |
 	'cycling_power' |
 	'cycling_speed' |
+	'cycling_speed_and_cadence' |
 	'heart_rate' |
 	'smart_trainer';
 
@@ -32,12 +33,14 @@ export const { useGlobalState } = createGlobalState({
 	btDevice_cycling_cadence: null,
 	btDevice_cycling_power: null,
 	btDevice_cycling_speed: null,
+	btDevice_cycling_speed_and_cadence: null,
 	btDevice_heart_rate: null,
 	btDevice_smart_trainer: null, // TODO
 	// Measurements
 	cycling_cadence: null,
 	cycling_power: null,
 	cycling_speed: null,
+	cycling_speed_and_cadence: null,
 	heart_rate: null,
 	// Control
 	smart_trainer: null, // FIXME
