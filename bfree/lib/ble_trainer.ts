@@ -18,9 +18,82 @@ export type TrainerMeasurements = {
 	}
 }
 
+function calcChecksum(buf: DataView) {
+	let checksum = 0;
+
+	for (let i = 0; i < buf.byteLength - 1; i++) {
+		checksum ^= buf.getUint8(i);
+	}
+
+	return checksum;
+}
+
+function setSendHeader(msg: DataView, len: number) {
+		msg.setUint8(0, 0xa4); // sync
+		msg.setUint8(1, len);  // len
+		msg.setUint8(2, 0x4f); // type
+		msg.setUint8(3, 0x05); // channel
+}
+
 export async function createSmartTrainerController(server: BluetoothRemoteGATTServer) {
 	const service = await server.getPrimaryService(TACX_FEC_OVER_BLE_SERVICE_UUID);
 	const characteristic = await service.getCharacteristic(TACX_FEC_CHARACTERISTIC_RX);
+
+	const setBasicResistance = async (value) => {
+		const buf = new ArrayBuffer(13);
+		const msg = new DataView(buf);
+
+		value = Math.round(Math.abs(value) * 2) & 0xff;
+
+		// Header
+		setSendHeader(msg, 0x09);
+
+		// Payload
+		msg.setUint8(4, 0x30); // page
+		msg.setUint8(5, 0xff);
+		msg.setUint8(6, 0xff);
+		msg.setUint8(7, 0xff);
+		msg.setUint8(8, 0xff);
+		msg.setUint8(9, 0xff);
+		msg.setUint8(10, 0xff);
+		msg.setUint8(11, value);
+
+		// Checksum
+		msg.setUint8(12, calcChecksum(msg));
+
+		characteristic.writeValue(buf);
+	};
+
+	const sendTargetPower = (value) => {
+		const buf = new ArrayBuffer(13);
+		const msg = new DataView(buf);
+
+		value = Math.round(Math.abs(value * 4));
+
+		// Header
+		setSendHeader(msg, 0x09);
+
+		// Payload
+		msg.setUint8(4, 0x31); // page
+		msg.setUint8(5, 0xff);
+		msg.setUint8(6, 0xff);
+		msg.setUint8(7, 0xff);
+		msg.setUint8(8, 0xff);
+		msg.setUint8(9, 0xff);
+		msg.setUint8(10, value & 0x00ff);
+		msg.setUint8(11, (value & 0xff00) >> 8);
+
+		// Checksum
+		msg.setUint8(12, calcChecksum(msg));
+
+		characteristic.writeValue(buf);
+	};
+
+	return {
+		characteristic,
+		setBasicResistance,
+		sendTargetPower,
+	};
 }
 
 export async function startSmartTrainerNotifications(server: BluetoothRemoteGATTServer, measurementsCb: (res: TrainerMeasurements) => void) {
@@ -39,6 +112,7 @@ export async function startSmartTrainerNotifications(server: BluetoothRemoteGATT
 	};
 
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		// @ts-ignore
 		const value = event.target.value;
 
 		const sync = value.getUint8(0);
@@ -56,13 +130,9 @@ export async function startSmartTrainerNotifications(server: BluetoothRemoteGATT
 		/*
 		 * Verify the checksum.
 		 */
-		let compChecksum = 0;
-		for (let i = 0; i < value.byteLength - 1; i++) {
-			compChecksum ^= value.getUint8(i);
-		}
 		const checksum = value.getUint8(3 + msgLen);
-		if (checksum !== compChecksum) {
-			console.error(`Invalid ANT+ message checksum ${checksum} != ${compChecksum}`);
+		if (checksum !== calcChecksum(value)) {
+			console.error(`Invalid ANT+ message checksum ${checksum}`);
 			return;
 		}
 
@@ -173,7 +243,7 @@ export async function startSmartTrainerNotifications(server: BluetoothRemoteGATT
 			const lastCommandSeq = value.getUint8(offset + 2);
 			const lastCommandStatus = value.getUint8(offset + 3);
 			if (lastCommandReceived === 48) { // FE basic resistance
-				const setResistanceAck = value.getUint8(offset + 7) * 0.5;
+				const setResistanceAck = value.getUint8(offset + 7) / 2;
 			} else if (lastCommandReceived === 49) { // FE target power
 				const targetPowerAck = value.getUint8(offset + 6) >> 2 | value.getUint8(offset + 7) << 6;
 			} else if (lastCommandReceived === 50) { // Wind resistance

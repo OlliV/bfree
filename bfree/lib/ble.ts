@@ -1,5 +1,10 @@
 import { BluetoothServiceType } from "./global";
 
+export interface BtDevice {
+	device: BluetoothDevice;
+	server: BluetoothRemoteGATTServer;
+}
+
 async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServer> {
 	try {
 		const server = await exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
@@ -14,11 +19,6 @@ async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServ
 		time(`Failed to reconnect (${device.name}).`);
 		return null;
 	}
-}
-
-interface BtDevice {
-	device: BluetoothDevice;
-	server: BluetoothRemoteGATTServer;
 }
 
 /*

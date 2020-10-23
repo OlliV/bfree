@@ -12,13 +12,10 @@ import IconBike from '@material-ui/icons/DirectionsBike';
 import IconCadence from '@material-ui/icons/FlipCameraAndroid';
 import IconHeart from '@material-ui/icons/Favorite';
 import IconPower from '@material-ui/icons/OfflineBolt';
-import IconReportProblem from '@material-ui/icons/ReportProblem';
 import IconSpeed from '@material-ui/icons/Speed';
 import Paper from '@material-ui/core/CardContent';
 import Title from '../../components/title';
 import Typography from '@material-ui/core/Typography';
-import clsx from 'clsx';
-import { Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {
@@ -33,13 +30,14 @@ import {
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble_cpp';
 import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble_cscp';
 import { startHRMNotifications } from '../../lib/ble_hrm';
-import { startSmartTrainerNotifications } from '../../lib/ble_trainer';
+import { startSmartTrainerNotifications, createSmartTrainerController } from '../../lib/ble_trainer';
 import BatteryLevel from '../../components/batteryLevel';
+import SensorValue from '../../components/SensorValue';
+import { TrainerControlBasicResistance } from '../../components/TrainerControl';
 import {
 	useGlobalState,
 	SensorType,
 	BluetoothServiceType,
-	speedUnitConv,
 } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -67,7 +65,11 @@ const useStyles = makeStyles((theme: Theme) =>
 			fontSize: '18px !important',
 		},
 		sensorStatus: {
-			marginTop: '5em',
+		},
+		trainerControl: {
+			marginTop: '1em',
+			margin: 'auto',
+			width: '80%',
 		},
 		batteryLevel: {
 			position: 'relative',
@@ -77,9 +79,8 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		sensorValue: {
 			position: 'relative',
-			float: 'left',
-			display: ' inline-block',
 			marginBottom: '1em',
+			width: '300px',
 		},
 	})
 );
@@ -101,107 +102,6 @@ function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: 
 	return <Paper><Alert severity={severity}>{children}</Alert></Paper>;
 }
 
-function SensorValue({ sensorType, sensorValue }) {
-	const [units] = useGlobalState('units');
-	const classes = useStyles();
-
-	if (sensorType === 'cycling_cadence') {
-		const cadence = sensorValue && sensorValue.cadence !== null
-			? Math.round(sensorValue.cadence)
-			: '--';
-
-		return (
-			<Typography className={classes.sensorValue}>
-				{cadence}&nbsp;RPM
-			</Typography>
-		);
-	} else if (sensorType === 'cycling_power') {
-		return (
-			<Typography className={classes.sensorValue}>
-				{(sensorValue && sensorValue.power !== null) ? sensorValue.power : '--'}&nbsp;W
-				<br />
-				{(sensorValue && sensorValue.speed !== null) ? sensorValue.speed.toFixed(1) : '--'}&nbsp;km/h
-	</Typography>
-		);
-	} else if (sensorType === 'cycling_speed_and_cadence') {
-		const speedUnit = speedUnitConv[units.speedUnit];
-		const speed = sensorValue && sensorValue.speed !== null
-			? (sensorValue.speed * speedUnit.mul).toFixed(1)
-			: '--';
-		const cadence = sensorValue && sensorValue.cadence !== null
-			? Math.round(sensorValue.cadence)
-			: '--';
-
-		return (
-			<Typography className={classes.sensorValue}>
-				{speed}&nbsp;{speedUnit.name}
-				<br />
-				{cadence}&nbsp;RPM
-			</Typography>
-		);
-	} else if (sensorType === 'cycling_speed') {
-		const speedUnit = speedUnitConv[units.speedUnit];
-		const speed = sensorValue
-			? (sensorValue.speed * speedUnit.mul).toFixed(1)
-			: '--';
-
-		return (
-			<Typography className={classes.sensorValue}>
-				{speed}&nbsp;{speedUnit.name}
-			</Typography>
-		);
-	} else if (sensorType === 'heart_rate') {
-		return (
-			<Typography className={classes.sensorValue}>
-				{sensorValue ? sensorValue.heartRate : '--'}&nbsp;BPM
-			</Typography>
-		);
-	} else if (sensorType === 'smart_trainer') {
-		let power = '--';
-		let calRequired;
-
-		if (sensorValue) {
-			if (sensorValue.power != null) {
-				power = sensorValue.power;
-			}
-
-			const warns = [];
-			const { calStatus } = sensorValue;
-			if (calStatus.powerCalRequired) {
-				warns.push('Power calibration required');
-			}
-			if (calStatus.resistanceCalRequired) {
-				warns.push('Resistance calibration required');
-			}
-			if (calStatus.userConfigRequired) {
-				warns.push('User configuration required');
-			}
-			if (warns.length > 0) {
-				calRequired = warns.join(', ');
-			}
-		}
-
-
-		return (
-			<Typography className={classes.sensorValue}>
-				{power}&nbsp;W
-				<br />
-				{(calRequired) ? (
-					<Tooltip title={calRequired}>
-						<IconReportProblem />
-					</Tooltip>
-				) : ''}
-			</Typography>
-		);
-	} else {
-		return (
-			<Typography className={classes.sensorValue}>
-				N/A
-			</Typography>
-		);
-	}
-}
-
 function Sensor(props: { children: any; sensorType: SensorType; }) {
 	const pairedWithMessage = (btd) => btd ? `Paired with\n${btd.device.name}` : 'Not configured';
 	const [pairingRequest, setPairingRequest] = useState(false);
@@ -213,9 +113,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 	let [message, setMessage] = useState(pairedWithMessage(btDevice));
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
-	const sensorValueRef = useRef();
-
-	sensorValueRef.current = sensorValue;
+	const [smartTrainerControl, setSmartTrainerControl] = useGlobalState('smart_trainer_control');
 
 	const unpairDevice = () => {
 		if (btDevice) {
@@ -226,6 +124,9 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 			setMessage(pairedWithMessage(null));
 			setBatteryLevel(-1);
 			setSensorValue(null);
+			if (props.sensorType === 'smart_trainer') {
+				setSmartTrainerControl(null);
+			}
 			setIsPairing(false);
 		}
 	};
@@ -261,16 +162,22 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 							console.log(`Device ${device.name} doesn't support battery_level`);
 						}
 
-						if (props.sensorType === 'cycling_power') {
-							startCyclingPowerMeasurementNotifications(server, setSensorValue);
-						} else if (['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(props.sensorType)) {
-							startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
-						} else if (props.sensorType === 'heart_rate') {
-							startHRMNotifications(server, setSensorValue);
-						} else if (props.sensorType === 'smart_trainer') {
-							startSmartTrainerNotifications(server, setSensorValue);
-						} else {
-							console.error('Invalid sensor type');
+						try {
+							if (props.sensorType === 'cycling_power') {
+								await startCyclingPowerMeasurementNotifications(server, setSensorValue);
+							} else if (['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(props.sensorType)) {
+								await startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
+							} else if (props.sensorType === 'heart_rate') {
+								await startHRMNotifications(server, setSensorValue);
+							} else if (props.sensorType === 'smart_trainer') {
+								await startSmartTrainerNotifications(server, setSensorValue);
+									setSmartTrainerControl(await createSmartTrainerController(server));
+							} else {
+								console.error('Invalid sensor type');
+							}
+						} catch (err) {
+							setSeverity('error');
+							setMessage(`${err}`);
 						}
 					});
 
@@ -279,14 +186,15 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 					setSeverity('info');
 					setMessage(pairedWithMessage(newBtDevice));
 					setBtDevice(newBtDevice);
-				} catch (error) {
-					const msg = `${error}`;
+				} catch (err) {
+					const msg = `${err}`;
 					if (msg.startsWith('NotFoundError: User cancelled')) {
 						setSeverity('warning');
+						setMessage('Pairing cancelled');
 					} else {
 						setSeverity('error');
+						setMessage(`${err}`);
 					}
-					setMessage(`${error}`);
 				} finally {
 					setIsPairing(false);
 				}
@@ -307,10 +215,11 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 					<Typography gutterBottom variant="h5" component="h2">
 						{props.children}
 					</Typography>
-					<SensorValue sensorType={props.sensorType} sensorValue={sensorValue} />
+					<SensorValue sensorType={props.sensorType} sensorValue={sensorValue} className={classes.sensorValue} />
 					<div className={classes.batteryLevel}>
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
 					</div>
+					{props.sensorType === 'smart_trainer' ? <TrainerControlBasicResistance className={classes.trainerControl}/> : ''}
 					<div className={classes.sensorStatus}>
 						<SensorStatus wait={isPairing} severity={severity}>
 							{message.split('\n').map((line, i) => (<span key={i}>{`${line}`}<br /></span>))}

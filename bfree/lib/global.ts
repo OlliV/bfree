@@ -36,13 +36,14 @@ export const { useGlobalState } = createGlobalState({
 	btDevice_cycling_speed: null,
 	btDevice_cycling_speed_and_cadence: null,
 	btDevice_heart_rate: null,
-	btDevice_smart_trainer: null, // TODO
+	btDevice_smart_trainer: null,
 	// Measurements
 	cycling_cadence: null,
 	cycling_power: null,
 	cycling_speed: null,
 	cycling_speed_and_cadence: null,
 	heart_rate: null,
+	smart_trainer: null,
 	// Control
-	smart_trainer: null, // FIXME
+	smart_trainer_control: null,
 });
