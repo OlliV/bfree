@@ -137,11 +137,11 @@ export async function startSmartTrainerNotifications(server: BluetoothRemoteGATT
 		}
 
 		const channelNo = value.getUint8(3);
-		console.log('tacx', {
-			msgLen,
-			msgId,
-			channelNo,
-		});
+		//console.log('tacx', {
+		//	msgLen,
+		//	msgId,
+		//	channelNo,
+		//});
 
 		const result = prevResult;
 

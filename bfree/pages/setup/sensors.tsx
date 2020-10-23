@@ -33,7 +33,7 @@ import { startHRMNotifications } from '../../lib/ble_hrm';
 import { startSmartTrainerNotifications, createSmartTrainerController } from '../../lib/ble_trainer';
 import BatteryLevel from '../../components/batteryLevel';
 import SensorValue from '../../components/SensorValue';
-import { TrainerControlBasicResistance } from '../../components/TrainerControl';
+import { TrainerTestModal } from '../../components/TrainerControl';
 import {
 	useGlobalState,
 	SensorType,
@@ -65,11 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
 			fontSize: '18px !important',
 		},
 		sensorStatus: {
-		},
-		trainerControl: {
-			marginTop: '1em',
-			margin: 'auto',
-			width: '80%',
 		},
 		batteryLevel: {
 			position: 'relative',
@@ -114,6 +109,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
 	const [smartTrainerControl, setSmartTrainerControl] = useGlobalState('smart_trainer_control');
+	const [showSmartTrainerTestModal, setShowSmartTrainerTestModal] = useState(false);
 
 	const unpairDevice = () => {
 		if (btDevice) {
@@ -219,12 +215,16 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 					<div className={classes.batteryLevel}>
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
 					</div>
-					{props.sensorType === 'smart_trainer' ? <TrainerControlBasicResistance className={classes.trainerControl}/> : ''}
 					<div className={classes.sensorStatus}>
 						<SensorStatus wait={isPairing} severity={severity}>
 							{message.split('\n').map((line, i) => (<span key={i}>{`${line}`}<br /></span>))}
 						</SensorStatus>
 					</div>
+					{props.sensorType === 'smart_trainer'
+						? (
+							<TrainerTestModal open={showSmartTrainerTestModal} onClose={() => setShowSmartTrainerTestModal(false)} />
+						)
+						: ''}
 				</CardContent>
 				<CardActions>
 					<ActionButton wait={isPairing} onClick={scanDevices}>
@@ -233,6 +233,14 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 					<ActionButton wait={false} disabled={!btDevice} onClick={unpairDevice}>
 						Unpair
 					</ActionButton>
+					{props.sensorType === 'smart_trainer' ? (
+						<ActionButton
+							wait={!smartTrainerControl && !!btDevice}
+							disabled={!btDevice}
+							onClick={() => setShowSmartTrainerTestModal(true)}>
+							Test
+						</ActionButton>
+					) : ''}
 				</CardActions>
 			</Card>
 		</Grid>

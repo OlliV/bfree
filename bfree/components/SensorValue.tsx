@@ -1,39 +1,27 @@
 import IconReportProblem from '@material-ui/icons/ReportProblem';
 import Typography from '@material-ui/core/Typography';
 import { Tooltip } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
 	SensorType,
 	speedUnitConv,
 	useGlobalState,
 } from '../lib/global';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		sensorValue: {
-		},
-	})
-);
-
-export function SensorValueCC(sensorValue) {
-	const classes = useStyles();
-
+export function SensorValueCC({ sensorValue, className }) {
 	const cadence = sensorValue && sensorValue.cadence !== null
 		? Math.round(sensorValue.cadence)
 		: '--';
 
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			{cadence}&nbsp;RPM
 		</Typography>
 	);
 }
 
-export function SensorValueCP(sensorValue) {
-	const classes = useStyles();
-
+export function SensorValueCP({ sensorValue, className }) {
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			{(sensorValue && sensorValue.power !== null) ? sensorValue.power : '--'}&nbsp;W
 			<br />
 			{(sensorValue && sensorValue.speed !== null) ? sensorValue.speed.toFixed(1) : '--'}&nbsp;km/h
@@ -41,9 +29,8 @@ export function SensorValueCP(sensorValue) {
 	);
 }
 
-export function SensorValueCSC(sensorValue) {
+export function SensorValueCSC({ sensorValue, className }) {
 	const [units] = useGlobalState('units');
-	const classes = useStyles();
 
 	const speedUnit = speedUnitConv[units.speedUnit];
 	const speed = sensorValue && sensorValue.speed !== null
@@ -54,7 +41,7 @@ export function SensorValueCSC(sensorValue) {
 		: '--';
 
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			{speed}&nbsp;{speedUnit.name}
 			<br />
 			{cadence}&nbsp;RPM
@@ -62,34 +49,30 @@ export function SensorValueCSC(sensorValue) {
 	);
 }
 
-export function SensorValueCS(sensorValue) {
+export function SensorValueCS({ sensorValue, className }) {
 	const [units] = useGlobalState('units');
-	const classes = useStyles();
 	const speedUnit = speedUnitConv[units.speedUnit];
 	const speed = sensorValue
 		? (sensorValue.speed * speedUnit.mul).toFixed(1)
 		: '--';
 
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			{speed}&nbsp;{speedUnit.name}
 		</Typography>
 	);
 }
 
-export function SensorValueHRM(sensorValue) {
-	const classes = useStyles();
-
+export function SensorValueHRM({ sensorValue, className }) {
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			{sensorValue ? sensorValue.heartRate : '--'}&nbsp;BPM
 		</Typography>
 	);
 }
 
-export function SensorValueSmartTrainer(sensorValue) {
+export function SensorValueSmartTrainer({ sensorValue, className }) {
 	const [units] = useGlobalState('units');
-	const classes = useStyles();
 	let power = '--';
 	let calRequired;
 
@@ -115,7 +98,7 @@ export function SensorValueSmartTrainer(sensorValue) {
 	}
 
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			{power}&nbsp;W
 			<br />
 			{(calRequired) ? (
@@ -127,26 +110,23 @@ export function SensorValueSmartTrainer(sensorValue) {
 	);
 }
 
-export default function SensorValue({ sensorType, sensorValue }: { sensorType: SensorType, sensorValue }) {
-	const [units] = useGlobalState('units');
-	const classes = useStyles();
-
+export default function SensorValue({ sensorType, sensorValue, className }: { sensorType: SensorType, sensorValue, className }) {
 	switch (sensorType) {
 	case 'cycling_cadence':
-		return SensorValueCC(sensorValue);
+		return (<SensorValueCC sensorValue={sensorValue} className={className} />);
 	case 'cycling_power':
-		return SensorValueCP(sensorValue);
+		return (<SensorValueCP sensorValue={sensorValue} className={className} />);
 	case 'cycling_speed_and_cadence':
-		return SensorValueCSC(sensorValue);
+		return (<SensorValueCSC sensorValue={sensorValue} className={className} />);
 	case 'cycling_speed':
-		return SensorValueCS(sensorValue);
+		return (<SensorValueCS sensorValue={sensorValue} className={className} />);
 	case 'heart_rate':
-		return SensorValueHRM(SensorValue);
+		return (<SensorValueHRM sensorValue={sensorValue} className={className} />);
 	case 'smart_trainer':
-		return SensorValueSmartTrainer(sensorValue);
+		return (<SensorValueSmartTrainer sensorValue={sensorValue} className={className} />);
 	default:
 	return (
-		<Typography className={classes.sensorValue}>
+		<Typography className={className}>
 			Unknown sensor type
 		</Typography>
 	);

@@ -1,6 +1,8 @@
+import Modal from '@material-ui/core/Modal';
+import {useState} from 'react';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import {useGlobalState} from '../lib/global';
 
 const useStyles = makeStyles({
@@ -9,6 +11,35 @@ const useStyles = makeStyles({
 		width: '80%',
 	},
 });
+
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+const useModalStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      position: 'absolute',
+      width: 400,
+      backgroundColor: theme.palette.background.paper,
+      border: '2px solid #000',
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+	trainerControl: {
+		marginTop: '1em',
+		margin: 'auto',
+		width: '80%',
+	},
+  }),
+);
 
 function valueText(value: number) {
 	return `${value} %`;
@@ -33,7 +64,7 @@ export function TrainerControlBasicResistance({className}) {
 				defaultValue={0}
 				getAriaValueText={valueText}
 				aria-labelledby="discrete-slider"
-				valueLabelDisplay="off"
+				valueLabelDisplay="auto"
 				step={10}
 				marks
 				min={0}
@@ -42,5 +73,37 @@ export function TrainerControlBasicResistance({className}) {
 				onChangeCommitted={setBasicResistance}
 			/>
 		</div>
+	);
+}
+
+
+export function TrainerTestModal({open, onClose}) {
+	const classes = useModalStyles();
+	const modalStyle = getModalStyle();
+	const [btDevice] = useGlobalState(`btDevice_smart_trainer`);
+
+	const handleClose = () => {
+		onClose();
+	};
+
+	const body = (
+		<div style={modalStyle} className={classes.paper}>
+			<h2 id="simple-modal-title">Test {btDevice && btDevice.device.name || 'trainer'}</h2>
+			<TrainerControlBasicResistance className={classes.trainerControl}/>
+			<p id="simple-modal-description">
+				Adjust the basic resistance by using the slider above.
+			</p>
+		</div>
+	);
+
+	return (
+		<Modal
+			open={open}
+			onClose={handleClose}
+			aria-labelledby="simple-modal-title"
+			aria-describedby="simple-modal-description"
+		>
+			{body}
+		</Modal>
 	);
 }
