@@ -1,13 +1,12 @@
 import { useRouter } from 'next/router';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
 	// TODO This doesn't always work
 	createStyles({
 		title: {
-			marginLeft: '-2.5ex',
+			//marginLeft: '-2.5ex',
 		},
 		arrow: {
 			'&:hover': {
@@ -18,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default ({ children }: { children: any }) => {
+export default function Title ({ children }: { children: any }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const back = () => router.back();

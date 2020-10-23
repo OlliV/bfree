@@ -3,12 +3,11 @@ import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Head from 'next/head';
 import Link from 'next/link';
 import Typography from '@material-ui/core/Typography';
-import clsx from 'clsx';
 import { CardContent } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Head from '../../components/Head';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -51,17 +50,17 @@ function MenuCard({ title, href, children }: { title: string; href: string; chil
 export default function Setup() {
 	return (
 		<Container maxWidth="md">
-			<Head>
-				<title>Bfree Setup</title>
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
+			<Head title="Setup" />
 			<Box>
 				<Title>Setup</Title>
 				<p>Configure your trainer setup here.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<MenuCard title="Bike Setup" href="">
-						Set the bike configuration parameters.
+					<MenuCard title="Rider" href="/setup/rider">
+						Configure the rider profile.
+					</MenuCard>
+					<MenuCard title="Bike" href="/setup/bike">
+						Setup the bike configuration parameters.
 					</MenuCard>
 					<MenuCard title="Sensors" href="/setup/sensors">
 						Connect to BLE sensors.

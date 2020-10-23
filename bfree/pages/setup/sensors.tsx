@@ -7,7 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Head from 'next/head';
 import IconBike from '@material-ui/icons/DirectionsBike';
 import IconCadence from '@material-ui/icons/FlipCameraAndroid';
 import IconHeart from '@material-ui/icons/Favorite';
@@ -23,6 +22,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import Head from '../../components/Head';
 import {
 	pairDevice,
 	readBatteryLevel,
@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			position: 'relative',
 			float: 'right',
 			display: ' inline-block',
+			top: '-5.5em',
 			marginBottom: '1em',
 		},
 		sensorValue: {
@@ -252,10 +253,7 @@ export default function Setup() {
 
 	return (
 		<Container maxWidth="md">
-			<Head>
-				<title>Bfree Sensors</title>
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
+			<Head title="Senors" />
 			<Box>
 				<Title>Sensors</Title>
 				<p>Connect your smart trainer, HRM, and other sensors using BLE.</p>
