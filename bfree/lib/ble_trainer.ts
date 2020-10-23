@@ -2,27 +2,41 @@ const TACX_FEC_OVER_BLE_SERVICE_UUID = '6e40fec1-b5a3-f393-e0a9-e50e24dcca9e';
 const TACX_FEC_CHARACTERISTIC_TX = '6e40fec2-b5a3-f393-e0a9-e50e24dcca9e';
 const TACX_FEC_CHARACTERISTIC_RX = '6e40fec3-b5a3-f393-e0a9-e50e24dcca9e';
 
-export async function startSmartTrainerNotifications(server, cb) {
+export type TrainerMeasurements = {
+	ts: number;
+	elapsedTime?: number;
+	instantPower?: number;
+	power?: number;
+	accumulatedPower?: number;
+	cadence?: number;
+	accumulatedDistance?: number;
+	heartRate?: number;
+	calStatus: {
+		powerCalRequired: boolean;
+		resistanceCalRequired: boolean;
+		userConfigRequired: boolean;
+	}
+}
+
+export async function createSmartTrainerController(server: BluetoothRemoteGATTServer) {
+	const service = await server.getPrimaryService(TACX_FEC_OVER_BLE_SERVICE_UUID);
+	const characteristic = await service.getCharacteristic(TACX_FEC_CHARACTERISTIC_RX);
+}
+
+export async function startSmartTrainerNotifications(server: BluetoothRemoteGATTServer, measurementsCb: (res: TrainerMeasurements) => void) {
 	const service = await server.getPrimaryService(TACX_FEC_OVER_BLE_SERVICE_UUID);
 	const characteristic = await service.getCharacteristic(TACX_FEC_CHARACTERISTIC_TX);
-	//const characteristic = await service.getCharacteristic(TACX_FEC_CHARACTERISTIC_RX);
 
 	// This is here because we will be receiving different message types and
 	// we need to keep the previous results.
-	let prevResult: {
-		elapsedTime?: number;
-		instantPower?: number;
-		power?: number;
-		accumulatedPower?: number;
-		cadence?: number;
-		accumulatedDistance?: number;
-		heartRate?: number;
-		calStatus?: {
-			powerCalRequired: boolean;
-			resistanceCalRequired: boolean;
-			userConfigRequired: boolean;
+	let prevResult: TrainerMeasurements = {
+		ts: Date.now(),
+		calStatus: {
+			powerCalRequired: false,
+			resistanceCalRequired: false,
+			userConfigRequired: false,
 		}
-	} = { };
+	};
 
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
 		const value = event.target.value;
@@ -135,12 +149,10 @@ export async function startSmartTrainerNotifications(server, cb) {
 
 			result.accumulatedPower = accumulatedPower;
 			result.power = instantaneousPower;
-			result.calStatus = {
-				powerCalRequired,
-				resistanceCalRequired,
-				userConfigRequired,
-			};
 			result.cadence = instantaneousCadence;
+			result.calStatus.powerCalRequired = powerCalRequired;
+			result.calStatus.resistanceCalRequired = resistanceCalRequired;
+			result.calStatus.userConfigRequired = userConfigRequired;
 		} else if (pageNumber === 32) { // Trainer torque page
 			const updateEventCount = value.getUint8(offset + 1);
 			const wheelRevolutions = value.getUint8(offset + 2); // Rollover 256
@@ -176,11 +188,13 @@ export async function startSmartTrainerNotifications(server, cb) {
 		} else if (pageNumber === 81) { // Product info
 		}
 
+		result.ts = Date.now();
+
 		// We probably shouldn't be mutating a result object but always
 		// create a new copy, thus we make a copy here.
 		prevResult = JSON.parse(JSON.stringify(result))
 
-		cb(result);
+		measurementsCb(result);
 	});
 	characteristic.startNotifications();
 }

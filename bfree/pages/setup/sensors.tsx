@@ -118,7 +118,7 @@ function SensorValue({ sensorType, sensorValue }) {
 	} else if (sensorType === 'cycling_power') {
 		return (
 			<Typography className={classes.sensorValue}>
-				{sensorValue ? sensorValue.power : '--'}&nbsp;W
+				{(sensorValue && sensorValue.power !== null) ? sensorValue.power : '--'}&nbsp;W
 				<br />
 				{(sensorValue && sensorValue.speed !== null) ? sensorValue.speed.toFixed(1) : '--'}&nbsp;km/h
 	</Typography>
@@ -161,23 +161,23 @@ function SensorValue({ sensorType, sensorValue }) {
 		let calRequired;
 
 		if (sensorValue) {
-			power = sensorValue.power;
+			if (sensorValue.power != null) {
+				power = sensorValue.power;
+			}
 
+			const warns = [];
 			const { calStatus } = sensorValue;
-			if (calStatus) {
-				const warns = [];
-				if (calStatus.powerCalRequired) {
-					warns.push('Power calibration required');
-				}
-				if (calStatus.resistanceCalRequired) {
-					warns.push('Resistance calibration required');
-				}
-				if (calStatus.userConfigRequired) {
-					warns.push('User configuration required');
-				}
-				if (warns.length > 0) {
-					calRequired = warns.join(', ');
-				}
+			if (calStatus.powerCalRequired) {
+				warns.push('Power calibration required');
+			}
+			if (calStatus.resistanceCalRequired) {
+				warns.push('Resistance calibration required');
+			}
+			if (calStatus.userConfigRequired) {
+				warns.push('User configuration required');
+			}
+			if (warns.length > 0) {
+				calRequired = warns.join(', ');
 			}
 		}
 

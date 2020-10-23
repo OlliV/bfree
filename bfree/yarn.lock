@@ -1368,6 +1368,11 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/web-bluetooth@0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.9.tgz#bfd545f6cbc32fc9d92e9543b5ea18ba0957e955"
+  integrity sha512-P6oHnRSEqRCR1fdAtJXmKBiHE3fOWtNFyfjm9NQZPrxdQjSZgRSiKRiHjLyKBh8eCvM8ldDS8/VJN0qKg0Pk1Q==
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"

@@ -50,7 +50,7 @@ export async function readCyclingPowerFeature(service) {
 	return feature;
 }
 
-export async function startCyclingPowerMeasurementNotifications(server, cb) {
+export async function startCyclingPowerMeasurementNotifications(server: BluetoothRemoteGATTServer, cb) {
 	const service = await server.getPrimaryService('cycling_power');
 	const feature = await readCyclingPowerFeature(service);
 
@@ -106,8 +106,8 @@ export async function startCyclingPowerMeasurementNotifications(server, cb) {
 
 		cb({
 			ts: Date.now(), // ms
-			cumulativeWheelRevolutions,
-			lastWheelEvent,
+			cumulativeWheelRevolutions: cumulativeWheelRevolutions !== null ? cumulativeWheelRevolutions : prevRevs,
+			lastWheelEvent: lastWheelEvent !== null ? lastWheelEvent : prevLastWheelEvent,
 			power: instantaneousPower, // Watts
 			speed: instantaneousSpeed, // m/s
 		});

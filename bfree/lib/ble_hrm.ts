@@ -1,4 +1,12 @@
-export async function startHRMNotifications(server, cb) {
+export type HrmMeasurements = {
+	ts: number;
+	heartRate: number;
+	contactDetected?: boolean;
+	energyExpended?: number;
+	rrIntervals?: number[]
+}
+
+export async function startHRMNotifications(server: BluetoothRemoteGATTServer, cb: (res: HrmMeasurements) => void) {
 	const service = await server.getPrimaryService('heart_rate');
 	const characteristic = await service.getCharacteristic('heart_rate_measurement');
 
@@ -6,13 +14,7 @@ export async function startHRMNotifications(server, cb) {
 		const value = event.target.value;
 		const flags = value.getUint8(0);
 		const rate16Bits = flags & 0x1;
-		const result: {
-			ts: number;
-			heartRate: number;
-			contactDetected?: boolean;
-			energyExpended?: number;
-			rrIntervals?: number[]
-		} = {
+		const result: HrmMeasurements = {
 			ts: Date.now(),
 			heartRate: 0,
 		};

@@ -1,9 +1,9 @@
 import { BluetoothServiceType } from "./global";
 
-async function connect(device) {
+async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServer> {
 	try {
 		const server = await exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
-			async () => {
+			async (): Promise<BluetoothRemoteGATTServer> => {
 				time(`Connecting to Bluetooth Device (${device.name})...`);
 				return await device.gatt.connect();
 			});
@@ -17,8 +17,8 @@ async function connect(device) {
 }
 
 interface BtDevice {
-	device: any;
-	server: any;
+	device: BluetoothDevice;
+	server: BluetoothRemoteGATTServer;
 }
 
 /*
@@ -31,7 +31,6 @@ export async function pairDevice(service: BluetoothServiceType, connectCb: (dev:
 		optionalServices: ['battery_service'],
 	};
 
-	// @ts-ignore
 	const device = await navigator.bluetooth.requestDevice(options);
 	const onDisconnected = (e) => {
 		console.log('> Bluetooth Device disconnected'); // TODO Show the name
@@ -62,7 +61,7 @@ export async function pairDevice(service: BluetoothServiceType, connectCb: (dev:
 	};
 }
 
-export async function readBatteryLevel(server) {
+export async function readBatteryLevel(server: BluetoothRemoteGATTServer) {
 	const batteryService = await server.getPrimaryService('battery_service');
 	const characteristic = await batteryService.getCharacteristic('battery_level');
 
@@ -70,11 +69,12 @@ export async function readBatteryLevel(server) {
 	return value.getUint8(0);
 }
 
-export async function startBatteryLevelNotifications(server, cb) {
+export async function startBatteryLevelNotifications(server: BluetoothRemoteGATTServer, cb) {
 	const service = await server.getPrimaryService('battery_service');
 	const characteristic = await service.getCharacteristic('battery_level');
 
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		// @ts-ignore value does exist in event.target
 		cb(event.target.value.getUint8(0));
 	});
 
@@ -89,11 +89,11 @@ export async function stopNotifications(characteristic) {
 	characteristic.stopNotifications();
 }
 
-async function exponentialBackoff(max, delay, toTry) {
+async function exponentialBackoff(max: number, delay: number, toTry) {
 	return new Promise((resolve, reject) => _exponentialBackoff(max, delay, toTry, resolve, reject));
 }
 
-async function _exponentialBackoff(max, delay, toTry, success, fail) {
+async function _exponentialBackoff(max: number, delay: number, toTry, success, fail) {
 	try {
 		success(await toTry());
 	} catch(error) {

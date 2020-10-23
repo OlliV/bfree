@@ -1,4 +1,14 @@
-export async function startCyclingSpeedAndCadenceMeasurementNotifications(server, cb) {
+export type CscMeasurements = {
+	ts: number,
+	cumulativeWheelRevolutions: number | null;
+	lastWheelEvent: number | null;
+	cumulativeCrankRevolutions: number | null;
+	lastCrankEvent: number | null;
+	speed: number | null;
+	cadence: number | null;
+}
+
+export async function startCyclingSpeedAndCadenceMeasurementNotifications(server: BluetoothRemoteGATTServer, cb: (res: CscMeasurements) => void) {
 	const service = await server.getPrimaryService('cycling_speed_and_cadence');
 	const characteristic = await service.getCharacteristic('csc_measurement');
 
