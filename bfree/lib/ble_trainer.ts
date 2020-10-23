@@ -137,6 +137,10 @@ export async function startSmartTrainerNotifications(server: BluetoothRemoteGATT
 		}
 
 		const channelNo = value.getUint8(3);
+		if (channelNo !== 0x05) {
+			console.error(`No idea what to do with channelNo ${channelNo}`);
+			return;
+		}
 		//console.log('tacx', {
 		//	msgLen,
 		//	msgId,
