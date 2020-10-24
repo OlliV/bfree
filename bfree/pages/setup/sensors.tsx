@@ -17,11 +17,7 @@ import Title from '../../components/title';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import {
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { useEffect, useState, } from 'react';
 import Head from '../../components/Head';
 import {
 	pairDevice,

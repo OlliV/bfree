@@ -13,12 +13,14 @@ export type SensorType =
 	'heart_rate' |
 	'smart_trainer';
 
-export const speedUnitConv: { [index: string]:
-	{
+export interface UnitConv {
+	[index: string]: {
 		name: string;
 		convTo: (v: number) => number
 	}
-} = {
+}
+
+export const speedUnitConv: UnitConv = {
 	kmph: {
 		name: 'km/h',
 		convTo: (v) => v * 3.6,
@@ -28,6 +30,21 @@ export const speedUnitConv: { [index: string]:
 		convTo: (v) => v * 2.237,
 	},
 };
+
+export const distanceUnitConv: UnitConv = {
+	km: {
+		name: 'km',
+		convTo: (d) => d / 1000,
+	},
+	m: {
+		name: 'm',
+		convTo: (d) => d,
+	},
+	mi: {
+		name: 'mi',
+		convTo: (d) => d * 0.000621,
+	},
+}
 
 type SensorSourceType = {
 	id: SensorType;
@@ -89,10 +106,8 @@ export const { useGlobalState } = createGlobalState({
 	cadenceSources: [],
 	speedSources: [],
 	powerSources: [],
-	units: {
-		distanceUnit: 'km',
-		speedUnit: 'kmph',
-	},
+	unitDistance: 'km',
+	unitSpeed: 'kmph',
 	rider: {
 		weight: 70,
 		ftp: 200,

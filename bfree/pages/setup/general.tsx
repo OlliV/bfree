@@ -1,42 +1,21 @@
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import { useState } from 'react';
 import Head from '../../components/Head';
 import Title from '../../components/title';
-import { isValidUnsigned } from '../../lib/validation';
 import {
-	useSetupStyles as useStyles,
-	Param,
+	EnumConfigParam,
+	UnsignedConfigParam,
 } from '../../components/SetupComponents';
 import {
-	useGlobalState,
+	UnitConv,
+	distanceUnitConv,
+	speedUnitConv,
 } from '../../lib/global';
 
-function SamplingRate() {
-	const classes = useStyles();
-	const [samplingRate, setSamplingRate] = useGlobalState('samplingRate');
-	const [tmp, setTmp] = useState(samplingRate);
-
-	const handleChange = (event) => {
-		const raw = event.target.value;
-		const value = Number(raw);
-
-		setTmp(raw);
-		if (isValidUnsigned(value)) {
-			setSamplingRate(samplingRate);
-		}
-	};
-
-	return (
-		<Param title="Sampling Rate" image="/images/cards/tic_tac.jpg">
-			<form className={classes.form} noValidate autoComplete="off">
-				<TextField value={tmp} error={!isValidUnsigned(Number(tmp))} onChange={handleChange} id="outlined-basic" label="Hz" variant="outlined" />
-			</form>
-		</Param>
-	);
-}
+const gen = (uc: UnitConv): [string, string][] => Object.keys(uc).map((k) => [k, uc[k].name]);
+const speedUnits: [string, string][] = gen(speedUnitConv);
+const distanceUnits: [string, string][] = gen(distanceUnitConv);
 
 export default function Setup() {
 	return (
@@ -49,7 +28,9 @@ export default function Setup() {
 				</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<SamplingRate />
+					<UnsignedConfigParam title="Sampling Rate" image="/images/cards/tic_tac.jpg" label="Hz" configName="samplingRate" />
+					<EnumConfigParam title="Speed" image="/images/cards/limit.jpg" label="unit" items={speedUnits} configName="unitSpeed" />
+					<EnumConfigParam title="Distance" image="/images/cards/road.jpg" label="unit" items={distanceUnits} configName="unitDistance" />
 				</Grid>
 			</Box>
 		</Container>

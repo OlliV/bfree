@@ -30,9 +30,9 @@ export function SensorValueCP({ sensorValue, className }) {
 }
 
 export function SensorValueCSC({ sensorValue, className }) {
-	const [units] = useGlobalState('units');
+	const [unitSpeed] = useGlobalState('unitSpeed');
 
-	const speedUnit = speedUnitConv[units.speedUnit];
+	const speedUnit = speedUnitConv[unitSpeed];
 	const speed = sensorValue && sensorValue.speed !== null
 		? (speedUnit.convTo(sensorValue.speed)).toFixed(1)
 		: '--';
@@ -50,8 +50,8 @@ export function SensorValueCSC({ sensorValue, className }) {
 }
 
 export function SensorValueCS({ sensorValue, className }) {
-	const [units] = useGlobalState('units');
-	const speedUnit = speedUnitConv[units.speedUnit];
+	const [unitSpeed] = useGlobalState('unitSpeed');
+	const speedUnit = speedUnitConv[unitSpeed];
 	const speed = sensorValue
 		? (speedUnit.convTo(sensorValue.speed)).toFixed(1)
 		: '--';
@@ -72,9 +72,8 @@ export function SensorValueHRM({ sensorValue, className }) {
 }
 
 export function SensorValueSmartTrainer({ sensorValue, className }) {
-	const [units] = useGlobalState('units');
 	let power = '--';
-	let calRequired;
+	let calRequired: string;
 
 	if (sensorValue) {
 		if (sensorValue.power != null) {
