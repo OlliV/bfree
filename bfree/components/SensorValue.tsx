@@ -34,7 +34,7 @@ export function SensorValueCSC({ sensorValue, className }) {
 
 	const speedUnit = speedUnitConv[units.speedUnit];
 	const speed = sensorValue && sensorValue.speed !== null
-		? (sensorValue.speed * speedUnit.mul).toFixed(1)
+		? (speedUnit.convTo(sensorValue.speed)).toFixed(1)
 		: '--';
 	const cadence = sensorValue && sensorValue.cadence !== null
 		? Math.round(sensorValue.cadence)
@@ -53,7 +53,7 @@ export function SensorValueCS({ sensorValue, className }) {
 	const [units] = useGlobalState('units');
 	const speedUnit = speedUnitConv[units.speedUnit];
 	const speed = sensorValue
-		? (sensorValue.speed * speedUnit.mul).toFixed(1)
+		? (speedUnit.convTo(sensorValue.speed)).toFixed(1)
 		: '--';
 
 	return (

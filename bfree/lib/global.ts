@@ -13,19 +13,25 @@ export type SensorType =
 	'heart_rate' |
 	'smart_trainer';
 
-export const speedUnitConv = {
+export const speedUnitConv: { [index: string]:
+	{
+		name: string;
+		convTo: (v: number) => number
+	}
+} = {
 	kmph: {
 		name: 'km/h',
-		mul: 3.6,
+		convTo: (v) => v * 3.6,
 	},
 	mph: {
 		name: 'mph',
-		mul: 2.237,
+		convTo: (v) => v * 2.237,
 	},
 };
 
 export const { useGlobalState } = createGlobalState({
 	// Config
+	samplingRate: 1, // Hz
 	units: {
 		distanceUnit: 'km',
 		speedUnit: 'kmph',
