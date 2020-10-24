@@ -20,7 +20,10 @@ export default function Setup() {
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<MenuCard title="General" href="/setup/general">
-						Configure measurement units, sensor measurements priority, etc.
+						Configure measurement units and UX settings.
+					</MenuCard>
+					<MenuCard title="Measurements" href="/setup/measurements">
+						Select measurement sources for recording.
 					</MenuCard>
 					<MenuCard title="Rider" href="/setup/rider">
 						Configure the rider profile.

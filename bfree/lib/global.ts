@@ -29,9 +29,32 @@ export const speedUnitConv: { [index: string]:
 	},
 };
 
+export const speedSourceTypes: {
+	id: SensorType;
+	name: string
+}[] = [
+	{
+		id: 'cycling_power',
+		name: 'power sensor',
+	},
+	{
+		id: 'cycling_speed',
+		name: 'speed sensor',
+	},
+	{
+		id: 'cycling_speed_and_cadence',
+		name: 'speed and cadence sensor',
+	},
+	{
+		id: 'smart_trainer',
+		name: 'trainer',
+	},
+];
+
 export const { useGlobalState } = createGlobalState({
 	// Config
 	samplingRate: 1, // Hz
+	speedSources: [],
 	units: {
 		distanceUnit: 'km',
 		speedUnit: 'kmph',

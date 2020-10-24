@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-export type ListItem = {
+export interface ListItem {
 	id: string;
 	name: string;
 }
