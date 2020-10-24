@@ -69,9 +69,15 @@ export default function createLogger() {
 				outputCb('<Track>\n');
 				lap.trackPoints.forEach((point) => {
 					outputCb(`<Trackpoint><Time>${point.time}</Time>\n`);
+					// Course
 					// TODO position. example: <Position><LatitudeDegrees>45.62398910522461</LatitudeDegrees><LongitudeDegrees>6.797249794006348</LongitudeDegrees></Position>
-					// TODO alitude. example: <AltitudeMeters>909.0</AltitudeMeters>
+					// TODO altitude. example: <AltitudeMeters>909.0</AltitudeMeters>
 					// TODO distance. example: <DistanceMeters>0.0</DistanceMeters>
+
+					// Stationary
+					// Note no pos
+					// TODO <AltitudeMeters>423.2592392405907</AltitudeMeters>
+					// TODO <DistanceMeters>12452.1</DistanceMeters>
 					if (point.cadence) outputCb(`<Cadence>${point.cadence}</Cadence>\n`);
 					if (point.speed || point.power) {
 						outputCb(`<Extensions><ns2:TPX>\n`);
