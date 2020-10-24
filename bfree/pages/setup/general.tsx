@@ -29,8 +29,8 @@ export default function Setup() {
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<UnsignedConfigParam title="Sampling Rate" image="/images/cards/tic_tac.jpg" label="Hz" configName="samplingRate" />
-					<EnumConfigParam title="Speed" image="/images/cards/limit.jpg" label="unit" items={speedUnits} configName="unitSpeed" />
-					<EnumConfigParam title="Distance" image="/images/cards/road.jpg" label="unit" items={distanceUnits} configName="unitDistance" />
+					<EnumConfigParam title="Speed" image="/images/cards/limit.jpg" idPrefix='speed-unit' label="unit" items={speedUnits} configName="unitSpeed" />
+					<EnumConfigParam title="Distance" image="/images/cards/road.jpg" idPrefix='distance-unit' label="unit" items={distanceUnits} configName="unitDistance" />
 				</Grid>
 			</Box>
 		</Container>

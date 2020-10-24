@@ -82,7 +82,7 @@ export function UnsignedConfigParam({ title, image, label, configName }: { title
 	);
 }
 
-export function EnumConfigParam({ title, image, label, helpLabel, items, configName }: { title: string; image: string; label: string; helpLabel?: string; items: [string, string][], configName: string }) {
+export function EnumConfigParam({ idPrefix, title, image, label, helpLabel, items, configName }: { idPrefix?: string; title: string; image: string; label: string; helpLabel?: string; items: [string, string][], configName: string }) {
 	const classes = useSetupStyles();
     // @ts-ignore
 	const [value, setValue] = useGlobalState(configName);
@@ -95,8 +95,8 @@ export function EnumConfigParam({ title, image, label, helpLabel, items, configN
 					{label}
 				</InputLabel>
 				<Select
-					labelId={`${label}-label`}
-					id={`${label}-label`}
+					labelId={`${idPrefix || label}-label`}
+					id={`${idPrefix || label}-label`}
 					value={value}
 					onChange={handleChange}
 				>
