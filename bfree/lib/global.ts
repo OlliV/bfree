@@ -29,10 +29,31 @@ export const speedUnitConv: { [index: string]:
 	},
 };
 
-export const speedSourceTypes: {
+type SensorSourceType = {
 	id: SensorType;
-	name: string
-}[] = [
+	name: string;
+}
+
+export const cadenceSourceTypes: SensorSourceType[] = [
+	{
+		id: 'cycling_cadence',
+		name: 'cadence sensor',
+	},
+	{
+		id: 'cycling_speed_and_cadence',
+		name: 'speed and cadence sensor',
+	},
+	{
+		id: 'cycling_power',
+		name: 'power sensor',
+	},
+	{
+		id: 'smart_trainer',
+		name: 'trainer',
+	},
+];
+
+export const speedSourceTypes: SensorSourceType[] = [
 	{
 		id: 'cycling_power',
 		name: 'power sensor',
@@ -51,10 +72,23 @@ export const speedSourceTypes: {
 	},
 ];
 
+export const powerSourceTypes: SensorSourceType[] = [
+	{
+		id: 'cycling_power',
+		name: 'power sensor',
+	},
+	{
+		id: 'smart_trainer',
+		name: 'trainer',
+	},
+];
+
 export const { useGlobalState } = createGlobalState({
 	// Config
 	samplingRate: 1, // Hz
+	cadenceSources: [],
 	speedSources: [],
+	powerSources: [],
 	units: {
 		distanceUnit: 'km',
 		speedUnit: 'kmph',

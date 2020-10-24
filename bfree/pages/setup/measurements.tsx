@@ -6,27 +6,26 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Container from '@material-ui/core/Container';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
 import Head from '../../components/Head';
 import Title from '../../components/title';
-import { isValidUnsigned } from '../../lib/validation';
 import {
 	useSetupStyles as useStyles,
-	Param,
 } from '../../components/SetupComponents';
-import PriorityList, { ListItem } from '../../components/PriorityList';
+import PriorityList from '../../components/PriorityList';
 import SetupDialog from '../../components/SetupDialog';
 import {
+	cadenceSourceTypes,
 	speedSourceTypes,
+	powerSourceTypes,
 	useGlobalState,
 } from '../../lib/global';
 
-function SpeedSource() {
+function DaqSourceCard({ title, image, configName, sourceTypes }) {
 	const classes = useStyles();
-	const [right, setRight] = useGlobalState('speedSources');
-	const [left, setLeft] = useState(speedSourceTypes.filter((a) => !right.find((b) => a.id === b.id)));
+	const [right, setRight] = useGlobalState(configName);
+	const [left, setLeft] = useState(sourceTypes.filter((a) => !right.find((b) => a.id === b.id)));
 
 	const handleLeftChange = (v) => setLeft(v);
 	const handleRightChange = (v) => setRight(v);
@@ -36,11 +35,11 @@ function SpeedSource() {
 			<Card variant="outlined">
 				<CardMedia
 					className={classes.media}
-					image="/images/cards/tempo.jpg"
+					image={image}
 					title="Filler image"
 				/>
 				<Typography gutterBottom variant="h5" component="h2">
-					Speed Source
+					{title}
 				</Typography>
 				<CardContent>
 					<Typography gutterBottom>
@@ -48,7 +47,7 @@ function SpeedSource() {
 					</Typography>
 				</CardContent>
 				<CardActions>
-					<SetupDialog btnText="Configure" title="Speed Source">
+					<SetupDialog btnText="Configure" title={title}>
 						<DialogContentText>
 							The sensors on the right side will be used for measurements.
 						</DialogContentText>
@@ -71,7 +70,9 @@ export default function Setup() {
 				<p>Select measurement sources for recording.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<SpeedSource />
+					<DaqSourceCard title="Speed Source" image="/images/cards/tempo.jpg" configName="speedSources" sourceTypes={speedSourceTypes} />
+					<DaqSourceCard title="Cadence Source" image="/images/cards/pedals.jpg" configName="cadenceSources" sourceTypes={cadenceSourceTypes} />
+					<DaqSourceCard title="Power Source" image="/images/cards/force.jpg" configName="powerSources" sourceTypes={powerSourceTypes} />
 				</Grid>
 			</Box>
 		</Container>
