@@ -30,6 +30,18 @@ export const { useGlobalState } = createGlobalState({
 		distanceUnit: 'km',
 		speedUnit: 'kmph',
 	},
+	rider: {
+		weight: 70,
+		ftp: 200,
+		heartRate: {
+			rest: 50,
+			max: 200,
+		},
+	},
+	bike: {
+		wheelCircumference: 2097, // mm
+		weight: 10, // kg
+	},
 	// Sensors
 	btDevice_cycling_cadence: null,
 	btDevice_cycling_power: null,

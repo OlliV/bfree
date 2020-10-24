@@ -19,11 +19,14 @@ export default function Setup() {
 				<p>Configure your trainer setup here.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
+					<MenuCard title="General" href="/setup/general">
+						Configure measurement units, sensor measurements priority, etc.
+					</MenuCard>
 					<MenuCard title="Rider" href="/setup/rider">
 						Configure the rider profile.
 					</MenuCard>
 					<MenuCard title="Bike" href="/setup/bike">
-						Setup the bike configuration parameters.
+						Set the bike measurements.
 					</MenuCard>
 					<MenuCard title="Sensors" href="/setup/sensors">
 						Connect to BLE sensors.
