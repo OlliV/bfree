@@ -100,7 +100,7 @@ export function EnumConfigParam({ title, image, label, helpLabel, items, configN
 					value={value}
 					onChange={handleChange}
 				>
-					{ items.map(([key, name]) => (<MenuItem id={key} value={key}>{name}</MenuItem>)) }
+					{ items.map(([key, name]) => (<MenuItem key={key} value={key}>{name}</MenuItem>)) }
 				</Select>
 				{helpLabel ? <FormHelperText>{helpLabel}</FormHelperText> : ''}
 			</FormControl>

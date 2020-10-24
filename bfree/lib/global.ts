@@ -1,4 +1,6 @@
+import { Dispatch } from 'react';
 import { createGlobalState } from 'react-hooks-global-state';
+import { BtDevice } from '../lib/ble';
 
 export type BluetoothServiceType =
 	'cycling_power' |
@@ -19,6 +21,8 @@ export interface UnitConv {
 		convTo: (v: number) => number
 	}
 }
+
+const LOCAL_STORAGE_KEY = 'settings';
 
 export const speedUnitConv: UnitConv = {
 	kmph: {
@@ -100,7 +104,45 @@ export const powerSourceTypes: SensorSourceType[] = [
 	},
 ];
 
-export const { useGlobalState } = createGlobalState({
+type State = {
+	// Config
+	samplingRate: number;
+	cadenceSources: SensorSourceType[];
+	speedSources: SensorSourceType[];
+	powerSources: SensorSourceType[];
+	unitDistance: 'km' | 'm' | 'mi';
+	unitSpeed: 'kmph' | 'mph';
+	rider: {
+		weight: number;
+		ftp: number;
+		heartRate: {
+			rest: number;
+			max: number;
+		};
+	};
+	bike: {
+		wheelCircumference: number;
+		weight: number;
+	};
+	// Sensors
+	btDevice_cycling_cadence: null | BtDevice;
+	btDevice_cycling_power: null | BtDevice;
+	btDevice_cycling_speed: null | BtDevice;
+	btDevice_cycling_speed_and_cadence: null | BtDevice;
+	btDevice_heart_rate: null | BtDevice;
+	btDevice_smart_trainer: null | BtDevice;
+	// Measurements
+	cycling_cadence: any;
+	cycling_power: any;
+	cycling_speed: any;
+	cycling_speed_and_cadence: any;
+	heart_rate: any;
+	smart_trainer: any;
+	// Control
+	smart_trainer_control: any;
+}
+
+const initialState: State = {
 	// Config
 	samplingRate: 1, // Hz
 	cadenceSources: [],
@@ -136,4 +178,34 @@ export const { useGlobalState } = createGlobalState({
 	smart_trainer: null,
 	// Control
 	smart_trainer_control: null,
-});
+	// Load config from local storage
+	...(typeof window === 'undefined' ? {} : JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))),
+};
+
+const { useGlobalState: _useGlobalState, getGlobalState } = createGlobalState(initialState);
+
+export function useGlobalState(key: keyof State) {
+	const [value, setValue] = _useGlobalState(key);
+
+	const setAndSaveValue = (value: Parameters<typeof setValue>[0]) => {
+		setValue(value);
+		saveConfig();
+	};
+
+	return [value, setAndSaveValue] as const;
+}
+
+export function saveConfig() {
+	const config = {
+		samplingRate: getGlobalState('samplingRate'),
+		cadenceSources: getGlobalState('cadenceSources'),
+		speedSources: getGlobalState('speedSources'),
+		powerSources: getGlobalState('powerSources'),
+		unitDistance: getGlobalState('unitDistance'),
+		unitSpeed: getGlobalState('unitSpeed'),
+		rider: getGlobalState('rider'),
+		bike: getGlobalState('bike'),
+	};
+
+	localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
+};

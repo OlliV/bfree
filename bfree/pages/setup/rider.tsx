@@ -103,7 +103,7 @@ function HeartRate() {
 		const raw = event.target.value;
 		const value = Number(raw);
 
-		setTmpRest(raw);
+		setTmpMax(raw);
 		if (isValidUnsigned(value)) {
 			setRider({
 				...rider,
