@@ -5,11 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import Head from '../../components/Head';
 import MenuCard from '../../components/MenuCard';
 
-// TODO Priority order config for sensor measurements
-// e.g.
-// power from 1. pm 2. trainer
-// speed from 1. speed sensor 2. trainer
-
 export default function Setup() {
 	return (
 		<Container maxWidth="md">

@@ -61,7 +61,7 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 	);
 }
 
-export default function Setup() {
+export default function SetupMeasurements() {
 	return (
 		<Container maxWidth="md">
 			<Head title="Measurements" />

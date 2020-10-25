@@ -143,7 +143,7 @@ function HeartRate() {
 	);
 }
 
-export default function Setup() {
+export default function SetupRider() {
 	return (
 		<Container maxWidth="md">
 			<Head title="Rider" />

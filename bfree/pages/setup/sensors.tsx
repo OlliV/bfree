@@ -244,7 +244,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 	);
 }
 
-export default function Setup() {
+export default function SetupSensors() {
 	const classes = useStyles();
 
 	return (

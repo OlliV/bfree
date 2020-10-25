@@ -68,7 +68,7 @@ function BikeWeight() {
 	);
 }
 
-export default function Setup() {
+export default function SetupBike() {
 	return (
 		<Container maxWidth="md">
 			<Head title="Bike" />

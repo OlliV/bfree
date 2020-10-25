@@ -17,7 +17,7 @@ const gen = (uc: UnitConv): [string, string][] => Object.keys(uc).map((k) => [k,
 const speedUnits: [string, string][] = gen(speedUnitConv);
 const distanceUnits: [string, string][] = gen(distanceUnitConv);
 
-export default function Setup() {
+export default function SetupGeneral() {
 	return (
 		<Container maxWidth="md">
 			<Head title="General" />
