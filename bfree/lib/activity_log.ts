@@ -26,7 +26,7 @@ type Lap = {
 	triggerMethod?: LapTriggerMethod;
 };
 
-const PRODUCT_NAME = 'Bfree';
+const PRODUCT_NAME = 'Bfree App';
 const UNIT_ID = 0;
 const PRODUCT_ID = 0;
 const VERSION = [0, 1];
