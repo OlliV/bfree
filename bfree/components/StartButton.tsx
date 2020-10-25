@@ -17,15 +17,15 @@ const useStyles = makeStyles((theme: Theme) =>
 			cursor: 'not-allowed',
 		},
 		center: {
-			  display: 'flex',
-			  justifyContent: 'center',
-			  alignItems: 'bottom',
-			  height: '3ex',
-		}
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'bottom',
+			height: '3ex',
+		},
 	})
 );
 
-export default function StartButton({ disabled, href }: { disabled?: boolean; href: string; }) {
+export default function StartButton({ disabled, href }: { disabled?: boolean; href: string }) {
 	const classes = useStyles();
 
 	const handleOnClick = (e) => {
@@ -41,9 +41,9 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 					<Card variant="outlined" className={disabled ? classes.buttonDisabled : classes.button}>
 						<CardContent>
 							<Box className={classes.center}>
-							<Typography gutterBottom variant="h5" component="h2">
-								Start
-							</Typography>
+								<Typography gutterBottom variant="h5" component="h2">
+									Start
+								</Typography>
 							</Box>
 						</CardContent>
 					</Card>

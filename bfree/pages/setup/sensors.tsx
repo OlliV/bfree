@@ -17,12 +17,9 @@ import Title from '../../components/title';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import { useEffect, useState, } from 'react';
+import { useEffect, useState } from 'react';
 import Head from '../../components/Head';
-import {
-	pairDevice,
-	readBatteryLevel,
-} from '../../lib/ble';
+import { pairDevice, readBatteryLevel } from '../../lib/ble';
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble_cpp';
 import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble_cscp';
 import { startHRMNotifications } from '../../lib/ble_hrm';
@@ -30,11 +27,7 @@ import { startSmartTrainerNotifications, createSmartTrainerController } from '..
 import BatteryLevel from '../../components/batteryLevel';
 import SensorValue from '../../components/SensorValue';
 import { TrainerTestModal } from '../../components/TrainerControl';
-import {
-	useGlobalState,
-	SensorType,
-	BluetoothServiceType,
-} from '../../lib/global';
+import { useGlobalState, SensorType, BluetoothServiceType } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -60,8 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		inlineIcon: {
 			fontSize: '18px !important',
 		},
-		sensorStatus: {
-		},
+		sensorStatus: {},
 		batteryLevel: {
 			position: 'relative',
 			float: 'right',
@@ -77,7 +69,17 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function ActionButton({ wait, onClick, disabled, children }: { wait: boolean; onClick?: () => void; disabled?: boolean; children: any; }) {
+function ActionButton({
+	wait,
+	onClick,
+	disabled,
+	children,
+}: {
+	wait: boolean;
+	onClick?: () => void;
+	disabled?: boolean;
+	children: any;
+}) {
 	const classes = useStyles();
 
 	return (
@@ -91,11 +93,15 @@ function ActionButton({ wait, onClick, disabled, children }: { wait: boolean; on
 }
 
 function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Color; children: any }) {
-	return <Paper><Alert severity={severity}>{children}</Alert></Paper>;
+	return (
+		<Paper>
+			<Alert severity={severity}>{children}</Alert>
+		</Paper>
+	);
 }
 
-function Sensor(props: { children: any; sensorType: SensorType; }) {
-	const pairedWithMessage = (btd) => btd ? `Paired with\n${btd.device.name}` : 'Not configured';
+function Sensor(props: { children: any; sensorType: SensorType }) {
+	const pairedWithMessage = (btd) => (btd ? `Paired with\n${btd.device.name}` : 'Not configured');
 	const [pairingRequest, setPairingRequest] = useState(false);
 	const [isPairing, setIsPairing] = useState(false);
 	// @ts-ignore
@@ -158,13 +164,17 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 						try {
 							if (props.sensorType === 'cycling_power') {
 								await startCyclingPowerMeasurementNotifications(server, setSensorValue);
-							} else if (['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(props.sensorType)) {
+							} else if (
+								['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(
+									props.sensorType
+								)
+							) {
 								await startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
 							} else if (props.sensorType === 'heart_rate') {
 								await startHRMNotifications(server, setSensorValue);
 							} else if (props.sensorType === 'smart_trainer') {
 								await startSmartTrainerNotifications(server, setSensorValue);
-									setSmartTrainerControl(await createSmartTrainerController(server));
+								setSmartTrainerControl(await createSmartTrainerController(server));
 							} else {
 								console.error('Invalid sensor type');
 							}
@@ -193,7 +203,7 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 				}
 			})();
 		}
-	})
+	});
 
 	const scanDevices = () => {
 		setPairingRequest(true);
@@ -208,20 +218,32 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 					<Typography gutterBottom variant="h5" component="h2">
 						{props.children}
 					</Typography>
-					<SensorValue sensorType={props.sensorType} sensorValue={sensorValue} className={classes.sensorValue} />
+					<SensorValue
+						sensorType={props.sensorType}
+						sensorValue={sensorValue}
+						className={classes.sensorValue}
+					/>
 					<div className={classes.batteryLevel}>
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
 					</div>
 					<div className={classes.sensorStatus}>
 						<SensorStatus wait={isPairing} severity={severity}>
-							{message.split('\n').map((line, i) => (<span key={i}>{`${line}`}<br /></span>))}
+							{message.split('\n').map((line, i) => (
+								<span key={i}>
+									{`${line}`}
+									<br />
+								</span>
+							))}
 						</SensorStatus>
 					</div>
-					{props.sensorType === 'smart_trainer'
-						? (
-							<TrainerTestModal open={showSmartTrainerTestModal} onClose={() => setShowSmartTrainerTestModal(false)} />
-						)
-						: ''}
+					{props.sensorType === 'smart_trainer' ? (
+						<TrainerTestModal
+							open={showSmartTrainerTestModal}
+							onClose={() => setShowSmartTrainerTestModal(false)}
+						/>
+					) : (
+						''
+					)}
 				</CardContent>
 				<CardActions>
 					<ActionButton wait={isPairing} onClick={scanDevices}>
@@ -234,10 +256,13 @@ function Sensor(props: { children: any; sensorType: SensorType; }) {
 						<ActionButton
 							wait={!smartTrainerControl && !!btDevice}
 							disabled={!btDevice}
-							onClick={() => setShowSmartTrainerTestModal(true)}>
+							onClick={() => setShowSmartTrainerTestModal(true)}
+						>
 							Test
 						</ActionButton>
-					) : ''}
+					) : (
+						''
+					)}
 				</CardActions>
 			</Card>
 		</Grid>

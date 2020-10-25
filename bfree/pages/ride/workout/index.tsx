@@ -10,12 +10,9 @@ export default function RideWorkout() {
 			<Head title="Workout" />
 			<Box>
 				<Title>Workout</Title>
-				<p>
-					Select the workout mode.
-				</p>
+				<p>Select the workout mode.</p>
 
-				<Grid container direction="row" alignItems="center" spacing={2}>
-				</Grid>
+				<Grid container direction="row" alignItems="center" spacing={2}></Grid>
 			</Box>
 		</Container>
 	);

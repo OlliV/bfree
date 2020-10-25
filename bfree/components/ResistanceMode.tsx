@@ -16,10 +16,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			margin: theme.spacing(1),
 			minWidth: 120,
 		},
-	}),
+	})
 );
 
-export default function ResistanceMode({mode, setMode}: { mode: string; setMode: (m: string) => void }) {
+export default function ResistanceMode({ mode, setMode }: { mode: string; setMode: (m: string) => void }) {
 	const classes = useSetupStyles();
 	const myClasses = useStyles();
 

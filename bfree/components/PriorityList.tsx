@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		button: {
 			margin: theme.spacing(0.5, 0),
 		},
-	}),
+	})
 );
 
 export interface ListItem {
@@ -38,7 +38,12 @@ function intersection(a: ListItem[], b: ListItem[]) {
 	return a.filter((value) => b.indexOf(value) !== -1);
 }
 
-export default function PriorityList({ leftList, handleLeftChange, rightList, handleRightChange }: {
+export default function PriorityList({
+	leftList,
+	handleLeftChange,
+	rightList,
+	handleRightChange,
+}: {
 	leftList: ListItem[];
 	handleLeftChange: (v: ListItem[]) => void;
 	rightList: ListItem[];

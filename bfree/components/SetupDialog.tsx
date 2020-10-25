@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		formControlLabel: {
 			marginTop: theme.spacing(1),
 		},
-	}),
+	})
 );
 
 export default function SetupDialog({ btnText, title, children }) {
@@ -41,17 +41,9 @@ export default function SetupDialog({ btnText, title, children }) {
 			<Button variant="outlined" color="primary" onClick={handleClickOpen}>
 				{btnText}
 			</Button>
-			<Dialog
-				fullWidth={false}
-				maxWidth="md"
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="dialog-title"
-			>
+			<Dialog fullWidth={false} maxWidth="md" open={open} onClose={handleClose} aria-labelledby="dialog-title">
 				<DialogTitle id="dialog-title">{title}</DialogTitle>
-				<DialogContent>
-					{children}
-				</DialogContent>
+				<DialogContent>{children}</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
 						Close

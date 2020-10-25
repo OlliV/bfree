@@ -10,12 +10,9 @@ export default function RideWorkout() {
 			<Head title="Virtual Ride" />
 			<Box>
 				<Title>Virtual Ride</Title>
-				<p>
-					Select something if you can...
-				</p>
+				<p>Select something if you can...</p>
 
-				<Grid container direction="row" alignItems="center" spacing={2}>
-				</Grid>
+				<Grid container direction="row" alignItems="center" spacing={2}></Grid>
 			</Box>
 		</Container>
 	);

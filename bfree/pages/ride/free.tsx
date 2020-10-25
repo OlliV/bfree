@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			position: 'fixed',
 			bottom: 10,
 		},
-	}),
+	})
 );
 
 export default function RideFree() {
@@ -26,16 +26,14 @@ export default function RideFree() {
 			<Head title="Free Ride" />
 			<Box>
 				<Title>Free Ride</Title>
-				<p>
-					Start a free ride.
-				</p>
+				<p>Start a free ride.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<ResistanceMode mode={resistanceMode} setMode={setResistanceMode} />
 				</Grid>
 			</Box>
 			<Box width="50%" className={classes.startButton}>
-				<StartButton disabled={!resistanceMode} href={`/ride/record?type=free&resistance=${resistanceMode}`}/>
+				<StartButton disabled={!resistanceMode} href={`/ride/record?type=free&resistance=${resistanceMode}`} />
 			</Box>
 		</Container>
 	);

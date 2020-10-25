@@ -6,13 +6,8 @@ import { useState } from 'react';
 import Title from '../../components/title';
 import Head from '../../components/Head';
 import { isValidUnsigned } from '../../lib/validation';
-import {
-	useSetupStyles as useStyles,
-	Param
-} from '../../components/SetupComponents';
-import {
-	useGlobalState,
-} from '../../lib/global';
+import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
+import { useGlobalState } from '../../lib/global';
 
 function WheelCircumference() {
 	const classes = useStyles();
@@ -35,7 +30,14 @@ function WheelCircumference() {
 	return (
 		<Param title="Wheel Circumference" image="/images/cards/wheel.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
-				<TextField value={tmp} error={!isValidUnsigned(Number(tmp))} onChange={handleChange} id="outlined-basic" label="mm" variant="outlined" />
+				<TextField
+					value={tmp}
+					error={!isValidUnsigned(Number(tmp))}
+					onChange={handleChange}
+					id="outlined-basic"
+					label="mm"
+					variant="outlined"
+				/>
 			</form>
 		</Param>
 	);
@@ -62,7 +64,14 @@ function BikeWeight() {
 	return (
 		<Param title="Bike Weight" image="/images/cards/weight.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
-				<TextField value={tmp} error={!isValidUnsigned(Number(tmp))} onChange={handleChange} id="outlined-basic" label="kg" variant="outlined" />
+				<TextField
+					value={tmp}
+					error={!isValidUnsigned(Number(tmp))}
+					onChange={handleChange}
+					id="outlined-basic"
+					label="kg"
+					variant="outlined"
+				/>
 			</form>
 		</Param>
 	);

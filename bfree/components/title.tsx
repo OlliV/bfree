@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function Title ({ children }: { children: any }) {
+export default function Title({ children }: { children: any }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const back = () => router.back();
@@ -30,4 +30,4 @@ export default function Title ({ children }: { children: any }) {
 			&nbsp;{children}
 		</Typography>
 	);
-};
+}

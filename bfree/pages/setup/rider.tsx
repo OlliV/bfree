@@ -7,13 +7,8 @@ import Title from '../../components/title';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { isValidUnsigned } from '../../lib/validation';
 import { useState } from 'react';
-import {
-	useSetupStyles as useStyles,
-	Param
-} from '../../components/SetupComponents';
-import {
-	useGlobalState,
-} from '../../lib/global';
+import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
+import { useGlobalState } from '../../lib/global';
 
 export const useHRMStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -44,7 +39,14 @@ function Weight() {
 	return (
 		<Param title="Weight" image="/images/cards/scale.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
-				<TextField value={tmp} error={!isValidUnsigned(Number(tmp))} onChange={handleChange} id="outlined-basic" label="kg" variant="outlined" />
+				<TextField
+					value={tmp}
+					error={!isValidUnsigned(Number(tmp))}
+					onChange={handleChange}
+					id="outlined-basic"
+					label="kg"
+					variant="outlined"
+				/>
 			</form>
 		</Param>
 	);
@@ -71,7 +73,14 @@ function FTPValue() {
 	return (
 		<Param title="FTP" image="/images/cards/ftp.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
-				<TextField value={tmp} error={!isValidUnsigned(Number(tmp))} onChange={handleChange} id="outlined-basic" label="Watt" variant="outlined" />
+				<TextField
+					value={tmp}
+					error={!isValidUnsigned(Number(tmp))}
+					onChange={handleChange}
+					id="outlined-basic"
+					label="Watt"
+					variant="outlined"
+				/>
 			</form>
 		</Param>
 	);
@@ -95,7 +104,7 @@ function HeartRate() {
 				heartRate: {
 					rest: value,
 					max: rider.heartRate.max,
-				}
+				},
 			});
 		}
 	};
@@ -110,7 +119,7 @@ function HeartRate() {
 				heartRate: {
 					rest: rider.heartRate.rest,
 					max: value,
-				}
+				},
 			});
 		}
 	};
