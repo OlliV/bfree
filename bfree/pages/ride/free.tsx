@@ -26,7 +26,7 @@ export default function RideFree() {
 			<Head title="Free Ride" />
 			<Box>
 				<Title>Free Ride</Title>
-				<p>Start a free ride.</p>
+				<p>Start a free ride exercise.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<ResistanceMode mode={resistanceMode} setMode={setResistanceMode} />
