@@ -14,17 +14,36 @@ const useStyles = makeStyles((theme: Theme) =>
 				cursor: 'pointer',
 			},
 		},
+		arrowDisabled: {
+			visibility: 'hidden',
+		},
 	})
 );
 
-export default function Title({ children }: { children: any }) {
+export default function Title({
+	disableBack,
+	href,
+	children,
+}: {
+	disableBack?: boolean;
+	href?: string;
+	children: any;
+}) {
 	const classes = useStyles();
 	const router = useRouter();
-	const back = () => router.back();
+	const handleOnClick = (e) => {
+		if (disableBack) {
+			e.preventDefault();
+		} else if (href) {
+			router.push(href);
+		} else {
+			router.back();
+		}
+	};
 
 	return (
 		<Typography gutterBottom variant="h2" component="h2" className={classes.title}>
-			<span className={classes.arrow} onClick={back}>
+			<span className={disableBack ? classes.arrowDisabled : classes.arrow} onClick={handleOnClick}>
 				&larr;
 			</span>
 			&nbsp;{children}

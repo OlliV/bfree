@@ -1,6 +1,7 @@
 import { Dispatch } from 'react';
 import { createGlobalState } from 'react-hooks-global-state';
-import { BtDevice } from '../lib/ble';
+import { BtDevice } from './ble';
+import createActivityLog from './activity_log';
 
 export type BluetoothServiceType =
 	'cycling_power' |
@@ -140,6 +141,9 @@ type State = {
 	smart_trainer: any;
 	// Control
 	smart_trainer_control: any;
+	// Recording state
+	currentActivityLog: null | ReturnType<typeof createActivityLog>;
+	ridePaused: number, // 0 = not paused; anything else is a timestamp
 }
 
 const initialState: State = {
@@ -178,13 +182,16 @@ const initialState: State = {
 	smart_trainer: null,
 	// Control
 	smart_trainer_control: null,
+	// Recording state
+	currentActivityLog: null,
+	ridePaused: 0,
 	// Load config from local storage
 	...(typeof window === 'undefined' ? {} : JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))),
 };
 
 const { useGlobalState: _useGlobalState, getGlobalState } = createGlobalState(initialState);
 
-export function useGlobalState(key: keyof State) {
+function useGlobalState(key: keyof State) {
 	const [value, setValue] = _useGlobalState(key);
 
 	const setAndSaveValue = (value: Parameters<typeof setValue>[0]) => {
@@ -195,7 +202,7 @@ export function useGlobalState(key: keyof State) {
 	return [value, setAndSaveValue] as const;
 }
 
-export function saveConfig() {
+function saveConfig() {
 	const config = {
 		samplingRate: getGlobalState('samplingRate'),
 		cadenceSources: getGlobalState('cadenceSources'),
@@ -209,3 +216,9 @@ export function saveConfig() {
 
 	localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
 };
+
+export {
+	useGlobalState,
+	getGlobalState,
+	saveConfig,
+}

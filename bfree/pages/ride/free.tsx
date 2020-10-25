@@ -2,11 +2,11 @@ import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useState } from 'react';
 import Head from '../../components/Head';
 import StartButton from '../../components/StartButton';
 import ResistanceMode from '../../components/ResistanceMode';
 import Title from '../../components/title';
-import { useState } from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

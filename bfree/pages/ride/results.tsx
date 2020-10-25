@@ -4,7 +4,8 @@ import Grid from '@material-ui/core/Grid';
 import ExportCard from '../../components/ExportCard';
 import Head from '../../components/Head';
 import Title from '../../components/title';
-import createActivityLog from '../../lib/activity_log';
+import { useGlobalState } from '../../lib/global';
+import { useEffect } from 'react';
 
 function downloadBlob(blob: Blob, filename: string) {
 	const url = URL.createObjectURL(blob);
@@ -27,25 +28,12 @@ function downloadBlob(blob: Blob, filename: string) {
 }
 
 export default function RideResults() {
-
-	// TODO Remove this example data
-	const logger = createActivityLog();
-	logger.lapSplit(0, 'Manual');
-	logger.addTrackPoint({
-		time: 1,
-		speed: 420,
-		power: 666,
-	});
-	logger.addTrackPoint({
-		time: 2,
-		speed: 420,
-		power: 666,
-	});
+	const [logger, setLogger] = useGlobalState('currentActivityLog');
 
 	const handleTCXExport = () => {
 		const title = 'My Training';
 		const notes = 'This is just an example.';
-		const date = (new Date()).toISOString().slice(0, 10); // TODO get date from the logger
+		const date = new Date().toISOString().slice(0, 10); // TODO get date from the logger
 		const filename = `${date}_${title}.tcx`; // RFE Re-eval
 		const xmlLines: string[] = [];
 
@@ -55,11 +43,20 @@ export default function RideResults() {
 		downloadBlob(blob, filename);
 	};
 
+	// Cleanup the logger after the user exists this page.
+	useEffect(() => {
+		return () => {
+			console.log('Discarding the active logger');
+			setLogger(null);
+		};
+	}, [logger]);
+
+	// TODO Show an error if logger is missing
 	return (
 		<Container maxWidth="md">
 			<Head title="RideResults" />
 			<Box>
-				<Title>Results</Title>
+				<Title href="/">Results</Title>
 				<p>Training ride results.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

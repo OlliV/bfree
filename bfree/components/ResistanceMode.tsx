@@ -48,8 +48,8 @@ export default function ResistanceMode({ mode, setMode }: { mode: string; setMod
 							onChange={handleChange}
 						>
 							<MenuItem value={'basic'}>Basic resistance</MenuItem>
-							<MenuItem value={'slope'}>Slope</MenuItem>
 							<MenuItem value={'power'}>Power</MenuItem>
+							<MenuItem value={'slope'}>Slope</MenuItem>
 						</Select>
 					</FormControl>
 				</CardContent>

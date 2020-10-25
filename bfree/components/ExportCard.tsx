@@ -26,5 +26,5 @@ export default function ExportCard({ title, children, onClickTCX }) {
 				</CardActions>
 			</Card>
 		</Grid>
-	)
+	);
 }
