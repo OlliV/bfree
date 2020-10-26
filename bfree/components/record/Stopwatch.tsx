@@ -42,8 +42,10 @@ export function Stopwatch({ startTime, isStopped, className }: { startTime: numb
 
 		let offset = Date.now();
 		let t = time;
+
 		if (reset) {
 			t = 0;
+			setTime(t);
 			setReset(false);
 		}
 
@@ -63,7 +65,7 @@ export function Stopwatch({ startTime, isStopped, className }: { startTime: numb
 		return () => {
 			clearInterval(intervalId);
 		};
-	}, [startTime, isStopped]);
+	}, [startTime, isStopped, reset]);
 
 	return <div className={className}>{getElapsedStr(time)}</div>;
 }
