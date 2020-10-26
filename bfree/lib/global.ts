@@ -144,6 +144,8 @@ type State = {
 	// Recording state
 	currentActivityLog: null | ReturnType<typeof createActivityLog>;
 	ridePaused: number, // -1 = not started; 0 = not paused; anything else is a timestamp
+	elapsedTime: number,
+	elapsedLapTime: number,
 }
 
 const initialState: State = {
@@ -185,11 +187,13 @@ const initialState: State = {
 	// Recording state
 	currentActivityLog: null,
 	ridePaused: -1,
+	elapsedTime: 0,
+	elapsedLapTime: 0,
 	// Load config from local storage
 	...(typeof window === 'undefined' ? {} : JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))),
 };
 
-const { useGlobalState: _useGlobalState, getGlobalState } = createGlobalState(initialState);
+const { useGlobalState: _useGlobalState, getGlobalState, setGlobalState } = createGlobalState(initialState);
 
 function useGlobalState(key: keyof State) {
 	const [value, setValue] = _useGlobalState(key);
@@ -220,5 +224,6 @@ function saveConfig() {
 export {
 	useGlobalState,
 	getGlobalState,
+	setGlobalState,
 	saveConfig,
 }

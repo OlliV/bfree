@@ -17,7 +17,8 @@ import FlightRecorder from '../../components/record/FlightRecorder';
 import Head from '../../components/Head';
 import ResistanceControl from '../../components/record/ResistanceControl';
 import Title from '../../components/title';
-import { Stopwatch, StopwatchCard } from '../../components/record/Stopwatch';
+import Stopwatch from '../../components/record/Stopwatch';
+import Time from '../../components/record/Time';
 import { useGlobalState } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -45,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function FreeRideDashboard({ startTime, lapStartTime }: { startTime: number; lapStartTime: number }) {
+function FreeRideDashboard() {
 	const classes = useStyles();
 	const router = useRouter();
 	const { resistance } = router.query;
@@ -62,7 +63,7 @@ function FreeRideDashboard({ startTime, lapStartTime }: { startTime: number; lap
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<ResistanceControl resistance={resistance} />
-				<StopwatchCard startTime={startTime} lapStartTime={lapStartTime} isStopped={ridePaused !== 0} />
+				<Time />
 			</Grid>
 		</Box>
 	);
@@ -100,8 +101,8 @@ export default function RideRecord() {
 	const { type: rideType } = router.query;
 	const [ridePaused, setRidePaused] = useGlobalState('ridePaused');
 	const [currentActivityLog] = useGlobalState('currentActivityLog');
-	const [rideStartTime, setRideStartTime] = useState(Date.now());
-	const [lapStartTime, setLapStartTime] = useState(Date.now());
+	const [rideStartTime, setRideStartTime] = useState(0);
+	const [elapsedLapTime, setElapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideEnded, setRideEnded] = useState(false);
 	let title: string;
 	let Dashboard;
@@ -130,7 +131,7 @@ export default function RideRecord() {
 			const now = Date.now();
 
 			currentActivityLog.lapSplit(now, 'Manual');
-			setLapStartTime(now);
+			setElapsedLapTime(0);
 		}
 	}
 	const endRide = () => {
@@ -142,7 +143,7 @@ export default function RideRecord() {
 	return (
 		<Container maxWidth="md">
 			<Head title={title} />
-			<Dashboard startTime={rideStartTime} lapStartTime={lapStartTime} />
+			<Dashboard />
 			<FlightRecorder startTime={rideStartTime} />
 			<PauseModal show={ridePaused === -1 && !rideEnded} onClose={continueRide}>
 				<p id="pause-modal-description">Tap outside of this area to start the ride.</p>
