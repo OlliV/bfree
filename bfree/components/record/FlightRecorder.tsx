@@ -1,15 +1,15 @@
-import { useGlobalState, getGlobalState } from '../lib/global';
 import { useEffect } from 'react';
-import createActivityLog from '../lib/activity_log';
+import createActivityLog from '../../lib/activity_log';
+import { useGlobalState, getGlobalState } from '../../lib/global';
 
-export default function FlightRecorder({ startTime }: { startTime: number }) {
+export default function FlightRecorder() {
 	const [samplingRate] = useGlobalState('samplingRate');
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
 
-	if (!logger && startTime !== 0) {
+	if (!logger) {
 		try {
 			const l = createActivityLog();
-			l.lapSplit(startTime, 'Manual'); // Initial lap
+			l.lapSplit(0, 'Manual'); // Initial lap
 			setLogger(l);
 		} catch (err) {
 			// TODO Show an error to the user

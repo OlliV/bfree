@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useGlobalState } from '../lib/global';
+import { useGlobalState } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

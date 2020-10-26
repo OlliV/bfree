@@ -44,6 +44,15 @@ export default function createActivityLog() {
 	const laps: Lap[] = [];
 
 	return {
+		getLapStartTime: (lapIndex?: number): number => {
+			const lap = typeof lapIndex === 'number' ? laps[lapIndex] : laps[laps.length - 1];
+
+			if (!lap) {
+				throw new Error('Invalid lap index');
+			}
+
+			return lap.startTime;
+		},
 		lapSplit: (time: number, triggerMethod: LapTriggerMethod) => {
 			if (laps.length > 0) {
 				const lap = laps[laps.length - 1];
@@ -69,6 +78,8 @@ export default function createActivityLog() {
 					if (i === arr.length - 1) {
 						acc.avgHR /= arr.length;
 					}
+
+					return acc;
 				}, {
 					maxSpeed: null,
 					avgHR: null,

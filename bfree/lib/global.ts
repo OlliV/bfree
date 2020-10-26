@@ -143,7 +143,7 @@ type State = {
 	smart_trainer_control: any;
 	// Recording state
 	currentActivityLog: null | ReturnType<typeof createActivityLog>;
-	ridePaused: number, // 0 = not paused; anything else is a timestamp
+	ridePaused: number, // -1 = not started; 0 = not paused; anything else is a timestamp
 }
 
 const initialState: State = {
@@ -184,7 +184,7 @@ const initialState: State = {
 	smart_trainer_control: null,
 	// Recording state
 	currentActivityLog: null,
-	ridePaused: 0,
+	ridePaused: -1,
 	// Load config from local storage
 	...(typeof window === 'undefined' ? {} : JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))),
 };
