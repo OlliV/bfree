@@ -10,6 +10,8 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 		try {
 			const l = createActivityLog();
 			l.lapSplit(startTime, 'Manual'); // Initial lap
+			setGlobalState('elapsedTime', 0);
+			setGlobalState('elapsedLapTime', 0);
 			setLogger(l);
 		} catch (err) {
 			// TODO Show an error to the user
@@ -25,7 +27,6 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 			console.log('Waiting for logger');
 			return;
 		}
-		setGlobalState('elapsedLapTime', 0);
 
 		const intervalId = setInterval(() => {
 			try {
@@ -66,7 +67,7 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				setGlobalState('elapsedTime', elapsedTime);
 				setGlobalState('elapsedLapTime', elapsedLapTime);
 
-				console.log(`tick! ride: ${elapsedLapTime} lap: ${elapsedTime}`);
+				console.log(`tick! ride: ${(elapsedTime / 1000).toFixed(2)} lap: ${(elapsedLapTime / 1000).toFixed(2)}`);
 			} catch (err) {
 				// TODO Show an error to the user
 				console.error(err);

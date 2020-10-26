@@ -59,9 +59,7 @@ export default function createActivityLog() {
 
 				lap.totalTime = time - lap.startTime;
 				lap.triggerMethod = triggerMethod;
-				// TODO stats
-				// - distanceMeters
-				// - calories
+
 				const {
 					maxSpeed,
 					avgHR,
@@ -95,13 +93,16 @@ export default function createActivityLog() {
 				if (maxHR !== null) {
 					lap.maxHR = maxHR;
 				}
+
+				lap.distanceMeters = (lap.trackPoints.length > 0) ? (lap.trackPoints[lap.trackPoints.length - 1].dist || 0) : 0;
+				lap.calories = 0; // TODO not supported yet.
 			}
 
 			laps.push({
 				trackPoints: [],
 				startTime: time,
-				totalTime: 0, // place holder
-				intensity: 'Active', // TODO
+				totalTime: 0, // placeholder
+				intensity: 'Active', // TODO Does it ever change?
 			});
 		},
 		addTrackPoint: (trackPoint: TrackPoint) => {

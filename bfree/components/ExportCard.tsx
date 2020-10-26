@@ -4,16 +4,15 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useSetupStyles } from './SetupComponents';
 
-export default function ExportCard({ title, children, onClickTCX }) {
+export default function ExportCard({ title, children, onClickTCX, cardContentClassName }: { title: string; children: any; onClickTCX: () => void; cardContentClassName?: string }) {
 	const classes = useSetupStyles();
 
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardContent className={classes.setupCard}>
+				<CardContent className={cardContentClassName || classes.setupCard}>
 					<Typography gutterBottom variant="h5" component="h2">
 						{title}
 					</Typography>
