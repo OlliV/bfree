@@ -23,7 +23,7 @@ export default function ExportCard({ defaultName, onChangeName, defaultNotes, on
 		<Grid item xs={4}>
 			<Card variant="outlined">
 				<CardContent className={classes.card}>
-					<Typography gutterBottom defaultValue={defaultName} variant="h5" component="h2">
+					<Typography gutterBottom variant="h5" component="h2">
 						Activity Info
 					</Typography>
 					<form>
