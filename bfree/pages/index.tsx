@@ -1,7 +1,8 @@
-import styles from '../styles/Home.module.css';
 import Grid from '@material-ui/core/Grid';
-import Head from '../components/Head';
+import Image from 'next/image';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import styles from '../styles/Home.module.css';
+import Head from '../components/Head';
 import MenuCard from '../components/MenuCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -9,8 +10,6 @@ const useStyles = makeStyles((theme: Theme) =>
 		pic: {
 			display: 'block',
 			border: 0,
-			width: '100%',
-			height: '150px',
 			objectFit: 'cover',
 			marginLeft: 'auto',
 			marginRight: 'auto',
@@ -25,7 +24,7 @@ export default function Home() {
 		<div className={styles.container}>
 			<Head title="Cycling App" />
 
-			<img src="images/bfree.jpg" className={classes.pic} />
+			<Image src="/images/bfree.jpg" alt="Bfree forever" width="1200" height={150} className={classes.pic} />
 			<main className={styles.main}>
 				<h1 className={styles.title}>Welcome to Bfree!</h1>
 
