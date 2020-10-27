@@ -19,6 +19,7 @@ import ResistanceControl from '../../components/record/ResistanceControl';
 import Title from '../../components/title';
 import Stopwatch from '../../components/record/Stopwatch';
 import Time from '../../components/record/Time';
+import MeasurementCard from '../../components/record/MeasurementCard';
 import { useGlobalState } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,8 +63,12 @@ function FreeRideDashboard() {
 			<Title disableBack={true}>Free Ride</Title>
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
-				<ResistanceControl resistance={resistance} />
 				<Time />
+				<ResistanceControl resistance={resistance} />
+				<MeasurementCard type="cycling_power" />
+				<MeasurementCard type="cycling_speed" />
+				<MeasurementCard type="cycling_cadence" />
+				<MeasurementCard type="heart_rate" />
 			</Grid>
 		</Box>
 	);

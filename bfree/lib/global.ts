@@ -1,7 +1,7 @@
-import { Dispatch } from 'react';
 import { createGlobalState } from 'react-hooks-global-state';
 import { BtDevice } from './ble';
 import createActivityLog from './activity_log';
+import { CscMeasurements, HrmMeasurements } from './measurements';
 
 export type BluetoothServiceType =
 	'cycling_power' |
@@ -16,42 +16,7 @@ export type SensorType =
 	'heart_rate' |
 	'smart_trainer';
 
-export interface UnitConv {
-	[index: string]: {
-		name: string;
-		convTo: (v: number) => number
-	}
-}
-
-const LOCAL_STORAGE_KEY = 'settings';
-
-export const speedUnitConv: UnitConv = {
-	kmph: {
-		name: 'km/h',
-		convTo: (v) => v * 3.6,
-	},
-	mph: {
-		name: 'mph',
-		convTo: (v) => v * 2.237,
-	},
-};
-
-export const distanceUnitConv: UnitConv = {
-	km: {
-		name: 'km',
-		convTo: (d) => d / 1000,
-	},
-	m: {
-		name: 'm',
-		convTo: (d) => d,
-	},
-	mi: {
-		name: 'mi',
-		convTo: (d) => d * 0.000621,
-	},
-}
-
-type SensorSourceType = {
+export type SensorSourceType = {
 	id: SensorType;
 	name: string;
 }
@@ -133,11 +98,11 @@ type State = {
 	btDevice_heart_rate: null | BtDevice;
 	btDevice_smart_trainer: null | BtDevice;
 	// Measurements
-	cycling_cadence: any;
+	cycling_cadence: null | CscMeasurements;
 	cycling_power: any;
-	cycling_speed: any;
+	cycling_speed: null | CscMeasurements;
 	cycling_speed_and_cadence: any;
-	heart_rate: any;
+	heart_rate: null | HrmMeasurements;
 	smart_trainer: any;
 	// Control
 	smart_trainer_control: any;
@@ -148,6 +113,7 @@ type State = {
 	elapsedLapTime: number,
 }
 
+const LOCAL_STORAGE_KEY = 'settings';
 const initialState: State = {
 	// Config
 	samplingRate: 1, // Hz
@@ -226,4 +192,37 @@ export {
 	getGlobalState,
 	setGlobalState,
 	saveConfig,
+}
+
+export interface UnitConv {
+	[index: string]: {
+		name: string;
+		convTo: (v: number) => number
+	}
+}
+
+export const speedUnitConv: UnitConv = {
+	kmph: {
+		name: 'km/h',
+		convTo: (v) => v * 3.6,
+	},
+	mph: {
+		name: 'mph',
+		convTo: (v) => v * 2.237,
+	},
+};
+
+export const distanceUnitConv: UnitConv = {
+	km: {
+		name: 'km',
+		convTo: (d) => d / 1000,
+	},
+	m: {
+		name: 'm',
+		convTo: (d) => d,
+	},
+	mi: {
+		name: 'mi',
+		convTo: (d) => d * 0.000621,
+	},
 }

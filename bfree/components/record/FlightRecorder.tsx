@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useGlobalState, getGlobalState, setGlobalState } from '../../lib/global';
 import createActivityLog from '../../lib/activity_log';
+import {getCyclingCadenceMeasurement, getCyclingPowerMeasurement, getCyclingSpeedMeasurement, getHeartRateMeasurement} from '../../lib/measurements';
 
 export default function FlightRecorder({ startTime }: { startTime: number }) {
 	const [samplingRate] = useGlobalState('samplingRate');
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
+	const [bikeParams] = useGlobalState('bike');
 
 	if (!logger && startTime !== 0) {
 		try {
@@ -40,20 +42,21 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 					offset = Date.now();
 				}
 
-				const cadence = getGlobalState('cycling_cadence');
-				const power = getGlobalState('cycling_power');
-				const speed = getGlobalState('cycling_speed');
-				const speedAndCadence = getGlobalState('cycling_speed_and_cadence');
-				const heartRate = getGlobalState('heart_rate');
-				const smartTrainer = getGlobalState('smart_trainer');
+				const cadence = getCyclingCadenceMeasurement();
+				const power = getCyclingPowerMeasurement();
+				const speed = getCyclingSpeedMeasurement();
+				const heartRate = getHeartRateMeasurement();
+				//const smartTrainer = getGlobalState('smart_trainer');
 
-				// TODO Select the right sources
 				// TODO Do whatever filtering is required
 				const now = Date.now();
 				logger.addTrackPoint({
 					time: now,
+					dist: !speed ? undefined : speed.cumulativeWheelRevolutions * (bikeParams.wheelCircumference / 1000),
 					speed: !speed ? undefined : speed.speed,
-					power: !power ? undefined : power.power, // TODO Speed should averaged over x sec or so?
+					cadence: !cadence ? undefined : cadence.cadence,
+					power: !power ? undefined : power.power, // TODO Power should averaged over x sec or so?
+					hr: !heartRate ? undefined : heartRate.heartRate,
 				});
 
 				// Update elapsed time
@@ -77,6 +80,8 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 		return () => {
 			// Stop recording
 			clearInterval(intervalId);
+			// TODO Might not always be manual trigger
+			logger.endActivityLog(Date.now(), 'Manual');
 		};
 	}, [logger]);
 

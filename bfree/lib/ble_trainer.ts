@@ -1,22 +1,8 @@
+import { TrainerMeasurements } from './measurements';
+
 const TACX_FEC_OVER_BLE_SERVICE_UUID = '6e40fec1-b5a3-f393-e0a9-e50e24dcca9e';
 const TACX_FEC_CHARACTERISTIC_TX = '6e40fec2-b5a3-f393-e0a9-e50e24dcca9e';
 const TACX_FEC_CHARACTERISTIC_RX = '6e40fec3-b5a3-f393-e0a9-e50e24dcca9e';
-
-export type TrainerMeasurements = {
-	ts: number;
-	elapsedTime?: number;
-	instantPower?: number;
-	power?: number;
-	accumulatedPower?: number;
-	cadence?: number;
-	accumulatedDistance?: number;
-	heartRate?: number;
-	calStatus: {
-		powerCalRequired: boolean;
-		resistanceCalRequired: boolean;
-		userConfigRequired: boolean;
-	}
-}
 
 function calcChecksum(buf: DataView) {
 	let checksum = 0;

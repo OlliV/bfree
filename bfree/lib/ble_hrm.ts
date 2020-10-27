@@ -1,10 +1,4 @@
-export type HrmMeasurements = {
-	ts: number;
-	heartRate: number;
-	contactDetected?: boolean;
-	energyExpended?: number;
-	rrIntervals?: number[]
-}
+import { HrmMeasurements } from './measurements';
 
 export async function startHRMNotifications(server: BluetoothRemoteGATTServer, cb: (res: HrmMeasurements) => void) {
 	const service = await server.getPrimaryService('heart_rate');

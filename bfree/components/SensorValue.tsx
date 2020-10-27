@@ -98,7 +98,7 @@ export default function SensorValue({
 }: {
 	sensorType: SensorType;
 	sensorValue;
-	className;
+	className?: string;
 }) {
 	switch (sensorType) {
 		case 'cycling_cadence':
