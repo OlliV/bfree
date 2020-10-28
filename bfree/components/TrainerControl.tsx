@@ -1,9 +1,10 @@
 import Modal from '@material-ui/core/Modal';
-import { useState } from 'react';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { useState, useEffect } from 'react';
 import { useGlobalState } from '../lib/global';
+import SensorValue from './SensorValue';
 
 const useStyles = makeStyles({
 	root: {
@@ -51,7 +52,7 @@ export function TrainerControlBasicResistance({ className }) {
 
 	const setBasicResistance = (_ev: any, value: number) => {
 		if (smartTrainerControl) {
-			smartTrainerControl.setBasicResistance(value);
+			smartTrainerControl.setBasicResistance(value).catch(console.error);
 		}
 	};
 
@@ -87,9 +88,9 @@ export function TrainerTestModal({ open, onClose }) {
 
 	const body = (
 		<div style={modalStyle} className={classes.paper}>
-			<h2 id="simple-modal-title">Test {(btDevice && btDevice.device.name) || 'trainer'}</h2>
+			<h2 id="trainer-test-modal-title">Test {(btDevice && btDevice.device.name) || 'trainer'}</h2>
 			<TrainerControlBasicResistance className={classes.trainerControl} />
-			<p id="simple-modal-description">Adjust the basic resistance by using the slider above.</p>
+			<p id="trainer-test-modal-description">Adjust the basic resistance by using the slider above.</p>
 		</div>
 	);
 
@@ -97,8 +98,91 @@ export function TrainerTestModal({ open, onClose }) {
 		<Modal
 			open={open}
 			onClose={handleClose}
-			aria-labelledby="simple-modal-title"
-			aria-describedby="simple-modal-description"
+			aria-labelledby="trainer-test-modal-title"
+			aria-describedby="trainer-test-modal-description"
+		>
+			{body}
+		</Modal>
+	);
+}
+
+export function TrainerCalibrationModal({ open, onClose }) {
+	const classes = useModalStyles();
+	const modalStyle = getModalStyle();
+	const [btDevice] = useGlobalState(`btDevice_smart_trainer`);
+	const [smartTrainerStatus] = useGlobalState('smart_trainer');
+	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
+	const [targetSpeed, setTargetSpeed] = useState('slowly');
+	const [calResult, setCalResult] = useState('PENDING');
+
+	const handleClose = () => {
+		onClose();
+	};
+
+	useEffect(() => {
+		let tim;
+		const statusListener = (data) => {
+			console.log(data);
+			if (data.targetSpeed) {
+				// TODO How to mi/h
+				setTargetSpeed(`around ${data.targetSpeed.toFixed(0)} km/h`);
+			}
+			// TODO We should read spinDownCalRes here
+			if (data.spindownTimeRes > 0) {
+				setCalResult('PASSED');
+				clearTimeout(tim);
+			}
+			// TODO When fail?
+		};
+
+		if (open && smartTrainerControl) {
+			console.log(`Sending a calibration request to ${btDevice && btDevice.device.name}`);
+			setCalResult('PENDING');
+			const cal = async () => {
+				await smartTrainerControl.sendCalibrationReq();
+				await smartTrainerControl.sendSpinDownCalibrationReq();
+
+				smartTrainerControl.addPageListener(1, statusListener);
+				smartTrainerControl.addPageListener(2, statusListener);
+
+				// YOLO timeout
+				tim = setTimeout(() => {
+					setCalResult('FAILED');
+				}, 30000); // TODO const for this
+			};
+			cal().catch(console.error)
+		}
+
+		return () => {
+			if (smartTrainerControl) {
+				if (tim) {
+					clearTimeout(tim);
+					smartTrainerControl.removePageListener(1, statusListener);
+					smartTrainerControl.removePageListener(2, statusListener);
+				}
+				tim = null;
+			}
+		};
+	}, [open])
+
+	const body = (
+		<div style={modalStyle} className={classes.paper}>
+			<h2 id="calibration-modal-title">Calibrate {(btDevice && btDevice.device.name) || 'trainer'}</h2>
+			<p id="calibration-modal-description">Start the calibration by pedaling {targetSpeed}.</p>
+			<p><b>Calibration status:</b> {calResult}</p>
+			<SensorValue
+				sensorType={'smart_trainer'}
+				sensorValue={smartTrainerStatus}
+			/>
+		</div>
+	);
+
+	return (
+		<Modal
+			open={open}
+			onClose={handleClose}
+			aria-labelledby="calibration-modal-title"
+			aria-describedby="calibration-modal-description"
 		>
 			{body}
 		</Modal>

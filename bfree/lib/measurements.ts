@@ -15,6 +15,7 @@ export type CscMeasurements = {
 export type TrainerMeasurements = {
 	ts: number;
 	elapsedTime?: number;
+	speed?: number;
 	instantPower?: number;
 	power?: number;
 	accumulatedPower?: number;

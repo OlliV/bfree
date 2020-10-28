@@ -23,10 +23,10 @@ import { pairDevice, readBatteryLevel } from '../../lib/ble';
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble_cpp';
 import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble_cscp';
 import { startHRMNotifications } from '../../lib/ble_hrm';
-import { startSmartTrainerNotifications, createSmartTrainerController } from '../../lib/ble_trainer';
+import { createSmartTrainerController } from '../../lib/ble_trainer';
 import BatteryLevel from '../../components/batteryLevel';
 import SensorValue from '../../components/SensorValue';
-import { TrainerTestModal } from '../../components/TrainerControl';
+import { TrainerCalibrationModal } from '../../components/TrainerControl';
 import { useGlobalState, SensorType, BluetoothServiceType } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -112,7 +112,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
 	const [smartTrainerControl, setSmartTrainerControl] = useGlobalState('smart_trainer_control');
-	const [showSmartTrainerTestModal, setShowSmartTrainerTestModal] = useState(false);
+	const [showSmartTrainerCalibrationModal, setShowSmartTrainerCalibrationModal] = useState(false);
 
 	const unpairDevice = () => {
 		if (btDevice) {
@@ -173,8 +173,9 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 							} else if (props.sensorType === 'heart_rate') {
 								await startHRMNotifications(server, setSensorValue);
 							} else if (props.sensorType === 'smart_trainer') {
-								await startSmartTrainerNotifications(server, setSensorValue);
-								setSmartTrainerControl(await createSmartTrainerController(server));
+								const controller = await createSmartTrainerController(server, setSensorValue);
+								await controller.startNotifications();
+								setSmartTrainerControl(controller);
 							} else {
 								console.error('Invalid sensor type');
 							}
@@ -237,9 +238,9 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						</SensorStatus>
 					</div>
 					{props.sensorType === 'smart_trainer' ? (
-						<TrainerTestModal
-							open={showSmartTrainerTestModal}
-							onClose={() => setShowSmartTrainerTestModal(false)}
+						<TrainerCalibrationModal
+							open={showSmartTrainerCalibrationModal}
+							onClose={() => setShowSmartTrainerCalibrationModal(false)}
 						/>
 					) : (
 						''
@@ -256,9 +257,9 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						<ActionButton
 							wait={!smartTrainerControl && !!btDevice}
 							disabled={!btDevice}
-							onClick={() => setShowSmartTrainerTestModal(true)}
+							onClick={() => setShowSmartTrainerCalibrationModal(true)}
 						>
-							Test
+							Calibrate
 						</ActionButton>
 					) : (
 						''

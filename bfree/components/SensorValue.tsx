@@ -1,7 +1,19 @@
 import IconReportProblem from '@material-ui/icons/ReportProblem';
 import Typography from '@material-ui/core/Typography';
 import { Tooltip } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { SensorType, speedUnitConv, useGlobalState } from '../lib/global';
+
+const useStyles = makeStyles({
+	trainerStatus: {
+		position: 'relative',
+	},
+	calRequired: {
+		position: 'absolute',
+		marginLeft: '15em',
+		bottom: '0.5em',
+	},
+});
 
 export function SensorValueCC({ sensorValue, className }) {
 	const cadence = sensorValue && sensorValue.cadence !== null ? Math.round(sensorValue.cadence) : '--';
@@ -52,13 +64,19 @@ export function SensorValueHRM({ sensorValue, className }) {
 }
 
 export function SensorValueSmartTrainer({ sensorValue, className }) {
+	const [unitSpeed] = useGlobalState('unitSpeed');
+	const speedUnit = speedUnitConv[unitSpeed];
+	const classes = useStyles();
+
 	let power = '--';
+	let speed = '--';
 	let calRequired: string;
 
 	if (sensorValue) {
 		if (sensorValue.power != null) {
 			power = sensorValue.power;
 		}
+		speed = sensorValue && sensorValue.speed != null ? speedUnit.convTo(sensorValue.speed).toFixed(1) : '--';
 
 		const warns = [];
 		const { calStatus } = sensorValue;
@@ -77,17 +95,22 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 	}
 
 	return (
+		<div className={classes.trainerStatus}>
 		<Typography className={className}>
 			{power}&nbsp;W
 			<br />
+			{speed}&nbsp;{speedUnit.name}
+		</Typography>
 			{calRequired ? (
 				<Tooltip title={calRequired}>
-					<IconReportProblem />
+					<div className={classes.calRequired}>
+						<IconReportProblem />
+					</div>
 				</Tooltip>
 			) : (
 				''
 			)}
-		</Typography>
+		</div>
 	);
 }
 

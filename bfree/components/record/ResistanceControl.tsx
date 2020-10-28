@@ -107,9 +107,10 @@ export default function ResistanceControl({ resistance }) {
 		if (smartTrainerControl) {
 			switch (resistance) {
 				case 'basic':
-					smartTrainerControl.setBasicResistance(value);
+					smartTrainerControl.setBasicResistance(value).catch(console.error);
 					break;
 				case 'power':
+					smartTrainerControl.sendTargetPower(value).catch(console.error);
 				case 'slope':
 					console.error('Control mode not implemented', resistance);
 					break;
