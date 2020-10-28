@@ -203,7 +203,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 				}
 			})();
 		}
-	});
+	}, [pairingRequest]);
 
 	const scanDevices = () => {
 		setPairingRequest(true);
