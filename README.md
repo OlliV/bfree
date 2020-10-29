@@ -9,7 +9,8 @@ Related Work
 ------------
 
 While Bfree is not a derivative work the following open source projects have
-been a great help in understanding how BLE, ANT+, and Trainers work in general.
+been a great help in understanding how BLE, ANT+, and smart trainers work in
+general.
 
 - [jedla22/BleTrainerControl](https://github.com/jedla22/BleTrainerControl)
 - [GoldenCheetah](https://github.com/GoldenCheetah/GoldenCheetah)
@@ -18,3 +19,5 @@ Useful Links
 ------------
 
 - [TCX Schema](https://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
+- [ThisIsAnt](https://www.thisisant.com/)
+- [Bluetooth SIG - GATT specifications](https://www.bluetooth.com/specifications/gatt/)
