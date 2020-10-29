@@ -8,18 +8,20 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
 	const [bikeParams] = useGlobalState('bike');
 
-	if (!logger && startTime !== 0) {
-		try {
-			const l = createActivityLog();
-			l.lapSplit(startTime, 'Manual'); // Initial lap
-			setGlobalState('elapsedTime', 0);
-			setGlobalState('elapsedLapTime', 0);
-			setLogger(l);
-		} catch (err) {
-			// TODO Show an error to the user
-			console.error(err);
+	useEffect(() => {
+		if (!logger && startTime !== 0) {
+			try {
+				const l = createActivityLog();
+				l.lapSplit(startTime, 'Manual'); // Initial lap
+				setGlobalState('elapsedTime', 0);
+				setGlobalState('elapsedLapTime', 0);
+				setLogger(l);
+			} catch (err) {
+				// TODO Show an error to the user
+				console.error(err);
+			}
 		}
-	}
+	}, [startTime]);
 
 	useEffect(() => {
 		let resetOffset = true;
@@ -65,8 +67,6 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				elapsedTime += now - offset;
 				elapsedLapTime += now - offset;
 				offset = now;
-				//setElapsedTime(elapsedTime);
-				//setElapsedLapTime(elapsedLapTime);
 				setGlobalState('elapsedTime', elapsedTime);
 				setGlobalState('elapsedLapTime', elapsedLapTime);
 
