@@ -111,6 +111,7 @@ type State = {
 	ridePaused: number, // -1 = not started; 0 = not paused; anything else is a timestamp
 	elapsedTime: number,
 	elapsedLapTime: number,
+	rideDistance: number,
 }
 
 const LOCAL_STORAGE_KEY = 'settings';
@@ -155,25 +156,40 @@ const initialState: State = {
 	ridePaused: -1,
 	elapsedTime: 0,
 	elapsedLapTime: 0,
+	rideDistance: 0,
 	// Load config from local storage
 	...(typeof window === 'undefined' ? {} : JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))),
 };
 
 const { useGlobalState: _useGlobalState, getGlobalState, setGlobalState } = createGlobalState(initialState);
 
+type ConfigKey =
+	'samplingRate' |
+	'cadenceSources' |
+	'speedSources' |
+	'powerSources' |
+	'unitDistance' |
+	'unitSpeed' |
+	'rider' |
+	'bike';
+
 function useGlobalState(key: keyof State) {
 	const [value, setValue] = _useGlobalState(key);
 
 	const setAndSaveValue = (value: Parameters<typeof setValue>[0]) => {
 		setValue(value);
-		saveConfig();
+
+		// Defer saving to not disturb the render loop.
+		setTimeout(() => {
+			saveConfig();
+		}, 0);
 	};
 
 	return [value, setAndSaveValue] as const;
 }
 
 function saveConfig() {
-	const config = {
+	const config: { [k in ConfigKey]: any } = {
 		samplingRate: getGlobalState('samplingRate'),
 		cadenceSources: getGlobalState('cadenceSources'),
 		speedSources: getGlobalState('speedSources'),
@@ -192,37 +208,4 @@ export {
 	getGlobalState,
 	setGlobalState,
 	saveConfig,
-}
-
-export interface UnitConv {
-	[index: string]: {
-		name: string;
-		convTo: (v: number) => number
-	}
-}
-
-export const speedUnitConv: UnitConv = {
-	kmph: {
-		name: 'km/h',
-		convTo: (v) => v * 3.6,
-	},
-	mph: {
-		name: 'mph',
-		convTo: (v) => v * 2.237,
-	},
-};
-
-export const distanceUnitConv: UnitConv = {
-	km: {
-		name: 'km',
-		convTo: (d) => d / 1000,
-	},
-	m: {
-		name: 'm',
-		convTo: (d) => d,
-	},
-	mi: {
-		name: 'mi',
-		convTo: (d) => d * 0.000621,
-	},
 }

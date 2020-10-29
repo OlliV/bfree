@@ -2,7 +2,8 @@ import IconReportProblem from '@material-ui/icons/ReportProblem';
 import Typography from '@material-ui/core/Typography';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { SensorType, speedUnitConv, useGlobalState } from '../lib/global';
+import { SensorType, useGlobalState } from '../lib/global';
+import { speedUnitConv } from '../lib/units';
 
 const useStyles = makeStyles({
 	trainerStatus: {

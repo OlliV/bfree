@@ -127,7 +127,10 @@ export function TrainerCalibrationModal({ open, onClose }) {
 				// TODO How to mi/h
 				setTargetSpeed(`around ${data.targetSpeed.toFixed(0)} km/h`);
 			}
-			// TODO We should read spinDownCalRes here
+			// TODO We should read spinDownCalRes here!!
+			// data.spinDownCalRes true/false === passed/failed if req was received
+			// spinDownCalStat == pending
+			// use  speedCond, // 0 = NA; 1 = too low; 2 = ok
 			if (data.spindownTimeRes > 0) {
 				setCalResult('PASSED');
 				clearTimeout(tim);

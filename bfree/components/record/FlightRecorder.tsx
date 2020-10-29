@@ -32,6 +32,8 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 			return;
 		}
 
+		let wheelRevolutionsOffset: number;
+		let calculatedDistance: number;
 		const intervalId = setInterval(() => {
 			try {
 				if (getGlobalState('ridePaused') != 0) {
@@ -50,11 +52,29 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				const heartRate = getHeartRateMeasurement();
 				//const smartTrainer = getGlobalState('smart_trainer');
 
+				if (speed && speed.cumulativeWheelRevolutions) {
+					// Instead of resetting the sensor, we are keeping track off the
+					// initially observed revolutions value and subtract it from
+					// the future readings. Indeed, the reset operation might not be
+					// even available in many sensors.
+					if (wheelRevolutionsOffset === undefined) {
+						wheelRevolutionsOffset = speed.cumulativeWheelRevolutions;
+					}
+					// We calculate the distance inside this if block because the number of
+					// cumulative wheel revolutions might not be available at every measurement point.
+					//
+					// TODO As ble_cscp is state preserving, this is likely happening because we are
+					// jumping to another speed sensor source that doesn't have wheelRevs. We should
+					// probably support the whatever otherways too or implement revs for all speed
+					// sources. (mainly trainer?)
+					calculatedDistance = (speed.cumulativeWheelRevolutions - wheelRevolutionsOffset) * (bikeParams.wheelCircumference / 1000);
+				}
+
 				// TODO Do whatever filtering is required
 				const now = Date.now();
 				logger.addTrackPoint({
 					time: now,
-					dist: !speed ? undefined : speed.cumulativeWheelRevolutions * (bikeParams.wheelCircumference / 1000),
+					dist: !speed? undefined: calculatedDistance || 0,
 					speed: !speed ? undefined : speed.speed,
 					cadence: !cadence ? undefined : cadence.cadence,
 					power: !power ? undefined : power.power, // TODO Power should averaged over x sec or so?
@@ -69,8 +89,10 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				offset = now;
 				setGlobalState('elapsedTime', elapsedTime);
 				setGlobalState('elapsedLapTime', elapsedLapTime);
+				// TODO Support lap distance
+				setGlobalState('rideDistance', calculatedDistance);
 
-				console.log(`tick! ride: ${(elapsedTime / 1000).toFixed(2)} lap: ${(elapsedLapTime / 1000).toFixed(2)}`);
+				console.log(`tick! ride: ${(elapsedTime / 1000).toFixed(2)} lap: ${(elapsedLapTime / 1000).toFixed(2)} distance: ${calculatedDistance}`);
 			} catch (err) {
 				// TODO Show an error to the user
 				console.error(err);

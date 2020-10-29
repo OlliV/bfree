@@ -10,7 +10,8 @@ import IconSpeed from '@material-ui/icons/Speed';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import SensorValue from '../SensorValue';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
-import { useGlobalState, speedUnitConv } from '../../lib/global';
+import { useGlobalState } from '../../lib/global';
+import { speedUnitConv } from '../../lib/units';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

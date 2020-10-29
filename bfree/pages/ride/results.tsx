@@ -67,8 +67,9 @@ export default function RideResults() {
 			// of the next recording session.
 			setGlobalState('elapsedTime', 0);
 			setGlobalState('elapsedLapTime', 0);
+			setGlobalState('rideDistance', 0);
 		};
-	}, [logger]);
+	}, []);
 
 	// TODO Show an error if logger is missing
 	return (

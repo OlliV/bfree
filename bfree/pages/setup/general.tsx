@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Head from '../../components/Head';
 import Title from '../../components/title';
 import { EnumConfigParam, UnsignedConfigParam } from '../../components/SetupComponents';
-import { UnitConv, distanceUnitConv, speedUnitConv } from '../../lib/global';
+import { UnitConv, distanceUnitConv, speedUnitConv } from '../../lib/units';
 
 const gen = (uc: UnitConv): [string, string][] => Object.keys(uc).map((k) => [k, uc[k].name]);
 const speedUnits: [string, string][] = gen(speedUnitConv);

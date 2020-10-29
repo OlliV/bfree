@@ -1,8 +1,11 @@
 import { CscMeasurements } from './measurements';
+import { getGlobalState } from './global';
 
 export async function startCyclingSpeedAndCadenceMeasurementNotifications(server: BluetoothRemoteGATTServer, cb: (res: CscMeasurements) => void) {
 	const service = await server.getPrimaryService('cycling_speed_and_cadence');
 	const characteristic = await service.getCharacteristic('csc_measurement');
+	const { wheelCircumference } = getGlobalState('bike');
+	const circumferenceM = wheelCircumference / 1000;
 
 	let prevCumulativeWheelRevolutions = null;
 	let prevLastWheelEvent = null;
@@ -39,9 +42,6 @@ export async function startCyclingSpeedAndCadenceMeasurementNotifications(server
 					? curLastWheelEvent - prevLastWheelEvent
 					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
 
-				// TODO This should be configurable!
-				// mm => m
-				const circumferenceM = 2097 / 1000;
 				// 1024 = as per CSCS_SPECv10:
 				// > The ‘wheel event time’ is a free-running-count of
 				// > 1/1024 second units and it represents the time when the

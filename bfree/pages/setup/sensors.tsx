@@ -27,7 +27,7 @@ import { createSmartTrainerController } from '../../lib/ble_trainer';
 import BatteryLevel from '../../components/batteryLevel';
 import SensorValue from '../../components/SensorValue';
 import { TrainerCalibrationModal } from '../../components/TrainerControl';
-import { useGlobalState, SensorType, BluetoothServiceType } from '../../lib/global';
+import { useGlobalState, SensorType, BluetoothServiceType, getGlobalState } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -175,6 +175,15 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 							} else if (props.sensorType === 'smart_trainer') {
 								const controller = await createSmartTrainerController(server, setSensorValue);
 								await controller.startNotifications();
+
+								const { weight: userWeightKg } = getGlobalState('rider');
+								const { weight: bikeWeightKg, wheelCircumference } = getGlobalState('bike');
+								await controller.sendUserConfiguration({
+									userWeightKg,
+									bikeWeightKg,
+									wheelCircumference,
+								});
+
 								setSmartTrainerControl(controller);
 							} else {
 								console.error('Invalid sensor type');

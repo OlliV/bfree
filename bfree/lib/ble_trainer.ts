@@ -217,6 +217,44 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		await txCharacteristic.writeValue(buf);
 	};
 
+	const sendUserConfiguration = async ({
+		userWeightKg,
+		bikeWeightKg,
+		wheelCircumference,
+	}: {
+		userWeightKg: number;
+		bikeWeightKg: number;
+		wheelCircumference: number;
+	}) => {
+		const buf = new ArrayBuffer(13);
+		const msg = new DataView(buf);
+
+		userWeightKg = Math.round(userWeightKg * 100) & 0xffff; // Unit 0.01 kg
+		bikeWeightKg = Math.round(bikeWeightKg * 0.05) & 0x0fff; // Unit 0.05 kg
+		const bikeWheelDiameter = Math.floor(100 * wheelCircumference / (10 * Math.PI)) & 0xff; // Unit 0.01 m
+		// RFE floor or round?
+		// RFE Does it always stay around 10 mm this way?
+		const wheelOffset = Math.round(wheelCircumference /Math.PI - bikeWheelDiameter * 10) & 0x0f; // mm
+
+		// Header
+		setSendHeader(msg, 0x09);
+
+		// Payload
+		msg.setUint8(4, 0x37); // page
+		msg.setUint8(5, userWeightKg & 0xff);
+		msg.setUint8(6, (userWeightKg & 0xff00) >> 8);  // user weight msb, unit 0.01 kg, invalid = 0xffff
+		msg.setUint8(7, 0xff);
+		msg.setUint8(8, wheelOffset | ((bikeWeightKg & 0xf) << 4));  // bike weight lsb bits 4-7
+		msg.setUint8(9, (0x0ff0 & bikeWeightKg) >> 4);  // bike weight msb unit 0.05 kg
+		msg.setUint8(10, bikeWheelDiameter);
+		msg.setUint8(11, 0x00); // TODO DI2 could set this?
+
+		// Checksum
+		msg.setUint8(12, calcChecksum(msg));
+
+		await txCharacteristic.writeValue(buf);
+	};
+
 	const sendCalibrationReq = async () => {
 		const buf = new ArrayBuffer(13);
 		const msg = new DataView(buf);
@@ -336,8 +374,8 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		let pageData; // This will be sent to listeners and queued reqs
 		if (pageNumber === 1) { // Calibration request and response
 			const calibrationRes = value.getUint8(offset + 1);
-			const spinDownCalRes = !!(calibrationRes & 0x1);
-			const zeroOffsetCalRes = !!(calibrationRes & 0x2);
+			const spinDownCalRes = !!(calibrationRes & 0x80);
+			const zeroOffsetCalRes = !!(calibrationRes & 0x40);
 
 			let temperature = value.getUint8(offset + 3); // Celsius
 			temperature = temperature === 0xff ? -1 : temperature * 0.5 - 25;
@@ -358,13 +396,13 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		} else if (pageNumber === 2) { // Calibration in progress
 			// Calibration status
 			const calStatus = value.getUint8(offset + 1);
-			const spinDownCalRes = !!(calStatus & 0x1);
-			const zeroOffsetCalRes = !!(calStatus & 0x2);
+			const spinDownCalStat = !!(calStatus & 0x80);
+			const zeroOffsetCalStat = !!(calStatus & 0x40);
 
 			// Calibration condition
 			const calCond = value.getUint8(offset + 2);
-			const speedCond = calCond & 0x03;
-			const tempCond = (calCond & 0x0c) >> 2;
+			const tempCond = (calCond & 0x30) >> 4;
+			const speedCond = (calCond & 0xc0) >> 6;
 
 			// Current temperature
 			let currentTemp = value.getUint8(offset + 3);
@@ -379,10 +417,10 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			targetSpinDownTime = targetSpinDownTime === 0xffff ? -1 : targetSpinDownTime / 1000;
 
 			pageData = {
-				spinDownCalRes,
-				zeroOffsetCalRes,
-				speedCond, // TODO Figure out how to parse this, should be something like N/A = 0; TOO_LOW; OK
-				tempCond,
+				spinDownCalStat,
+				zeroOffsetCalStat,
+				speedCond, // 0 = NA; 1 = too low; 2 = ok
+				tempCond, // 0 = NA; 1 = too low; 2 = ok; 3 = too high
 				currentTemp,
 				targetSpeed,
 				targetSpinDownTime,
@@ -432,6 +470,8 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				incline,
 				resistanceLevel,
 			};
+		} else if (pageNumber == 18) { // Metabolic rate
+			// TODO Check if TACX has this
 		} else if (pageNumber === 21) { // Stationary specific page
 			const cadence = value.getUint8(offset + 4);
 			const instantPower = value.getUint8(offset + 5) | (value.getUint8(offset + 4) << 8);
@@ -456,7 +496,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			const resistanceCalRequired = !!(calBits & 0x2);
 			const userConfigRequired = !!(calBits & 0x4);
 
-			const powerOverLimits = value.getUint8(offset + 7) & 0xf;
+			const powerLimits = value.getUint8(offset + 7) & 0xf;
 			const fecState = value.getUint8(offset + 7) >> 4;
 
 			pageData = {
@@ -464,7 +504,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				instantaneousCadence,
 				accumulatedPower,
 				instantaneousPower,
-				powerOverLimits,
+				powerLimits, // 0 = at target/not set; 1 = too low power; 2 = too high power; 3 = undetermined
 				fecState,
 				calStatus: {
 					powerCalRequired,
@@ -479,7 +519,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			result.calStatus.powerCalRequired = powerCalRequired;
 			result.calStatus.resistanceCalRequired = resistanceCalRequired;
 			result.calStatus.userConfigRequired = userConfigRequired;
-		} else if (pageNumber === 32) { // Trainer torque page
+		} else if (pageNumber === 26) { // Trainer torque page
 			const updateEventCount = value.getUint8(offset + 1);
 			const wheelRevolutions = value.getUint8(offset + 2); // Rollover 256
 			const wheelAccumulatedPeriod = value.getUint8(offset + 3) | value.getUint8(offset + 4) << 8;
@@ -532,15 +572,16 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				capabilities,
 			};
 		} else if (pageNumber === 55) { // User configuration
-			const userWeightKg = (value.getUint8(offset + 1) | value.getUint8(offset + 2) << 8) * 0.1;
-			const WheelOffset = (value.getUint8(offset + 4) & 0xf0) >> 4; // mm
+			const userWeightKg = (value.getUint8(offset + 1) | value.getUint8(offset + 2) << 8) * 0.01;
+			const wheelOffset = (value.getUint8(offset + 4) & 0xf0) >> 4; // mm
 			const bikeWeightKg = ((value.getUint8(offset + 4) & 0x0f) | value.getUint8(offset + 5) << 8) * 0.05;
 			const bikeWheelDiameter = value.getUint8(offset + 6) * 0.01;
 			const gearRatio = value.getUint8(offset + 7) * 0.03;
 
+			// TODO Calc the wheel size here already
 			pageData = {
 				userWeightKg,
-				WheelOffset,
+				wheelOffset,
 				bikeWeightKg,
 				bikeWheelDiameter,
 				gearRatio,
@@ -642,6 +683,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		sendTargetPower,
 		sendWindResistance,
 		sendSlope,
+		sendUserConfiguration,
 		sendCalibrationReq,
 		sendSpinDownCalibrationReq,
 		sendPageReq,

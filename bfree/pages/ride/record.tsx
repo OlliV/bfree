@@ -18,7 +18,7 @@ import Head from '../../components/Head';
 import ResistanceControl from '../../components/record/ResistanceControl';
 import Title from '../../components/title';
 import Stopwatch from '../../components/record/Stopwatch';
-import Time from '../../components/record/Time';
+import Ride from '../../components/record/Ride';
 import MeasurementCard from '../../components/record/MeasurementCard';
 import { useGlobalState } from '../../lib/global';
 
@@ -63,7 +63,7 @@ function FreeRideDashboard() {
 			<Title disableBack={true}>Free Ride</Title>
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
-				<Time />
+				<Ride />
 				<ResistanceControl resistance={resistance} />
 				<MeasurementCard type="cycling_power" />
 				<MeasurementCard type="cycling_speed" />
