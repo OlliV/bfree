@@ -192,11 +192,11 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		const buf = new ArrayBuffer(13);
 		const msg = new DataView(buf);
 
-		gradeP = (gradeP + 200) * 100;
-		const gradeLsb = 0x00ff;
-		const gradeMsb = 0xff00;
+		gradeP = Math.round((gradeP + 200) * 100);
+		const gradeLsb = gradeP & 0x00ff;
+		const gradeMsb = (gradeP & 0xff00) >> 8;
 
-		rollingResistanceCoeff *= 20000; // coeff / (5 * 10^(-5))
+		rollingResistanceCoeff = Math.round(rollingResistanceCoeff * 20000); // coeff / (5 * 10^(-5))
 
 		// Header
 		setSendHeader(msg, 0x09);

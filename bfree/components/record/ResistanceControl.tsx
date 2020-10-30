@@ -6,6 +6,7 @@ import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useGlobalState } from '../../lib/global';
+import { useEffect, useState } from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -108,27 +109,47 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 		resistanceControlName,
 		resistanceStep,
 		maxResistance,
+		resistanceUnit,
 		defaultResistance,
 	} = params[resistance];
 	const marks = r2marks[resistance];
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
+	const [enabled, setEnabled] = useState(false);
 
-	const handleChange = (_ev: never, value: number) => {
-		console.log('Setting', value);
-
+	const sendResistance = async (value: number) => {
+		console.log(`Setting resistance: ${value} ${resistanceUnit}`);
 		if (smartTrainerControl) {
 			switch (resistance) {
 				case 'basic':
-					smartTrainerControl.sendBasicResistance(value).catch(console.error);
+					await smartTrainerControl.sendBasicResistance(value);
 					break;
 				case 'power':
-					smartTrainerControl.sendTargetPower(value).catch(console.error);
+					await smartTrainerControl.sendTargetPower(value);
 					break;
 				case 'slope':
-					smartTrainerControl.sendSlope(value, 0.004).catch(console.error);
+					await smartTrainerControl.sendSlope(value, 0.004);
 					break;
 			}
 		}
+	};
+
+	// Set the initial resistance and mode + register a cleanup.
+	useEffect(() => {
+		sendResistance(defaultResistance)
+			.catch(console.error)
+			.then(() => setEnabled(true));
+
+		return () => {
+			// Reset resistance to zero
+			sendResistance(0).catch(console.error);
+		};
+	}, []);
+
+	const handleChange = (_ev: never, value: number) => {
+		setEnabled(false);
+		sendResistance(value)
+			.catch(console.error)
+			.then(() => setEnabled(true));
 	};
 
 	return (
@@ -145,6 +166,7 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 							aria-labelledby="resistance-control"
 							getAriaValueText={valuetext}
 							aria-label="resistance slider"
+							disabled={!enabled}
 							marks={marks}
 							min={0}
 							step={resistanceStep}
