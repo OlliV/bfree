@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
+const objectMap = (obj: any, fn: (v: any, k: string, i: number) => any): any => Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
+const valuetext = (value: number) => `${value}`;
+
 const ResistanceSlider = withStyles({
 	root: {
 		color: 'rgb(222, 35, 91)',
@@ -52,54 +55,63 @@ const ResistanceSlider = withStyles({
 	},
 })(Slider);
 
-export default function ResistanceControl({ resistance }) {
-	const classes = useStyles();
-	let resistanceControlName: string;
-	let resistanceStep: number;
-	let maxResistance: number;
-	let resistanceUnit: string;
-	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
-
-	// rgb(222, 35, 91)
-	switch (resistance) {
-		case 'basic':
-			resistanceControlName = 'Basic Resistance';
-			resistanceStep = 5;
-			maxResistance = 100;
-			resistanceUnit = '%';
-			//resistanceControl =
-			break;
-		case 'power':
-			resistanceControlName = 'Target Power';
-			resistanceStep = 10;
-			maxResistance = 2000; // TODO Get the max from somewhere
-			resistanceUnit = 'W';
-			break;
-		case 'slope':
-			resistanceControlName = 'Slope';
-			resistanceStep = 0.5;
-			maxResistance = 40;
-			resistanceUnit = '%';
-			break;
-		default:
-			throw new Error(`Invalid resistance type: "${resistance}"`);
+type Resistance = 'basic' | 'power' | 'slope';
+const params: {
+	[k in Resistance]: {
+		resistanceControlName: string;
+		resistanceStep: number;
+		maxResistance: number;
+		resistanceUnit: string;
+		defaultResistance: number;
 	}
+} = {
+	basic: {
+		resistanceControlName: 'Basic Resistance',
+		resistanceStep: 5,
+		maxResistance: 100,
+		resistanceUnit: '%',
+		defaultResistance: 20,
+	},
+	power: {
+		resistanceControlName: 'Target Power',
+		resistanceStep: 10,
+		maxResistance: 1000, // TODO Get the max from somewhere
+		resistanceUnit: 'W',
+		defaultResistance: 150,
+	},
+	slope: {
+		resistanceControlName: 'Slope',
+		resistanceStep: 0.5,
+		maxResistance: 40,
+		resistanceUnit: '%',
+		defaultResistance: 5,
+	}
+};
+const r2marks: { [k in Resistance]: { value: number; label: string }[]} = objectMap(params, (v) => ([
+	{
+		value: 0,
+		label: `0 ${v.resistanceUnit}`,
+	},
+	{
+		value: v.maxResistance / 2,
+		label: `${v.maxResistance / 2} ${v.resistanceUnit}`,
+	},
+	{
+		value: v.maxResistance,
+		label: `${v.maxResistance} ${v.resistanceUnit}`,
+	}
+]));
 
-	const valuetext = (value: number) => `${value}`;
-	const marks: { value: number; label: string }[] = [
-		{
-			value: 0,
-			label: `0 ${resistanceUnit}`,
-		},
-		{
-			value: maxResistance / 2,
-			label: `${maxResistance / 2} ${resistanceUnit}`,
-		},
-		{
-			value: maxResistance,
-			label: `${maxResistance} ${resistanceUnit}`,
-		},
-	];
+export default function ResistanceControl({ resistance }: { resistance: Resistance }) {
+	const classes = useStyles();
+	const {
+		resistanceControlName,
+		resistanceStep,
+		maxResistance,
+		defaultResistance,
+	} = params[resistance];
+	const marks = r2marks[resistance];
+	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
 
 	const handleChange = (_ev: never, value: number) => {
 		console.log('Setting', value);
@@ -107,12 +119,13 @@ export default function ResistanceControl({ resistance }) {
 		if (smartTrainerControl) {
 			switch (resistance) {
 				case 'basic':
-					smartTrainerControl.setBasicResistance(value).catch(console.error);
+					smartTrainerControl.sendBasicResistance(value).catch(console.error);
 					break;
 				case 'power':
 					smartTrainerControl.sendTargetPower(value).catch(console.error);
+					break;
 				case 'slope':
-					console.error('Control mode not implemented', resistance);
+					smartTrainerControl.sendSlope(value, 0.004).catch(console.error);
 					break;
 			}
 		}
@@ -136,7 +149,7 @@ export default function ResistanceControl({ resistance }) {
 							min={0}
 							step={resistanceStep}
 							max={maxResistance}
-							defaultValue={20}
+							defaultValue={defaultResistance}
 							onChangeCommitted={handleChange}
 						/>
 					</Container>

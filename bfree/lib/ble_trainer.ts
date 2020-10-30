@@ -111,7 +111,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		}
 	};
 
-	const setBasicResistance = async (value: number) => {
+	const sendBasicResistance = async (value: number) => {
 		const buf = new ArrayBuffer(13);
 		const msg = new DataView(buf);
 
@@ -679,7 +679,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		txCharacteristic,
 		rxCharacteristic,
 		startNotifications: () => rxCharacteristic.startNotifications(),
-		setBasicResistance,
+		sendBasicResistance,
 		sendTargetPower,
 		sendWindResistance,
 		sendSlope,

@@ -51,8 +51,6 @@ function FreeRideDashboard() {
 	const classes = useStyles();
 	const router = useRouter();
 	const { resistance } = router.query;
-	const [ridePaused] = useGlobalState('ridePaused');
-	const [currentActivityLog] = useGlobalState('currentActivityLog');
 
 	if (typeof resistance !== 'string' || !['basic', 'power', 'slope'].includes(resistance)) {
 		return <DefaultErrorPage statusCode={400} />;
