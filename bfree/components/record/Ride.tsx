@@ -18,6 +18,17 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
+function valueToDistance(value: number | null): string {
+	if (typeof value === 'number') {
+		if (value < 1000) {
+			return `${value.toFixed(0)} m`;
+		} else {
+			return `${(value / 1000).toFixed(2)} km`;
+		}
+	}
+	return '--';
+}
+
 export default function Ride() {
 	const classes = useStyles();
 	const [elapsedTime] = useGlobalState('elapsedTime');
@@ -39,7 +50,7 @@ export default function Ride() {
 						<br />
 						<b>Lap time:</b> <div className={classes.value}>{getElapsedTimeStr(elapsedLapTime)}</div>
 						<br />
-						<b>Ride distance:</b> <div className={classes.value}>{rideDistance || '--'}</div>
+						<b>Ride distance:</b> <div className={classes.value}>{valueToDistance(rideDistance)}</div>
 						<br />
 						<b>Lap distance:</b> <div className={classes.value}>--</div>
 					</Container>
