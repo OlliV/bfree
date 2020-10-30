@@ -14,7 +14,8 @@ async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServ
 			});
 
 		console.log(`Bluetooth Device connected (${device.name}).`);
-		return server;
+		// TODO The typing of exponentialBackoff() is not correct
+		return server as BluetoothRemoteGATTServer;
 	} catch (err) {
 		time(`Failed to reconnect (${device.name}).`);
 		return null;

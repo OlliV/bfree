@@ -116,7 +116,7 @@ export default function PriorityList({
 	);
 
 	return (
-		<Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
+		<Grid container spacing={2} alignItems="center" className={classes.root}>
 			<Grid item>{customList(leftList)}</Grid>
 			<Grid item>
 				<Grid container direction="column" alignItems="center">

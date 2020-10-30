@@ -59,6 +59,7 @@ export async function startCyclingPowerMeasurementNotifications(server: Bluetoot
 
 	const characteristic = await service.getCharacteristic('cycling_power_measurement');
 	characteristic.addEventListener('characteristicvaluechanged', (event) => {
+		// @ts-ignore
 		const value = event.target.value;
 
 		const flags = value.getUint16(0, true);
