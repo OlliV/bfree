@@ -89,6 +89,7 @@ type State = {
 	bike: {
 		wheelCircumference: number;
 		weight: number;
+		type: 'atb' | 'commuter' | 'road' | 'racing';
 	};
 	// Sensors
 	btDevice_cycling_cadence: null | BtDevice;
@@ -134,6 +135,7 @@ const initialState: State = {
 	bike: {
 		wheelCircumference: 2097, // mm
 		weight: 10, // kg
+		type: 'road',
 	},
 	// Sensors
 	btDevice_cycling_cadence: null,

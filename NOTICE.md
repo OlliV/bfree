@@ -8,6 +8,7 @@ Images
 - [force.jpg](/bfree/public/images/cards/force.jpg) CC0 [free-images.com](https://free-images.com/)
 - [ftp.jpg](/bfree/public/images/cards/ftp.jpg) CC0 [free-images.com](https://free-images.com/)
 - [limit.jpg](/bfree/public/images/cards/limit.jpg) CC0 [free-images.com](https://free-images.com/)
+- [patent.jpg](bfree/public/images/cards/patent.jpg) US Patent No. US642919A
 - [pedals.jpg](bfree/public/images/cards/pedals.jpg) CC0 [free-images.com](https://free-images.com/)
 - [road.jpg](bfree/public/images/cards/road.jpg) CC0 Olli Vanhoja
 - [roller.jpg](/bfree/public/images/roller.jpg) CC BY-SA 3.0 Spinning 4 health.cz

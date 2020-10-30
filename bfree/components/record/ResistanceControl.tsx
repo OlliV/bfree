@@ -4,9 +4,9 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
+import { useEffect, useState } from 'react';
 import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useGlobalState } from '../../lib/global';
-import { useEffect, useState } from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

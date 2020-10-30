@@ -1,6 +1,8 @@
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useState } from 'react';
 import Title from '../../components/title';
@@ -77,6 +79,34 @@ function BikeWeight() {
 	);
 }
 
+function BikeType() {
+	const classes = useStyles();
+	const [bike, setBike] = useGlobalState('bike');
+
+	const handleChange = (event) => {
+		setBike({
+			...bike,
+			type: event.target.value,
+		});
+	};
+
+	return (
+		<Param title="Bike Type" image="/images/cards/patent.jpg">
+			<form className={classes.form} noValidate autoComplete="off">
+				<Select
+					value={bike.type}
+					onChange={handleChange}
+					defaultValue="road"
+				>
+					<MenuItem value="atb">ATB/MTB</MenuItem>
+					<MenuItem value="road">Road</MenuItem>
+					<MenuItem value="racing">Racing</MenuItem>
+				</Select>
+			</form>
+		</Param>
+	);
+}
+
 export default function SetupBike() {
 	return (
 		<Container maxWidth="md">
@@ -88,6 +118,7 @@ export default function SetupBike() {
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<WheelCircumference />
 					<BikeWeight />
+					<BikeType />
 				</Grid>
 			</Box>
 		</Container>
