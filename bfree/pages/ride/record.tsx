@@ -133,9 +133,9 @@ function FreeRideDashboard() {
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
 				<ResistanceControl resistance={resistance as Resistance} />
-				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
-				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_cadence" />
+				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
+				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
 				<MeasurementCard type="heart_rate" ribbonColor={classes.colorHeartRate} />
 				<DataGraph />
 			</Grid>
