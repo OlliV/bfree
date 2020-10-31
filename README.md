@@ -10,6 +10,8 @@ will be ever implemented it will be totally opt-in. All the date remains
 in your browser, plain text, currently in local storage. This might be
 changed to something more secure in the future.
 
+![Free Ride mode](/doc/images/freeride.png)
+
 
 Getting Started
 ----------------
@@ -71,11 +73,8 @@ Running the build step is required before this.
 
 ### Next.js telemetry
 
-The Next.js telemetry is disabled by default, as per GDPR this sort of things
-should be opt-in.
-
-You can opt-in for the telemetry by setting the `NEXT_TELEMETRY_DISABLED`
-environment variable to 0.
+The Next.js telemetry is disabled by default. You can opt-in for the telemetry
+by setting the `NEXT_TELEMETRY_DISABLED` environment variable to `0`.
 
 **For example:**
 
