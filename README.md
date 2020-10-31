@@ -24,6 +24,12 @@ applies to Next.js projects, should work here too.
 At bare minimum you'll need a web browser that supports Web Bluetooth,
 see [here](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API#Browser_compatibility).
 
+Only a few browsers support inhibiting screen locking from JS,
+see [here](https://developer.mozilla.org/en-US/docs/Web/API/WakeLock).
+
+The app is tested on Microsoft Edge and it should also work on Google Chrome and
+its Android derivatives.
+
 To build Bfree locally you'll need Node.js and `npm` or `yarn`.
 The [official website](https://nodejs.org/en/) of the Node.js project
 helps with that. Node.js itself ships with `npm` and nothing in this

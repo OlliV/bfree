@@ -12,7 +12,7 @@ import IconStop from '@material-ui/icons/Stop';
 import Modal from '@material-ui/core/Modal';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
 import Head from '../../components/Head';
@@ -189,6 +189,26 @@ export default function RideRecord() {
 		default:
 			return <DefaultErrorPage statusCode={400} />;
 	}
+
+	// Prevent screen locking while recording
+	useEffect(() => {
+		let wakeLock = null;
+
+		(async () => {
+			try {
+				// @ts-ignore
+				wakeLock = await navigator.wakeLock.request('screen');
+				console.log('WakeLock acquired');
+			} catch (err) {
+				console.log(`WakeLock failed: ${err.name}, ${err.message}`);
+			}
+		})();
+
+		return () => {
+			wakeLock.release().then(() => console.log('WakeLock released'));
+			wakeLock = null;
+		}
+	}, [])
 
 	const pauseRide = () => {
 		setRidePaused(Date.now());
