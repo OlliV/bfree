@@ -47,7 +47,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 		],
 		cycling_speed: [
 			(<span><IconSpeed className={classes.inlineIcon} /> Speed</span>),
-			(m: CscMeasurements) => ({ value: m ? m.speed.toFixed(1): '--', unit: speedUnit.name }),
+			(m: CscMeasurements) => ({ value: m && m.speed ? speedUnit.convTo(m.speed).toFixed(1) : '--', unit: speedUnit.name }),
 		],
 		heart_rate: [
 			(<span><IconHeart className={classes.inlineIcon} /> Heart Rate</span>),
