@@ -22,29 +22,37 @@ export const stdBikeDragCoefficient: { [k in GlobalState['bike']['type']]: numbe
 	racing: 0.88,
 };
 
+// From U.S. Standard Atmosphere 1976: Standard Atmosphere Air Properties
+const stdAtmAirDensity = [
+	1.347,	// -1000 m
+	1.225,	// 0 m
+	1.112,	// 1000 m
+	1.007,	// 2000 m
+	0.9093, // 3000 m
+	0.8194, // 4000 m
+	0.7364, // 5000 m
+	0.6601, // 6000 m
+	0.5900, // 7000 m
+	0.5258, // 8000 m
+	0.4671, // 9000 m
+	0.4135, // 10000 m
+];
+
 // Return unit kg/m^3
 function getAirDensity(alt: number): number {
-	// From U.S. Standard Atmosphere Air Properties
-	const d = [
-		1.347, // -1000 m
-		1.225, // 0 m
-		1.112, // 1000 m
-		1.007, // 2000 m
-		0.9093, // 3000 m
-		0.8194, // 4000 m
-		0.7364, // 5000 m
-		0.6601, // 6000 m
-		0.5900, // 7000 m
-		0.5258, // 8000 m
-		0.4671, // 9000 m
-		0.4135, // 10000 m
-	];
-	if (alt < 0) {
-		return d[0];
+	let i: number;
+
+	if (alt <= -500) {
+		i = 0;
+	} else if (alt <= 0) {
+		i = 1;
 	} else if (alt >= 10000) {
-		return d[11];
+		i = 11;
+	} else {
+		i = Math.round(alt / 1000) + 1;
 	}
-	return d[Math.round(alt / 1000) + 1];
+
+	return stdAtmAirDensity[i];
 }
 
 export function calcWindResistanceCoeff(bikeFrontalArea: number, bikeDragCoefficient: number, altitudeMeters: number) {
