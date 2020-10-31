@@ -74,7 +74,7 @@ export default function RideResults() {
 	// TODO Show an error if logger is missing
 	return (
 		<Container maxWidth="md">
-			<Head title="RideResults" />
+			<Head title="Ride Results" />
 			<Box>
 				<Title href="/">Results</Title>
 				<p>Training ride results.</p>
