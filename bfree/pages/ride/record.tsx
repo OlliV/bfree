@@ -68,17 +68,17 @@ const useStyles = makeStyles((theme: Theme) =>
 function lap2Series(lap: Lap, speedUnit): Series {
 	const { startTime } = lap;
 
-	const hrData: SeriesDataPoint[] = lap.trackPoints.filter((p) => typeof p.hr === 'number').map((p) => ({
+	const hrData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
 		x:  p.time - startTime,
-		y: p.hr,
+		y: typeof p.hr === 'number' ? p.hr : 0,
 	}));
-	const powerData: SeriesDataPoint[] = lap.trackPoints.filter((p) => typeof p.power === 'number').map((p) => ({
+	const powerData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
 		x: p.time - startTime,
-		y: p.power,
+		y: typeof p.power === 'number' ? p.power : 0,
 	}));
-	const speedData: SeriesDataPoint[] = lap.trackPoints.filter((p) => typeof p.speed === 'number').map((p) => ({
+	const speedData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
 		x: p.time - startTime,
-		y: speedUnit.convTo(p.speed),
+		y: typeof p.speed === 'number' ? speedUnit.convTo(p.speed) : 0,
 	}));
 
 	return [
@@ -178,17 +178,6 @@ export default function RideRecord() {
 	const [rideStartTime, setRideStartTime] = useState(0);
 	const [elapsedLapTime, setElapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideEnded, setRideEnded] = useState(false);
-	let title: string;
-	let Dashboard;
-
-	switch (rideType) {
-		case 'free':
-			title = 'Free Ride';
-			Dashboard = FreeRideDashboard;
-			break;
-		default:
-			return <DefaultErrorPage statusCode={400} />;
-	}
 
 	// Prevent screen locking while recording
 	useEffect(() => {
@@ -233,6 +222,17 @@ export default function RideRecord() {
 		setRideEnded(true);
 		router.push('/ride/results');
 	};
+
+	let title: string;
+	let Dashboard;
+	switch (rideType) {
+		case 'free':
+			title = 'Free Ride';
+			Dashboard = FreeRideDashboard;
+			break;
+		default:
+			return <DefaultErrorPage statusCode={400} />;
+	}
 
 	return (
 		<Container maxWidth="md">
