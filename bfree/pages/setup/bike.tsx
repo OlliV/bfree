@@ -99,6 +99,7 @@ function BikeType() {
 					defaultValue="road"
 				>
 					<MenuItem value="atb">ATB/MTB</MenuItem>
+					<MenuItem value="commuter">Commuter</MenuItem>
 					<MenuItem value="road">Road</MenuItem>
 					<MenuItem value="racing">Racing</MenuItem>
 				</Select>

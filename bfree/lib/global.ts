@@ -70,7 +70,7 @@ export const powerSourceTypes: SensorSourceType[] = [
 	},
 ];
 
-type State = {
+export type GlobalState = {
 	// Config
 	samplingRate: number;
 	cadenceSources: SensorSourceType[];
@@ -116,7 +116,7 @@ type State = {
 }
 
 const LOCAL_STORAGE_KEY = 'settings';
-const initialState: State = {
+const initialState: GlobalState = {
 	// Config
 	samplingRate: 1, // Hz
 	cadenceSources: [],
@@ -175,7 +175,7 @@ type ConfigKey =
 	'rider' |
 	'bike';
 
-function useGlobalState(key: keyof State) {
+function useGlobalState(key: keyof GlobalState) {
 	const [value, setValue] = _useGlobalState(key);
 
 	const setAndSaveValue = (value: Parameters<typeof setValue>[0]) => {

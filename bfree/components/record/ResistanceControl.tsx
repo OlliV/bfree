@@ -4,8 +4,9 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { stdBikeFrontalArea, stdBikeDragCoefficient, rollingResistanceCoeff, calcWindResistanceCoeff } from '../../lib/virtual_params';
 import { useGlobalState } from '../../lib/global';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -114,7 +115,12 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 	} = params[resistance];
 	const marks = r2marks[resistance];
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
+	const [bike] = useGlobalState('bike');
 	const [enabled, setEnabled] = useState(false);
+	const altitude = 0;
+	const windSpeed = 0;
+	const draftingFactor = 0;
+	const windResistanceCoeff = useMemo(() => calcWindResistanceCoeff(stdBikeFrontalArea[bike.type], stdBikeDragCoefficient[bike.type], altitude), [bike])
 
 	const sendResistance = async (value: number) => {
 		console.log(`Setting resistance: ${value} ${resistanceUnit}`);
@@ -127,7 +133,8 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 					await smartTrainerControl.sendTargetPower(value);
 					break;
 				case 'slope':
-					await smartTrainerControl.sendSlope(value, 0.004);
+					await smartTrainerControl.sendWindResistance(windResistanceCoeff, windSpeed, draftingFactor);
+					await smartTrainerControl.sendSlope(value, rollingResistanceCoeff.asphalt);
 					break;
 			}
 		}
