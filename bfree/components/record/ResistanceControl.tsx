@@ -9,6 +9,8 @@ import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/s
 import { stdBikeFrontalArea, stdBikeDragCoefficient, rollingResistanceCoeff, calcWindResistanceCoeff } from '../../lib/virtual_params';
 import { useGlobalState } from '../../lib/global';
 
+export type Resistance = 'basic' | 'power' | 'slope';
+
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		resistanceControlCard: {
@@ -57,7 +59,6 @@ const ResistanceSlider = withStyles({
 	},
 })(Slider);
 
-type Resistance = 'basic' | 'power' | 'slope';
 const params: {
 	[k in Resistance]: {
 		resistanceControlName: string;

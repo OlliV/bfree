@@ -1,20 +1,23 @@
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import IconBike from '@material-ui/icons/DirectionsBike';
 import IconCadence from '@material-ui/icons/FlipCameraAndroid';
 import IconHeart from '@material-ui/icons/Favorite';
 import IconPower from '@material-ui/icons/OfflineBolt';
 import IconSpeed from '@material-ui/icons/Speed';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import SensorValue from '../SensorValue';
+import Typography from '@material-ui/core/Typography';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
-import { useGlobalState } from '../../lib/global';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { speedUnitConv } from '../../lib/units';
+import { useGlobalState } from '../../lib/global';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
+		cardHeader: {
+			padding: 2,
+		},
 		card: {
 			height: '10em',
 		},
@@ -29,7 +32,7 @@ type DisplayValue = {
 	unit: string;
 }
 
-export default function MeasurementCard({ type }: { type: Measurement }) {
+export default function MeasurementCard({ type, ribbonColor }: { type: Measurement, ribbonColor?: string }) {
 	const classes = useStyles();
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
 
@@ -57,6 +60,7 @@ export default function MeasurementCard({ type }: { type: Measurement }) {
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
+				<CardHeader className={`${classes.cardHeader} ${ribbonColor || ''}`} />
 				<CardContent className={classes.card}>
 					<Typography gutterBottom variant="h5" component="h2">
 						{title}

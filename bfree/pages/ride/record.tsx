@@ -7,23 +7,41 @@ import DefaultErrorPage from 'next/error';
 import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import IconPause from '@material-ui/icons/Pause';
-import IconStop from '@material-ui/icons/Stop';
 import IconSplit from '@material-ui/icons/Timer';
+import IconStop from '@material-ui/icons/Stop';
 import Modal from '@material-ui/core/Modal';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import FlightRecorder from '../../components/record/FlightRecorder';
+import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
 import Head from '../../components/Head';
-import ResistanceControl from '../../components/record/ResistanceControl';
-import Title from '../../components/title';
-import Stopwatch from '../../components/record/Stopwatch';
-import Ride from '../../components/record/Ride';
 import MeasurementCard from '../../components/record/MeasurementCard';
+import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
+import Ride from '../../components/record/Ride';
+import Stopwatch from '../../components/record/Stopwatch';
+import Title from '../../components/title';
+import { Lap } from '../../lib/activity_log';
+import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
+
+const measurementColors = [
+	'#ffaeae', // heart_rate
+	'#b1e67b', // power
+	'#57baeb'  // speed
+];
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
+		colorPower: {
+			background: measurementColors[1],
+		},
+		colorSpeed: {
+			background: measurementColors[2],
+		},
+		colorHeartRate: {
+			background: measurementColors[0],
+		},
 		bottomActions: {
 			position: 'fixed',
 			left: 0,
@@ -47,9 +65,61 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
+function lap2Series(lap: Lap, speedUnit): Series {
+	const { startTime } = lap;
+
+	const hrData: SeriesDataPoint[] = lap.trackPoints.filter((p) => typeof p.hr === 'number').map((p) => ({
+		x:  p.time - startTime,
+		y: p.hr,
+	}));
+	const powerData: SeriesDataPoint[] = lap.trackPoints.filter((p) => typeof p.power === 'number').map((p) => ({
+		x: p.time - startTime,
+		y: p.power,
+	}));
+	const speedData: SeriesDataPoint[] = lap.trackPoints.filter((p) => typeof p.speed === 'number').map((p) => ({
+		x: p.time - startTime,
+		y: speedUnit.convTo(p.speed),
+	}));
+
+	return [
+		{
+			id: 'HR (BPM)',
+			data: hrData,
+		},
+		{
+			id: 'Power [W]',
+			data: powerData
+		},
+		{
+			id: `Speed [${speedUnit.name}]`,
+			data: speedData,
+		},
+	];
+}
+
+function DataGraph() {
+	const [logger] = useGlobalState('currentActivityLog');
+	const [unitSpeed] = useGlobalState('unitSpeed');
+	const speedUnit = speedUnitConv[unitSpeed];
+	let series: Series = [];
+
+	if (logger) {
+		const lap = logger.getCurrentLap();
+		if (lap) {
+			series = lap2Series(lap, speedUnit);
+		}
+	}
+
+	return (
+		<Grid item xs={12}>
+			<Graph series={series} colors={measurementColors} />
+		</Grid>
+	);
+}
+
 function FreeRideDashboard() {
-	const classes = useStyles();
 	const router = useRouter();
+	const classes = useStyles();
 	const { resistance } = router.query;
 
 	if (typeof resistance !== 'string' || !['basic', 'power', 'slope'].includes(resistance)) {
@@ -62,11 +132,12 @@ function FreeRideDashboard() {
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
-				<ResistanceControl resistance={resistance} />
-				<MeasurementCard type="cycling_power" />
-				<MeasurementCard type="cycling_speed" />
+				<ResistanceControl resistance={resistance as Resistance} />
+				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
+				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_cadence" />
-				<MeasurementCard type="heart_rate" />
+				<MeasurementCard type="heart_rate" ribbonColor={classes.colorHeartRate} />
+				<DataGraph />
 			</Grid>
 		</Box>
 	);

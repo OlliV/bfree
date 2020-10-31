@@ -1,4 +1,4 @@
-type TrackPoint = {
+export type TrackPoint = {
 	time: number;
 	position?: {
 		lat: number;
@@ -11,8 +11,8 @@ type TrackPoint = {
 	power?: number;
 	hr?: number;
 };
-type LapTriggerMethod = 'Manual' | 'Distance' | 'Location' | 'Time' | 'HeartRate';
-type Lap = {
+export type LapTriggerMethod = 'Manual' | 'Distance' | 'Location' | 'Time' | 'HeartRate';
+export type Lap = {
 	trackPoints: TrackPoint[];
 	startTime: number;
 	totalTime: number; // sec
@@ -96,6 +96,9 @@ export default function createActivityLog() {
 			}
 
 			return lap.startTime;
+		},
+		getCurrentLap: (): undefined | Lap => {
+			return laps[laps.length - 1];
 		},
 		lapSplit: (time: number, triggerMethod: LapTriggerMethod) => {
 			if (laps.length > 0) {
