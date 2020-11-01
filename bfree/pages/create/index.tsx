@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Head from '../../components/Head';
 import Title from '../../components/title';
 
-export default function RideFree() {
+export default function Creator() {
 	return (
 		<Container maxWidth="md">
 			<Head title="Creator" />
