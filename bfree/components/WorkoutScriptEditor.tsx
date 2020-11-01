@@ -1,14 +1,33 @@
-import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
+import Container from '@material-ui/core/Container';
+import Fab from '@material-ui/core/Fab';
 import Grid from '@material-ui/core/Grid';
+import IconCancel from '@material-ui/icons/Cancel';
+import IconSave from '@material-ui/icons/Save';
+import IconTimeLine from '@material-ui/icons/Timeline';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useState } from 'react';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		card: {
-			height: '40em',
+			height: '45em',
+		},
+		actions: {
+			'& > *': {
+			boxShadow: 'none',
+				margin: theme.spacing(1),
+			},
+			marginRight: '-2em',
+			marginTop: '-3.8em',
+			marginBottom: '1em',
+			textAlign: 'right',
+		},
+		nameField: {
+			paddingBottom: '2.5em',
 		},
 		editor: {
 			overflow: 'scroll',
@@ -18,32 +37,80 @@ export const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ({code, onChange}) {
+export default function WorkoutScriptEditor({
+	defaultName,
+	defaultNotes,
+	code,
+	onCodeChange,
+	onClickSave,
+	onClickDiscard,
+	onClickPreview
+}: {
+	defaultName: string;
+	defaultNotes: string;
+	code: string;
+	onCodeChange: (txt: string) => void;
+	onClickSave: (e: any) => void;
+	onClickDiscard: (e: any) => void;
+	onClickPreview: (e: any) => void;
+}
+) {
 	const classes = useStyles();
-
-	const handleChane = (e) => onChange(e.target.value);
+	const [name, setName] = useState(defaultName);
+	const [notes, setNotes] = useState(defaultNotes);
+	const handleChange = (e) => onCodeChange(e.target.value);
 
 	return (
-		<Grid item xs={6}>
+		<Grid item xs={12}>
 			<Card variant="outlined">
 				<CardContent className={classes.card}>
 					<Typography gutterBottom variant="h5" component="h2">
 						Workout Script
 					</Typography>
-					<TextField
-						multiline
-						fullWidth
-						rows={19}
-						variant="outlined"
-						margin="none"
-						defaultValue={code}
-						onChange={handleChane}
-						InputProps={{
-							classes: {
-								input: classes.editor
-							}
-						}}
-					/>
+					<Container className={classes.actions}>
+						<Fab size="small" color="primary" aria-label="save" onClick={onClickSave}>
+							<IconSave />
+						</Fab>
+						<Fab size="small" color="secondary" aria-label="discard" onClick={onClickDiscard}>
+							<IconCancel />
+						</Fab>
+						<Fab size="small" variant="extended" aria-label="preview" onClick={onClickPreview}>
+							<IconTimeLine />
+							Preview
+						</Fab>
+					</Container>
+					<form>
+						<TextField
+							id="act-name"
+							label="Name"
+							defaultValue={name}
+							onChange={(e) => setName(e.target.value)}
+							className={classes.nameField} />
+						<TextField
+							id="act-notes"
+							label="Notes"
+							multiline
+							rows={2}
+							fullWidth
+							defaultValue={notes}
+							onChange={(e) => setNotes(e.target.value)}
+							variant="outlined"
+						/>
+						<TextField
+							multiline
+							fullWidth
+							rows={14}
+							variant="outlined"
+							margin="none"
+							defaultValue={code}
+							onChange={handleChange}
+							InputProps={{
+								classes: {
+									input: classes.editor
+								}
+							}}
+						/>
+					</form>
 				</CardContent>
 			</Card>
 		</Grid>

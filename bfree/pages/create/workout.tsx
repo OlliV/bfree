@@ -2,10 +2,9 @@ import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Head from '../../components/Head';
 import Title from '../../components/title';
-import WorkoutEditorActions from '../../components/WorkoutEditorActions';
 import WorkoutPreviewModal from '../../components/WorkoutPreview';
 import WorkoutScriptEditor from '../../components/WorkoutScriptEditor';
 
@@ -19,8 +18,7 @@ const defaultNotes = 'This is just an example.';
 // TODO Commands that can be sent back
 // - split
 // - end ride
-const scriptExample: string = `
-self.addEventListener('message', function(e) {
+const scriptExample: string = `self.addEventListener('message', function(e) {
   self.postMessage({
     power: '150W'
   });
@@ -40,8 +38,9 @@ export default function RideResults() {
 				<p>Create or edit a workout.</p>
 
 				<Grid container direction="row" spacing={2}>
-					<WorkoutScriptEditor code={workoutScript} onChange={setWorkoutScript} />
-					<WorkoutEditorActions
+					<WorkoutScriptEditor
+						code={workoutScript}
+						onCodeChange={setWorkoutScript}
 						defaultName={defaultName}
 						defaultNotes={defaultNotes}
 						onClickSave={() => {}}
