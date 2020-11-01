@@ -23,20 +23,18 @@ export default function WorkoutEditorActions({
 	defaultName,
 	defaultNotes,
 	onClickSave,
-	onClickDiscard
+	onClickDiscard,
+	onClickPreview
 }: {
 	defaultName: string;
 	defaultNotes: string;
 	onClickSave: (e: any) => void;
 	onClickDiscard: (e: any) => void;
+	onClickPreview: (e: any) => void;
 }) {
 	const classes = useStyles();
 	const [name, setName] = useState(defaultName);
 	const [notes, setNotes] = useState(defaultNotes);
-
-	const onClickPreview = () => {
-		console.log('Preview requested');
-	};
 
 	return (
 		<Grid item xs={4}>

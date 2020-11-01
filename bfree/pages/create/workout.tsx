@@ -5,9 +5,9 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useEffect, useState } from 'react';
 import Head from '../../components/Head';
 import Title from '../../components/title';
-import WorkoutScriptEditor from '../../components/WorkoutScriptEditor';
-import createWorkoutRunner from '../../lib/workout_runner';
 import WorkoutEditorActions from '../../components/WorkoutEditorActions';
+import WorkoutPreviewModal from '../../components/WorkoutPreview';
+import WorkoutScriptEditor from '../../components/WorkoutScriptEditor';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -29,18 +29,8 @@ self.addEventListener('message', function(e) {
 
 export default function RideResults() {
 	const classes = useStyles();
-	const [workoutRunner, setWorkoutRunner] = useState();
 	const [workoutScript, setWorkoutScript] = useState(scriptExample);
-
-	// Cleanup the logger after the user exists this page.
-	useEffect(() => {
-		return () => {
-			if (workoutRunner) {
-				// @ts-ignore
-				workoutRunner.terminate();
-			}
-		};
-	}, []);
+	const [showPreview, setShowPreview] = useState(false);
 
 	return (
 		<Container maxWidth="md">
@@ -50,10 +40,17 @@ export default function RideResults() {
 				<p>Create or edit a workout.</p>
 
 				<Grid container direction="row" spacing={2}>
-					<WorkoutScriptEditor code={workoutScript} onValueChange={setWorkoutScript} />
-					<WorkoutEditorActions defaultName={defaultName} defaultNotes={defaultNotes} onClickSave={() => {}} onClickDiscard={() => {}}/>
+					<WorkoutScriptEditor code={workoutScript} onChange={setWorkoutScript} />
+					<WorkoutEditorActions
+						defaultName={defaultName}
+						defaultNotes={defaultNotes}
+						onClickSave={() => {}}
+						onClickDiscard={() => {}}
+						onClickPreview={() => setShowPreview(true)}
+					/>
 				</Grid>
 			</Box>
+			<WorkoutPreviewModal code={workoutScript} open={showPreview} onClose={() => setShowPreview(false)}/>
 		</Container>
 	);
 }
