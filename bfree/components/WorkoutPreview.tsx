@@ -116,8 +116,8 @@ function PreviewParams() {
 	return (
 		<form noValidate autoComplete="off">
 			<TextField value={endTime.toFixed(2)} onChange={handleEndTimeChange} onBlur={() => setPrev('time')} id="outlined-basic" label="End Time [min]" variant="outlined" />
-			<TextField value={endDistance.toFixed(2)} onChange={handleEndDistanceChange} onBlur={() => setPrev('distance')} id="outlined-basic" label="End Distance [km]" variant="outlined" />
-			<TextField value={speed.toFixed(2)} onChange={handleSpeedChange} onBlur={() => setPrev('speed')} id="outlined-basic" label="Speed [km/h]" variant="outlined" />
+			<TextField value={endDistance.toFixed(2)} onChange={handleEndDistanceChange} onBlur={() => setPrev('distance')} id="outlined-basic" label={`End Distance [${distanceUnit.name}]`} variant="outlined" />
+			<TextField value={speed.toFixed(2)} onChange={handleSpeedChange} onBlur={() => setPrev('speed')} id="outlined-basic" label={`Speed [${speedUnit.name}]`} variant="outlined" />
 		</form>
 	);
 }
