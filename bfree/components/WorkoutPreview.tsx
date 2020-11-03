@@ -4,42 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
 import { timeUnitConv, speedUnitConv, distanceUnitConv } from '../lib/units';
-import createWorkoutRunner from '../lib/workout_runner';
+import createWorkoutRunner, {RunnerResponse} from '../lib/workout_runner';
 import Graph, { Series } from './record/Graph';
 import { useGlobalState } from '../lib/global';
 
 const graphColors = [
-	'#ffaeae', // heart_rate
-	'#b1e67b', // power
-	'#57baeb'  // speed
-];
-
-const series: Series = [
-	{
-		id: 'abc',
-		data: [
-			{
-				x: 0,
-				y: 0,
-			},
-			{
-				x: 1,
-				y: 1,
-			},
-			{
-				x: 2,
-				y: 2,
-			},
-			{
-				x: 3,
-				y: 3,
-			},
-			{
-				x: 4,
-				y: 4,
-			},
-		],
-	}
+	'#b1e67b', // load resistance
 ];
 
 function getModalStyle() {
@@ -72,13 +42,27 @@ const useModalStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function PreviewParams() {
+function PreviewParams({ onChange }: {
+	onChange: (o: {
+		endTime: number;
+		endDistance: number;
+		speed: number;
+	}) => void;
+}) {
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
 	const distanceUnit = distanceUnitConv[useGlobalState('unitDistance')[0]];
 	const [endTime, setEndTime] = useState<number>(0);
 	const [endDistance, setEndDistance] = useState<number>(0);
 	const [speed, setSpeed] = useState<number>(0);
 	const [prev, setPrev] = useState<string>();
+
+	const propagateChange = () => {
+		onChange({
+			endTime: endTime * 60,
+			endDistance: distanceUnit.convToBase(endDistance),
+			speed: speedUnit.convToBase(speed),
+		});
+	};
 
 	const handleEndTimeChange = (e) => {
 		const time: number = Number(e.target.value);
@@ -87,8 +71,10 @@ function PreviewParams() {
 		if (prev === 'distance') {
 			setSpeed(speedUnit.convTo(distanceUnit.convToBase(endDistance) / (time * 60)));
 		} else if (prev === 'speed') {
-			setEndDistance(distanceUnit.convTo(distanceUnit.convToBase(speed) * (time * 60)));
+			setEndDistance(distanceUnit.convTo(speedUnit.convToBase(speed) * (time * 60)));
 		}
+
+		propagateChange();
 	};
 
 	const handleEndDistanceChange = (e) => {
@@ -100,6 +86,8 @@ function PreviewParams() {
 		} else if (prev === 'speed') {
 			setEndTime((distanceUnit.convToBase(distance) / speedUnit.convToBase(speed)) / 60);
 		}
+
+		propagateChange();
 	};
 
 	const handleSpeedChange = (e) => {
@@ -111,6 +99,8 @@ function PreviewParams() {
 		} else if (prev === 'distance') {
 			setEndTime((distanceUnit.convToBase(endDistance) / speedUnit.convToBase(speed)) / 60);
 		}
+
+		propagateChange();
 	};
 
 	return (
@@ -125,7 +115,8 @@ function PreviewParams() {
 export default function WorkoutPreviewModal({ code, open, onClose }) {
 	const classes = useModalStyles();
 	const modalStyle = getModalStyle();
-	const [workoutRunner, setWorkoutRunner] = useState();
+	const [params, setParams] = useState({ endTime: 0, endDistance: 0, speed: 0 });
+	const [series, setSeries] = useState([]);
 
 	const handleClose = () => {
 		onClose();
@@ -136,9 +127,60 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 
 		if (open && typeof code === 'string') {
 			console.log('Creating a worker');
-			// @ts-ignore
-			runner = createWorkoutRunner(code);
-			setWorkoutRunner(runner);
+			const newSeries: Series = [
+				{
+					id: 'load',
+					data: [{
+						x: -0.1,
+						y: 0,
+					}],
+				},
+			];
+
+			let tim;
+			(new Promise((resolve, reject) => {
+				tim = setTimeout(() => reject(new Error('Simulation timed out')), 20000);
+
+				// @ts-ignore
+				runner = createWorkoutRunner(code);
+
+				runner.onMessage((msg: RunnerResponse) => {
+					newSeries[0].data.push({
+						x: msg.time,
+						y: msg.basicLoad ?? msg.power ?? msg.slope,
+					});
+
+					if (msg.time >= params.endTime * 1000) {
+						resolve();
+					}
+				});
+
+				const endTime = Number(params.endTime) * 1000;
+				if (endTime <= 0 || endTime > 86400000) {
+					return resolve();
+				}
+
+				const step = endTime / 50;
+
+				// TODO Allow iterating over distance
+				console.log(endTime, step);
+				for (let time = 0; time <= endTime; time += step) {
+
+					runner.sendMessage({
+						time: time,
+						distance: params.speed * time,
+						speed: params.speed,
+					});
+				}
+			}))
+				.then(() => {
+					if (tim) {
+						clearTimeout(tim);
+					}
+					console.log('Simulation completed');
+					setSeries(newSeries);
+				})
+				.catch(console.error);
 		}
 
 		return () => {
@@ -147,14 +189,14 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 				runner.terminate();
 			}
 		};
-	}, [open, code]);
+	}, [open, code, params]);
 
 	const body = (
 		<div style={modalStyle} className={classes.paper}>
 			<h2 id="workout-preview-modal-title">Workout Preview</h2>
 			<p id="workout-preview-modal-description">Adjust the parameters below to see how they affect to the workout.</p>
-			<PreviewParams />
-			<Graph series={series} colors={graphColors}/>
+			<PreviewParams onChange={setParams} />
+			<Graph series={series} colors={graphColors} curve="stepAfter" enableArea={true} enableLegends={true} isInteractive={true} />
 		</div>
 	);
 

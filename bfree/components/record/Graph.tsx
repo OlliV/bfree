@@ -26,7 +26,14 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function Graph({ series, colors, isInteractive }: { series: Series, colors: string[], isInteractive?: boolean }) {
+export default function Graph({ series, colors, curve, enableArea, enableLegends, isInteractive }: {
+	series: Series;
+	colors: string[];
+	curve?: 'linear' | 'step' | 'natural' | 'basis' | 'cardinal' | 'catmullRom' | 'monotoneX' | 'monotoneY' | 'stepAfter' | 'stepBefore';
+	enableArea?: boolean;
+	enableLegends?: boolean;
+	isInteractive?: boolean;
+}) {
 	const classes = useStyles();
 
 	return (
@@ -36,13 +43,17 @@ export default function Graph({ series, colors, isInteractive }: { series: Serie
 					<ResponsiveLine
 						isInteractive={isInteractive || false}
 						data={series}
-						curve="natural"
+						curve={curve ?? 'natural'}
+						enableArea={enableArea || false}
+						areaBlendMode="multiply"
 						margin={{
 							top: 10,
 							right: 30,
 							bottom: 50,
 							left: 30,
 						}}
+						xFormat={getElapsedTimeStr}
+						yFormat={(v) => Number(v).toFixed(2)}
 						xScale={{
 							type: 'linear',
 						}}
@@ -75,6 +86,32 @@ export default function Graph({ series, colors, isInteractive }: { series: Serie
 						}}
 						colors={colors}
 						layers={['grid', 'markers', 'axes', 'areas', 'lines', 'slices', 'mesh', 'legends']}
+						legends={enableLegends ? [
+							{
+								anchor: 'bottom-right',
+								direction: 'row',
+								justify: false,
+								translateX: 0,
+								translateY: 0,
+								itemsSpacing: 0,
+								itemDirection: 'left-to-right',
+								itemWidth: 80,
+								itemHeight: 20,
+								itemOpacity: 0.75,
+								symbolSize: 12,
+								symbolShape: 'circle',
+								symbolBorderColor: 'rgba(0, 0, 0, .5)',
+								effects: [
+									{
+										on: 'hover',
+										style: {
+											itemBackground: 'rgba(0, 0, 0, .03)',
+											itemOpacity: 1
+										}
+									}
+								]
+							}
+						] : undefined}
 						useMesh={true}
 						theme={{
 							textColor: '#a1a1a1',
