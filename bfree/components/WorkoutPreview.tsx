@@ -139,7 +139,13 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 
 			let tim;
 			(new Promise((resolve, reject) => {
-				tim = setTimeout(() => reject(new Error('Simulation timed out')), 20000);
+				tim = setTimeout(() => {
+					if (runner) {
+						runner.terminate();
+						runner = null;
+					}
+					reject(new Error('Simulation timed out'));
+				}, 20000);
 
 				// @ts-ignore
 				runner = createWorkoutRunner(code);
@@ -160,10 +166,8 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 					return resolve();
 				}
 
-				const step = endTime / 50;
-
 				// TODO Allow iterating over distance
-				console.log(endTime, step);
+				const step = endTime / 50;
 				for (let time = 0; time <= endTime; time += step) {
 
 					runner.sendMessage({
@@ -176,6 +180,10 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 				.then(() => {
 					if (tim) {
 						clearTimeout(tim);
+					}
+					if (runner) {
+						runner.terminate();
+						runner = null;
 					}
 					console.log('Simulation completed');
 					setSeries(newSeries);
