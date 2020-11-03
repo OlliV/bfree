@@ -47,7 +47,7 @@ self.addEventListener('message', function(e) {
   self.postMessage({
     time: msg.time,
     power,
-	endRide,
+    endRide,
   });
 }, false);
 `;
