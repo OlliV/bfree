@@ -35,9 +35,6 @@ export default function Home() {
 					<MenuCard title="Previous Rides" href="/history">
 						Manage and export previous rides.
 					</MenuCard>
-					<MenuCard title="Creator" href="/create">
-						Create new workouts.
-					</MenuCard>
 					<MenuCard title="Setup" href="/setup">
 						Configure parameters and connect to sensors and a trainer.
 					</MenuCard>

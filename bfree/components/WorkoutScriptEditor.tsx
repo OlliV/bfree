@@ -9,7 +9,7 @@ import IconTimeLine from '@material-ui/icons/Timeline';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -50,7 +50,7 @@ export default function WorkoutScriptEditor({
 	defaultNotes: string;
 	code: string;
 	onCodeChange: (txt: string) => void;
-	onClickSave: (e: any) => void;
+	onClickSave: (e: any, name: string, notes: string) => void;
 	onClickDiscard: (e: any) => void;
 	onClickPreview: (e: any) => void;
 }
@@ -60,6 +60,13 @@ export default function WorkoutScriptEditor({
 	const [notes, setNotes] = useState(defaultNotes);
 	const handleChange = (e) => onCodeChange(e.target.value);
 
+	useEffect(() => {
+		setName(defaultName);
+	}, [defaultName]);
+	useEffect(() => {
+		setNotes(defaultNotes);
+	}, [defaultNotes]);
+
 	return (
 		<Grid item xs={12}>
 			<Card variant="outlined">
@@ -68,7 +75,7 @@ export default function WorkoutScriptEditor({
 						Workout Script
 					</Typography>
 					<Container className={classes.actions}>
-						<Fab size="small" color="primary" aria-label="save" onClick={onClickSave}>
+						<Fab size="small" color="primary" aria-label="save" onClick={(e: any) => onClickSave(e, name, notes)}>
 							<IconSave />
 						</Fab>
 						<Fab size="small" color="secondary" aria-label="discard" onClick={onClickDiscard}>
@@ -83,7 +90,7 @@ export default function WorkoutScriptEditor({
 						<TextField
 							id="act-name"
 							label="Name"
-							defaultValue={name}
+							value={name}
 							onChange={(e) => setName(e.target.value)}
 							className={classes.nameField} />
 						<TextField
@@ -92,7 +99,7 @@ export default function WorkoutScriptEditor({
 							multiline
 							rows={2}
 							fullWidth
-							defaultValue={notes}
+							value={notes}
 							onChange={(e) => setNotes(e.target.value)}
 							variant="outlined"
 						/>
@@ -102,7 +109,7 @@ export default function WorkoutScriptEditor({
 							rows={14}
 							variant="outlined"
 							margin="none"
-							defaultValue={code}
+							value={code}
 							onChange={handleChange}
 							InputProps={{
 								classes: {
