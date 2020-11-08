@@ -8,6 +8,7 @@ import Head from '../../components/Head';
 import InfoCard from '../../components/InfoCard';
 import Title from '../../components/title';
 import { useGlobalState, setGlobalState } from '../../lib/global';
+import downloadBlob from '../../lib/download_blob';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -16,26 +17,6 @@ export const useStyles = makeStyles((theme: Theme) =>
 		},
 	})
 );
-
-function downloadBlob(blob: Blob, filename: string) {
-	const url = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-
-	a.href = url;
-	a.download = filename;
-
-	const clickHandler = () => {
-		setTimeout(() => {
-			URL.revokeObjectURL(url);
-			a.removeEventListener('click', clickHandler);
-		}, 150);
-	};
-
-	a.addEventListener('click', clickHandler, false);
-	a.click();
-
-	return a;
-}
 
 export default function RideResults() {
 	const classes = useStyles();

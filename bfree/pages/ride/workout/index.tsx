@@ -12,7 +12,7 @@ import IconBike from '@material-ui/icons/DirectionsBike';
 import IconButton from '@material-ui/core/IconButton';
 import IconFavorite from '@material-ui/icons/Favorite';
 import IconMoreVert from '@material-ui/icons/MoreVert';
-import IconShare from '@material-ui/icons/Share';
+import IconDownload from '@material-ui/icons/GetApp';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Head from '../../../components/Head';
 import Title from '../../../components/title';
+import downloadBlob from '../../../lib/download_blob';
 import { getWorkouts, getWorkoutDate, deleteWorkout } from '../../../lib/workout_storage';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -73,6 +74,12 @@ function WorkoutCard({ workout, onChange }) {
 		deleteWorkout(workout.id);
 		onChange();
 	};
+	const handleDownload = () => {
+		const notes = workout.notes.split('\n').map((s: string) => `// ${s}`).join('\n');
+		const blob = new Blob([notes, '\n\n', workout.script], { type: 'text/javascript' });
+
+		downloadBlob(blob, `${workout.name}.js`);
+	};
 
 	return (
 		<Grid item xs={10}>
@@ -113,8 +120,8 @@ function WorkoutCard({ workout, onChange }) {
 				<IconButton aria-label="add to favorites">
 					<IconFavorite />
 				</IconButton>
-				<IconButton aria-label="share">
-					<IconShare />
+				<IconButton aria-label="download">
+					<IconDownload onClick={handleDownload} />
 				</IconButton>
 				<IconButton aria-label="Ride">
 					<IconBike />
