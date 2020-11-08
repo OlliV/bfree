@@ -1,8 +1,8 @@
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import IconBike from '@material-ui/icons/DirectionsBike';
 import IconCadence from '@material-ui/icons/FlipCameraAndroid';
 import IconHeart from '@material-ui/icons/Favorite';
 import IconPower from '@material-ui/icons/OfflineBolt';
@@ -10,6 +10,7 @@ import IconSpeed from '@material-ui/icons/Speed';
 import Typography from '@material-ui/core/Typography';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useState, useEffect, useMemo } from 'react';
 import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
 
@@ -24,6 +25,24 @@ export const useStyles = makeStyles((theme: Theme) =>
 		inlineIcon: {
 			fontSize: '18px !important',
 		},
+		valuesTable: {
+			border: 0,
+			width: '100%',
+			borderCollapse: 'collapse',
+			borderSpacing: 0,
+			borderWidth: 0,
+		},
+		header: {
+			textAlign: 'left',
+			fontWeight: 'bold',
+		},
+		value: {
+			width: '10em',
+			textAlign: 'right',
+		},
+		unit: {
+			textAlign: 'left',
+		},
 	})
 );
 
@@ -32,10 +51,7 @@ type DisplayValue = {
 	unit: string;
 }
 
-export default function MeasurementCard({ type, ribbonColor }: { type: Measurement, ribbonColor?: string }) {
-	const classes = useStyles();
-	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
-
+function getContentByType(classes, speedUnit, type: Measurement) {
 	const contentByType: { [K in Measurement]: [ Element | JSX.Element, (m: any) => DisplayValue ] } = {
 		cycling_cadence: [
 			(<span><IconCadence className={classes.inlineIcon} /> Cadence</span>),
@@ -54,8 +70,29 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 			(m: HrmMeasurements) => ({ value: m ? m.heartRate.toFixed(0) : '--', unit: 'BPM' }),
 		],
 	};
-	const toEl = (v: DisplayValue) => (<span>{v.value}&nbsp;{v.unit}</span>);
-	const [title, fn] = contentByType[type];
+
+	return contentByType[type];
+}
+
+export default function MeasurementCard({ type, ribbonColor }: { type: Measurement, ribbonColor?: string }) {
+	const classes = useStyles();
+	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
+	const [title, fn] = useMemo(() => getContentByType(classes, speedUnit, type), [type])
+	const m = useMeasurementByType(type);
+	const { value, unit } = fn(m);
+	let [min, setMin] = useState(0);
+	let [max, setMax] = useState(0);
+
+	useEffect(() => {
+		const v = Number(value);
+
+		if (v < min) {
+			setMin(v);
+		}
+		if (v > max) {
+			setMax(v);
+		}
+	}, [m]);
 
 	return (
 		<Grid item xs={4}>
@@ -66,7 +103,41 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 						{title}
 					</Typography>
 					<Typography>
-						{toEl(fn(useMeasurementByType(type)))}
+						<Container>
+							<table className={classes.valuesTable}>
+								<tr>
+									<th className={classes.header}>
+										Current:
+									</th>
+									<td className={classes.value}>
+										{value}
+									</td>
+									<td className={classes.unit}>
+										{unit}
+									</td>
+								</tr>
+								<tr>
+									<th className={classes.header}>
+										Min:
+									</th>
+									<td className={classes.value}>
+										{min}
+									</td>
+									<td className={classes.unit}>
+									</td>
+								</tr>
+								<tr>
+									<th className={classes.header}>
+										Max:
+									</th>
+									<td className={classes.value}>
+										{max}
+									</td>
+									<td className={classes.unit}>
+									</td>
+								</tr>
+							</table>
+						</Container>
 					</Typography>
 				</CardContent>
 			</Card>
