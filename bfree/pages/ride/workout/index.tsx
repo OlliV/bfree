@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		fab: {
 			float: 'right',
+			marginBottom: '2em',
 			marginTop: '2em',
 			marginRight: '8em',
 		},
