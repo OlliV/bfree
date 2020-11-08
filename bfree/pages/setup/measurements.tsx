@@ -62,7 +62,7 @@ export default function SetupMeasurements() {
 		<Container maxWidth="md">
 			<Head title="Measurements" />
 			<Box>
-				<Title>Measurements</Title>
+				<Title href="/setup">Measurements</Title>
 				<p>Select measurement sources for recording.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

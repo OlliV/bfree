@@ -9,7 +9,7 @@ export default function RideWorkout() {
 		<Container maxWidth="md">
 			<Head title="Virtual Ride" />
 			<Box>
-				<Title>Virtual Ride</Title>
+				<Title href="/ride">Virtual Ride</Title>
 				<p>Select something if you can...</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}></Grid>

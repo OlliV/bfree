@@ -10,7 +10,7 @@ export default function Ride() {
 		<Container maxWidth="md">
 			<Head title="Ride" />
 			<Box>
-				<Title>Ride</Title>
+				<Title href="/">Ride</Title>
 				<p>Select the ride type.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

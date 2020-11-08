@@ -157,7 +157,7 @@ export default function SetupRider() {
 		<Container maxWidth="md">
 			<Head title="Rider" />
 			<Box>
-				<Title>Rider</Title>
+				<Title href="/setup">Rider</Title>
 				<p>Set the rider weight and other measurements.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

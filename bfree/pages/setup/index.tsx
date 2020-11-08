@@ -10,7 +10,7 @@ export default function Setup() {
 		<Container maxWidth="md">
 			<Head title="Setup" />
 			<Box>
-				<Title>Setup</Title>
+				<Title href="/">Setup</Title>
 				<p>Configure your trainer setup here.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

@@ -113,7 +113,7 @@ export default function SetupBike() {
 		<Container maxWidth="md">
 			<Head title="Bike" />
 			<Box>
-				<Title>Bike</Title>
+				<Title href="/setup">Bike</Title>
 				<p>Setup the bike measurements.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

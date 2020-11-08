@@ -25,7 +25,7 @@ export default function RideFree() {
 		<Container maxWidth="md">
 			<Head title="Free Ride" />
 			<Box>
-				<Title>Free Ride</Title>
+				<Title href="/ride">Free Ride</Title>
 				<p>Start a free ride exercise.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

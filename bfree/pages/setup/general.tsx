@@ -15,7 +15,7 @@ export default function SetupGeneral() {
 		<Container maxWidth="md">
 			<Head title="General" />
 			<Box>
-				<Title>General</Title>
+				<Title href="/setup">General</Title>
 				<p>Configure measurement units and UX settings.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
