@@ -88,6 +88,9 @@ function WorkoutCard({ workout, onChange }) {
 			.catch(console.error)
 			.then(onChange());
 	};
+	const handleRide = () => {
+		router.push(`/ride/record?type=workout&id=${workout.id}`);
+	};
 
 	return (
 		<Grid item xs={10}>
@@ -132,7 +135,7 @@ function WorkoutCard({ workout, onChange }) {
 					<IconDownload onClick={handleDownload} />
 				</IconButton>
 				<IconButton aria-label="Ride">
-					<IconBike />
+					<IconBike onClick={handleRide} />
 				</IconButton>
 			</CardActions>
 			</Card>

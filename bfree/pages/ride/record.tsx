@@ -12,11 +12,12 @@ import IconStop from '@material-ui/icons/Stop';
 import Modal from '@material-ui/core/Modal';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
 import Head from '../../components/Head';
 import MeasurementCard from '../../components/record/MeasurementCard';
+import WorkoutStats from '../../components/record/WorkoutStats';
 import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
 import Ride from '../../components/record/Ride';
 import Stopwatch from '../../components/record/Stopwatch';
@@ -143,6 +144,32 @@ function FreeRideDashboard() {
 	);
 }
 
+function WorkoutDashboard() {
+	const router = useRouter();
+	const classes = useStyles();
+	const { id } = router.query;
+
+	if (typeof id !== 'string') {
+		return <DefaultErrorPage statusCode={400} />;
+	}
+
+	return (
+		<Box>
+			<Title disableBack={true}>Workout</Title>
+
+			<Grid container direction="row" alignItems="center" spacing={2}>
+				<Ride />
+				<WorkoutStats />
+				<MeasurementCard type="cycling_cadence" />
+				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
+				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
+				<MeasurementCard type="heart_rate" ribbonColor={classes.colorHeartRate} />
+				<DataGraph />
+			</Grid>
+		</Box>
+	);
+}
+
 function PauseModal({ show, onClose, children }: { show: boolean; onClose: () => void, children: any }) {
 	const classes = useStyles();
 
@@ -169,6 +196,23 @@ function PauseModal({ show, onClose, children }: { show: boolean; onClose: () =>
 	);
 }
 
+function getDashboardConfig(rideType: string | string[]) {
+	switch (rideType) {
+		case 'free':
+			return {
+				title: 'Free Ride',
+				Dashboard: FreeRideDashboard,
+			};
+		case 'workout':
+			return {
+				title: 'Workout',
+				Dashboard: WorkoutDashboard,
+			};
+		default:
+			return { };
+	}
+}
+
 export default function RideRecord() {
 	const classes = useStyles();
 	const router = useRouter();
@@ -178,6 +222,12 @@ export default function RideRecord() {
 	const [rideStartTime, setRideStartTime] = useState(0);
 	const [elapsedLapTime, setElapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideEnded, setRideEnded] = useState(false);
+	const { title, Dashboard } = useMemo(() => getDashboardConfig(rideType), [rideType]);
+
+	if (!title) {
+		console.log('no title', title);
+		return <DefaultErrorPage statusCode={400} />;
+	}
 
 	// Prevent screen locking while recording
 	useEffect(() => {
@@ -222,17 +272,6 @@ export default function RideRecord() {
 		setRideEnded(true);
 		router.push('/ride/results');
 	};
-
-	let title: string;
-	let Dashboard;
-	switch (rideType) {
-		case 'free':
-			title = 'Free Ride';
-			Dashboard = FreeRideDashboard;
-			break;
-		default:
-			return <DefaultErrorPage statusCode={400} />;
-	}
 
 	return (
 		<Container maxWidth="md">
