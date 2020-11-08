@@ -27,14 +27,16 @@ import { getWorkouts, getWorkoutDate, deleteWorkout } from '../../../lib/workout
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
-		root: {
+		cardRoot: {
+			minWidth: 345,
 			maxWidth: 345,
 		},
 		fab: {
-			float: 'right',
+			display: 'flex',
+			marginLeft: 'auto',
+			marginRight: 'auto',
 			marginBottom: '2em',
 			marginTop: '2em',
-			marginRight: '8em',
 		},
 		media: {
 			height: 0,
@@ -84,7 +86,7 @@ function WorkoutCard({ workout, onChange }) {
 
 	return (
 		<Grid item xs={10}>
-			<Card variant="outlined" className={classes.root}>
+			<Card variant="outlined" className={classes.cardRoot} >
       		<CardHeader
       		  avatar={
       		    <Avatar aria-label="recipe" className={classes.avatar}>
@@ -153,7 +155,7 @@ export default function Workout() {
 				<Title href="/ride">Workout</Title>
 				<p>Create and execute scripted workouts.</p>
 
-				<Grid container direction="row" alignItems="center" spacing={2}>
+				<Grid container direction="column" alignItems="center" spacing={2}>
 					{
 						workouts.map((w) => (<WorkoutCard workout={w} onChange={handleChange} key={w.id} />))
 					}
