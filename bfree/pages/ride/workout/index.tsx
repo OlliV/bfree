@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 import Head from '../../../components/Head';
 import Title from '../../../components/title';
 import downloadBlob from '../../../lib/download_blob';
-import { getWorkouts, getWorkoutDate, deleteWorkout } from '../../../lib/workout_storage';
+import { getWorkouts, getWorkoutDate, deleteWorkout, toggleWorkoutFav } from '../../../lib/workout_storage';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -83,6 +83,11 @@ function WorkoutCard({ workout, onChange }) {
 
 		downloadBlob(blob, `${workout.name}.js`);
 	};
+	const handleFav = () => {
+		toggleWorkoutFav(workout.id)
+			.catch(console.error)
+			.then(onChange());
+	};
 
 	return (
 		<Grid item xs={10}>
@@ -120,8 +125,8 @@ function WorkoutCard({ workout, onChange }) {
 				</Typography>
 			</CardContent>
 			<CardActions disableSpacing>
-				<IconButton aria-label="add to favorites">
-					<IconFavorite />
+				<IconButton aria-label="add to favorites" color={workout.fav ? "secondary" : undefined}>
+					<IconFavorite onClick={handleFav} />
 				</IconButton>
 				<IconButton aria-label="download">
 					<IconDownload onClick={handleDownload} />
