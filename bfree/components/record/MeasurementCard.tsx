@@ -105,7 +105,6 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 					<Typography gutterBottom variant="h5" component="h2">
 						{title}
 					</Typography>
-					<Typography>
 						<Container>
 							<table className={classes.valuesTable}>
 								<tr>
@@ -141,7 +140,6 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 								</tr>
 							</table>
 						</Container>
-					</Typography>
 				</CardContent>
 			</Card>
 		</Grid>
