@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		resistanceControlSlider: {
 			paddingTop: '3em',
 		},
+		inlineIcon: {
+			fontSize: '18px !important',
+		},
 	})
 );
 
@@ -166,7 +169,7 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 			<Card variant="outlined">
 				<CardContent className={classes.resistanceControlCard}>
 					<Typography id="resistance-control" gutterBottom variant="h5" component="h2">
-					<IconResistance /> {resistanceControlName}
+					<IconResistance className={classes.inlineIcon} /> {resistanceControlName}
 					</Typography>
 					<Container>
 						<ResistanceSlider

@@ -15,7 +15,10 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		value: {
 			float: 'right',
-		}
+		},
+		inlineIcon: {
+			fontSize: '18px !important',
+		},
 	})
 );
 
@@ -44,7 +47,7 @@ export default function Ride() {
 			<Card variant="outlined">
 				<CardContent className={classes.stopwatchCard}>
 					<Typography gutterBottom variant="h5" component="h2">
-						<IconTimelapse /> Time &amp; Distance
+						<IconTimelapse className={classes.inlineIcon} /> Time &amp; Distance
 					</Typography>
 					<Container>
 						<b>Ride time:</b> <div className={classes.value}>{getElapsedTimeStr(elapsedTime)}</div>
