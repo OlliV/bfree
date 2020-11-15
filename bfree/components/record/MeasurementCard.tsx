@@ -80,15 +80,18 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 	const [title, fn] = useMemo(() => getContentByType(classes, speedUnit, type), [type])
 	const m = useMeasurementByType(type);
 	const { value, unit } = fn(m);
-	let [min, setMin] = useState(0);
-	let [max, setMax] = useState(0);
+	const [avg, setAvg] = useState(0);
+	const [max, setMax] = useState(0);
+	const [n, setN] = useState(0);
 
 	useEffect(() => {
 		const v = Number(value);
 
-		if (v < min) {
-			setMin(v);
+		if (!Number.isNaN(v)) {
+			setAvg(avg + (v - avg) / (n + 1));
+			setN(n + 1);
 		}
+
 		if (v > max) {
 			setMax(v);
 		}
@@ -118,10 +121,10 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 								</tr>
 								<tr>
 									<th className={classes.header}>
-										Min:
+										Avg:
 									</th>
 									<td className={classes.value}>
-										{min}
+										{avg}
 									</td>
 									<td className={classes.unit}>
 									</td>
