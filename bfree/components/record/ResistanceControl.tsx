@@ -2,6 +2,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
+import IconResistance from '@material-ui/icons/FitnessCenter';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { useEffect, useState, useMemo } from 'react';
@@ -165,7 +166,7 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 			<Card variant="outlined">
 				<CardContent className={classes.resistanceControlCard}>
 					<Typography id="resistance-control" gutterBottom variant="h5" component="h2">
-						{resistanceControlName}
+					<IconResistance /> {resistanceControlName}
 					</Typography>
 					<Container>
 						<ResistanceSlider
