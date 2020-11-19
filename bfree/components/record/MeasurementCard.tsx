@@ -47,27 +47,31 @@ export const useStyles = makeStyles((theme: Theme) =>
 );
 
 type DisplayValue = {
-	value: string;
+	value: number;
 	unit: string;
 }
 
 function getContentByType(classes, speedUnit, type: Measurement) {
-	const contentByType: { [K in Measurement]: [ Element | JSX.Element, (m: any) => DisplayValue ] } = {
+	const contentByType: { [K in Measurement]: [ Element | JSX.Element, (m: any) => DisplayValue, number ] } = {
 		cycling_cadence: [
 			(<span><IconCadence className={classes.inlineIcon} /> Cadence</span>),
-			(m: CscMeasurements) => ({ value: m ? m.cadence.toFixed(0) : '--', unit: 'RPM' }),
+			(m: CscMeasurements) => ({ value: m ? m.cadence : NaN, unit: 'RPM' }),
+			0,
 		],
 		cycling_power: [
 			(<span><IconPower className={classes.inlineIcon} /> Power</span>),
-			(m: any) => ({ value: m ? m.power.toFixed(0) : '--', unit: 'W' }),
+			(m: any) => ({ value: m ? m.power : NaN, unit: 'W' }),
+			0,
 		],
 		cycling_speed: [
 			(<span><IconSpeed className={classes.inlineIcon} /> Speed</span>),
-			(m: CscMeasurements) => ({ value: m && m.speed ? speedUnit.convTo(m.speed).toFixed(1) : '--', unit: speedUnit.name }),
+			(m: CscMeasurements) => ({ value: m && m.speed ? speedUnit.convTo(m.speed) : NaN, unit: speedUnit.name }),
+			1,
 		],
 		heart_rate: [
 			(<span><IconHeart className={classes.inlineIcon} /> Heart Rate</span>),
-			(m: HrmMeasurements) => ({ value: m ? m.heartRate.toFixed(0) : '--', unit: 'BPM' }),
+			(m: HrmMeasurements) => ({ value: m ? m.heartRate : NaN, unit: 'BPM' }),
+			1,
 		],
 	};
 
@@ -77,15 +81,15 @@ function getContentByType(classes, speedUnit, type: Measurement) {
 export default function MeasurementCard({ type, ribbonColor }: { type: Measurement, ribbonColor?: string }) {
 	const classes = useStyles();
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
-	const [title, fn] = useMemo(() => getContentByType(classes, speedUnit, type), [type])
+	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [type])
 	const m = useMeasurementByType(type);
 	const { value, unit } = fn(m);
 	const [avg, setAvg] = useState(0);
-	const [max, setMax] = useState(0);
+	const [max, setMax] = useState(NaN);
 	const [n, setN] = useState(0);
 
 	useEffect(() => {
-		const v = Number(value);
+		const v = value;
 
 		if (!Number.isNaN(v)) {
 			setAvg(avg + (v - avg) / (n + 1));
@@ -112,7 +116,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 										Current:
 									</th>
 									<td className={classes.value}>
-										{value}
+										{Number.isNaN(value) ? '--' : value.toFixed(digits)}
 									</td>
 									<td className={classes.unit}>
 										{unit}
@@ -123,7 +127,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 										Avg:
 									</th>
 									<td className={classes.value}>
-										{avg}
+										{avg.toFixed(digits)}
 									</td>
 									<td className={classes.unit}>
 									</td>
@@ -133,7 +137,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 										Max:
 									</th>
 									<td className={classes.value}>
-										{max}
+										{Number.isNaN(max) ? '--' : max.toFixed(digits)}
 									</td>
 									<td className={classes.unit}>
 									</td>
