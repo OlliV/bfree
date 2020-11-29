@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import ExportCard from '../../components/ExportCard';
 import Head from '../../components/Head';
 import InfoCard from '../../components/InfoCard';
-import Title from '../../components/title';
+import Title from '../../components/Title';
 import { useGlobalState, setGlobalState } from '../../lib/global';
 import downloadBlob from '../../lib/download_blob';
 

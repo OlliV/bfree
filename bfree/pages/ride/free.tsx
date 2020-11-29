@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Head from '../../components/Head';
 import StartButton from '../../components/StartButton';
 import ResistanceMode from '../../components/ResistanceMode';
-import Title from '../../components/title';
+import Title from '../../components/Title';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

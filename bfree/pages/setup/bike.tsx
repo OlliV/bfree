@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useState } from 'react';
-import Title from '../../components/title';
+import Title from '../../components/Title';
 import Head from '../../components/Head';
 import { isValidUnsigned } from '../../lib/validation';
 import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';

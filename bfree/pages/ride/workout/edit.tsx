@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Head from '../../../components/Head';
-import Title from '../../../components/title';
+import Title from '../../../components/Title';
 import WorkoutPreviewModal from '../../../components/WorkoutPreview';
 import WorkoutScriptEditor from '../../../components/WorkoutScriptEditor';
 import { saveWorkout, readWorkout } from '../../../lib/workout_storage';

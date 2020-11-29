@@ -21,7 +21,7 @@ import { red } from '@material-ui/core/colors';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Head from '../../../components/Head';
-import Title from '../../../components/title';
+import Title from '../../../components/Title';
 import downloadBlob from '../../../lib/download_blob';
 import { getWorkouts, getWorkoutDate, deleteWorkout, toggleWorkoutFav } from '../../../lib/workout_storage';
 

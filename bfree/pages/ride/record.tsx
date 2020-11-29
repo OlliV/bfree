@@ -21,7 +21,7 @@ import WorkoutStats from '../../components/record/WorkoutStats';
 import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
 import Ride from '../../components/record/Ride';
 import Stopwatch from '../../components/record/Stopwatch';
-import Title from '../../components/title';
+import Title from '../../components/Title';
 import { Lap } from '../../lib/activity_log';
 import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';

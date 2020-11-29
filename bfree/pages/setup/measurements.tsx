@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
 import Head from '../../components/Head';
-import Title from '../../components/title';
+import Title from '../../components/Title';
 import { useSetupStyles as useStyles } from '../../components/SetupComponents';
 import PriorityList from '../../components/PriorityList';
 import SetupDialog from '../../components/SetupDialog';
