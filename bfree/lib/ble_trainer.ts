@@ -1,6 +1,10 @@
 import { TrainerMeasurements } from './measurements';
 import defer from './defer';
 
+// Supported page requests
+type PageNumber = 1 | 2 | 16 | 17 | 21 | 25 | 32 | 48 | 49 | 50 | 51 | 54 | 55 | 71 | 80 | 81;
+type PageListener = (pageData: any) => void;
+
 const TACX_FEC_OVER_BLE_SERVICE_UUID = '6e40fec1-b5a3-f393-e0a9-e50e24dcca9e';
 const TACX_FEC_CHARACTERISTIC_TX = '6e40fec2-b5a3-f393-e0a9-e50e24dcca9e';
 const TACX_FEC_CHARACTERISTIC_RX = '6e40fec3-b5a3-f393-e0a9-e50e24dcca9e';
@@ -21,10 +25,6 @@ function setSendHeader(msg: DataView, len: number) {
 		msg.setUint8(2, 0x4f); // type
 		msg.setUint8(3, 0x05); // channel
 }
-
-// Supported page requests
-type PageNumber = 1 | 2 | 16 | 17 | 21 | 25 | 32 | 48 | 49 | 50 | 51 | 54 | 55 | 71 | 80 | 81;
-type PageListener = (pageData: any) => void;
 
 export async function createSmartTrainerController(server: BluetoothRemoteGATTServer, measurementsCb: (res: TrainerMeasurements) => void) {
 	const service = await server.getPrimaryService(TACX_FEC_OVER_BLE_SERVICE_UUID);
@@ -516,6 +516,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			result.accumulatedPower = accumulatedPower;
 			result.power = instantaneousPower;
 			result.cadence = instantaneousCadence;
+			result.powerLimits = powerLimits as 0 | 1 | 2 | 3;
 			result.calStatus.powerCalRequired = powerCalRequired;
 			result.calStatus.resistanceCalRequired = resistanceCalRequired;
 			result.calStatus.userConfigRequired = userConfigRequired;
