@@ -8,12 +8,15 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
+		inlineIcon: {
+			fontSize: '18px !important',
+		},
 		stopwatchCard: {
 			height: '10em',
 		},
 		value: {
 			float: 'right',
-		}
+		},
 	})
 );
 

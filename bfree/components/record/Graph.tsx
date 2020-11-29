@@ -114,6 +114,7 @@ export default function Graph({ series, colors, curve, enableArea, enableLegends
 						] : undefined}
 						useMesh={true}
 						theme={{
+							// @ts-ignore textColor is there
 							textColor: '#a1a1a1',
 						}}
 					/>
