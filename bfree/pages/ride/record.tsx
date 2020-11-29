@@ -122,6 +122,7 @@ function FreeRideDashboard() {
 	const router = useRouter();
 	const classes = useStyles();
 	const { resistance } = router.query;
+	const rollingResistance = Number(router.query.rollingResistance);
 
 	if (typeof resistance !== 'string' || !['basic', 'power', 'slope'].includes(resistance)) {
 		return <DefaultErrorPage statusCode={400} />;
@@ -133,7 +134,7 @@ function FreeRideDashboard() {
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
-				<ResistanceControl resistance={resistance as Resistance} />
+				<ResistanceControl resistance={resistance as Resistance} rollingResistance={rollingResistance} />
 				<MeasurementCard type="cycling_cadence" />
 				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />

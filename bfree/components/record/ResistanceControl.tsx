@@ -109,7 +109,7 @@ const r2marks: { [k in Resistance]: { value: number; label: string }[]} = object
 	}
 ]));
 
-export default function ResistanceControl({ resistance }: { resistance: Resistance }) {
+export default function ResistanceControl({ resistance, rollingResistance }: { resistance: Resistance, rollingResistance?: number }) {
 	const classes = useStyles();
 	const {
 		resistanceControlName,
@@ -139,7 +139,7 @@ export default function ResistanceControl({ resistance }: { resistance: Resistan
 					break;
 				case 'slope':
 					await smartTrainerControl.sendWindResistance(windResistanceCoeff, windSpeed, draftingFactor);
-					await smartTrainerControl.sendSlope(value, rollingResistanceCoeff.asphalt);
+					await smartTrainerControl.sendSlope(value, rollingResistance || rollingResistanceCoeff.asphalt);
 					break;
 			}
 		}

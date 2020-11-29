@@ -6,9 +6,18 @@ import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useSetupStyles } from './SetupComponents';
+import { useEffect } from 'react';
+import { rollingResistanceCoeff } from '../lib/virtual_params';
+
+const predefinedRollingResistances: [string, number][] = [
+	[ 'Wooden track', rollingResistanceCoeff.wood ],
+	[ 'Concrete', rollingResistanceCoeff.concrete ],
+	[ 'Asphalt road', rollingResistanceCoeff.asphalt ],
+	[ 'Rough road', rollingResistanceCoeff.rough ],
+];
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -27,23 +36,26 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function ResistanceMode({ mode, setMode }: { mode: string; setMode: (m: string) => void }) {
+export default function RollingResistance({ rollingResistance, setRollingResistance }: { rollingResistance: number; setRollingResistance: (v: number) => void; }) {
 	const classes = useStyles();
 
 	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		setMode(event.target.value as string);
+		// @ts-ignore
+		setRollingResistance(event.target.value || 0);
 	};
+
+	useEffect(() => {
+		if (Number.isNaN(rollingResistance)) {
+			setRollingResistance(predefinedRollingResistances[2][1]);
+		}
+	}, []);
 
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardMedia
-					className={classes.media}
-					image="/images/cards/roller.jpg"
-					title="spinning on roller; Klasická kola umístěna na otáčecí válce a zapojena na měřič rychlosti."
-				/>
+				<CardMedia className={classes.media} image="/images/cards/roller.jpg" title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
-					Resistance Mode
+					Rolling Resistance
 				</Typography>
 				<CardContent className={classes.setupCard}>
 					<FormControl className={classes.formControl}>
@@ -51,13 +63,24 @@ export default function ResistanceMode({ mode, setMode }: { mode: string; setMod
 						<Select
 							labelId="resistance-mode-select-label"
 							id="resistance-mode-select"
-							value={mode}
+							value={rollingResistance}
 							onChange={handleChange}
 						>
-							<MenuItem value={'basic'}>Basic resistance</MenuItem>
-							<MenuItem value={'power'}>Power</MenuItem>
-							<MenuItem value={'slope'}>Slope</MenuItem>
+							{
+								predefinedRollingResistances.map((r) =>
+									(<MenuItem value={r[1]}>{r[0]}</MenuItem>)
+								)
+							}
 						</Select>
+						<br />
+						<TextField
+							value={rollingResistance}
+							error={rollingResistance <= 0}
+							onChange={handleChange}
+							id="outlined-basic"
+							label="fff"
+							variant="outlined"
+						/>
 					</FormControl>
 				</CardContent>
 			</Card>
