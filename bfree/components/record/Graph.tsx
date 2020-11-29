@@ -6,13 +6,13 @@ import { ResponsiveLine } from '@nivo/line';
 import { getElapsedTimeStr } from '../../lib/format';
 
 export type SeriesDataPoint = {
-		x: number;
-		y: number;
-}
+	x: number;
+	y: number;
+};
 export type Series = {
 	id: string;
-	data: SeriesDataPoint[]
-}[]
+	data: SeriesDataPoint[];
+}[];
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -26,10 +26,27 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function Graph({ series, colors, curve, enableArea, enableLegends, isInteractive }: {
+export default function Graph({
+	series,
+	colors,
+	curve,
+	enableArea,
+	enableLegends,
+	isInteractive,
+}: {
 	series: Series;
 	colors: string[];
-	curve?: 'linear' | 'step' | 'natural' | 'basis' | 'cardinal' | 'catmullRom' | 'monotoneX' | 'monotoneY' | 'stepAfter' | 'stepBefore';
+	curve?:
+		| 'linear'
+		| 'step'
+		| 'natural'
+		| 'basis'
+		| 'cardinal'
+		| 'catmullRom'
+		| 'monotoneX'
+		| 'monotoneY'
+		| 'stepAfter'
+		| 'stepBefore';
 	enableArea?: boolean;
 	enableLegends?: boolean;
 	isInteractive?: boolean;
@@ -86,32 +103,36 @@ export default function Graph({ series, colors, curve, enableArea, enableLegends
 						}}
 						colors={colors}
 						layers={['grid', 'markers', 'axes', 'areas', 'lines', 'slices', 'mesh', 'legends']}
-						legends={enableLegends ? [
-							{
-								anchor: 'bottom-right',
-								direction: 'row',
-								justify: false,
-								translateX: 0,
-								translateY: 0,
-								itemsSpacing: 0,
-								itemDirection: 'left-to-right',
-								itemWidth: 80,
-								itemHeight: 20,
-								itemOpacity: 0.75,
-								symbolSize: 12,
-								symbolShape: 'circle',
-								symbolBorderColor: 'rgba(0, 0, 0, .5)',
-								effects: [
-									{
-										on: 'hover',
-										style: {
-											itemBackground: 'rgba(0, 0, 0, .03)',
-											itemOpacity: 1
-										}
-									}
-								]
-							}
-						] : undefined}
+						legends={
+							enableLegends
+								? [
+										{
+											anchor: 'bottom-right',
+											direction: 'row',
+											justify: false,
+											translateX: 0,
+											translateY: 0,
+											itemsSpacing: 0,
+											itemDirection: 'left-to-right',
+											itemWidth: 80,
+											itemHeight: 20,
+											itemOpacity: 0.75,
+											symbolSize: 12,
+											symbolShape: 'circle',
+											symbolBorderColor: 'rgba(0, 0, 0, .5)',
+											effects: [
+												{
+													on: 'hover',
+													style: {
+														itemBackground: 'rgba(0, 0, 0, .03)',
+														itemOpacity: 1,
+													},
+												},
+											],
+										},
+								  ]
+								: undefined
+						}
 						useMesh={true}
 						theme={{
 							// @ts-ignore textColor is there
@@ -122,4 +143,4 @@ export default function Graph({ series, colors, curve, enableArea, enableLegends
 			</CardContent>
 		</Card>
 	);
-};
+}

@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { getElapsedTimeStr } from '../../lib/format';
 
-export default function Stopwatch({ startTime, isStopped, className }: { startTime: number; isStopped?: boolean; className?: any }) {
+export default function Stopwatch({
+	startTime,
+	isStopped,
+	className,
+}: {
+	startTime: number;
+	isStopped?: boolean;
+	className?: any;
+}) {
 	const [time, setTime] = useState(() => Date.now() - startTime);
 	const [reset, setReset] = useState(false);
 
@@ -31,7 +39,7 @@ export default function Stopwatch({ startTime, isStopped, className }: { startTi
 
 				offset = now;
 				return d;
-			}
+			};
 
 			t += delta();
 			setTime(t);
@@ -44,4 +52,3 @@ export default function Stopwatch({ startTime, isStopped, className }: { startTi
 
 	return <div className={className}>{getElapsedTimeStr(time)}</div>;
 }
-

@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
 import { timeUnitConv, speedUnitConv, distanceUnitConv } from '../lib/units';
-import createWorkoutRunner, {RunnerResponse} from '../lib/workout_runner';
+import createWorkoutRunner, { RunnerResponse } from '../lib/workout_runner';
 import Graph, { Series } from './record/Graph';
 import { useGlobalState } from '../lib/global';
 
@@ -42,12 +42,10 @@ const useModalStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function PreviewParams({ onChange }: {
-	onChange: (o: {
-		endTime: number;
-		endDistance: number;
-		speed: number;
-	}) => void;
+function PreviewParams({
+	onChange,
+}: {
+	onChange: (o: { endTime: number; endDistance: number; speed: number }) => void;
 }) {
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
 	const distanceUnit = distanceUnitConv[useGlobalState('unitDistance')[0]];
@@ -84,7 +82,7 @@ function PreviewParams({ onChange }: {
 		if (prev === 'time') {
 			setSpeed(speedUnit.convTo(distanceUnit.convToBase(distance) / (endTime * 60)));
 		} else if (prev === 'speed') {
-			setEndTime((distanceUnit.convToBase(distance) / speedUnit.convToBase(speed)) / 60);
+			setEndTime(distanceUnit.convToBase(distance) / speedUnit.convToBase(speed) / 60);
 		}
 
 		propagateChange();
@@ -97,7 +95,7 @@ function PreviewParams({ onChange }: {
 		if (prev === 'time') {
 			setEndDistance(distanceUnit.convTo(speedUnit.convToBase(speed) * (endTime * 60)));
 		} else if (prev === 'distance') {
-			setEndTime((distanceUnit.convToBase(endDistance) / speedUnit.convToBase(speed)) / 60);
+			setEndTime(distanceUnit.convToBase(endDistance) / speedUnit.convToBase(speed) / 60);
 		}
 
 		propagateChange();
@@ -105,9 +103,30 @@ function PreviewParams({ onChange }: {
 
 	return (
 		<form noValidate autoComplete="off">
-			<TextField value={endTime.toFixed(2)} onChange={handleEndTimeChange} onBlur={() => setPrev('time')} id="outlined-basic" label="End Time [min]" variant="outlined" />
-			<TextField value={endDistance.toFixed(2)} onChange={handleEndDistanceChange} onBlur={() => setPrev('distance')} id="outlined-basic" label={`End Distance [${distanceUnit.name}]`} variant="outlined" />
-			<TextField value={speed.toFixed(2)} onChange={handleSpeedChange} onBlur={() => setPrev('speed')} id="outlined-basic" label={`Speed [${speedUnit.name}]`} variant="outlined" />
+			<TextField
+				value={endTime.toFixed(2)}
+				onChange={handleEndTimeChange}
+				onBlur={() => setPrev('time')}
+				id="outlined-basic"
+				label="End Time [min]"
+				variant="outlined"
+			/>
+			<TextField
+				value={endDistance.toFixed(2)}
+				onChange={handleEndDistanceChange}
+				onBlur={() => setPrev('distance')}
+				id="outlined-basic"
+				label={`End Distance [${distanceUnit.name}]`}
+				variant="outlined"
+			/>
+			<TextField
+				value={speed.toFixed(2)}
+				onChange={handleSpeedChange}
+				onBlur={() => setPrev('speed')}
+				id="outlined-basic"
+				label={`Speed [${speedUnit.name}]`}
+				variant="outlined"
+			/>
 		</form>
 	);
 }
@@ -130,15 +149,17 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 			const newSeries: Series = [
 				{
 					id: 'load',
-					data: [{
-						x: -0.1,
-						y: 0,
-					}],
+					data: [
+						{
+							x: -0.1,
+							y: 0,
+						},
+					],
 				},
 			];
 
 			let tim;
-			(new Promise((resolve, reject) => {
+			new Promise((resolve, reject) => {
 				tim = setTimeout(() => {
 					if (runner) {
 						runner.terminate();
@@ -169,14 +190,13 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 				// TODO Allow iterating over distance
 				const step = endTime / 50;
 				for (let time = 0; time <= endTime; time += step) {
-
 					runner.sendMessage({
 						time: time,
 						distance: params.speed * time,
 						speed: params.speed,
 					});
 				}
-			}))
+			})
 				.then(() => {
 					if (tim) {
 						clearTimeout(tim);
@@ -202,9 +222,18 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 	const body = (
 		<div style={modalStyle} className={classes.paper}>
 			<h2 id="workout-preview-modal-title">Workout Preview</h2>
-			<p id="workout-preview-modal-description">Adjust the parameters below to see how they affect to the workout.</p>
+			<p id="workout-preview-modal-description">
+				Adjust the parameters below to see how they affect to the workout.
+			</p>
 			<PreviewParams onChange={setParams} />
-			<Graph series={series} colors={graphColors} curve="stepAfter" enableArea={true} enableLegends={true} isInteractive={true} />
+			<Graph
+				series={series}
+				colors={graphColors}
+				curve="stepAfter"
+				enableArea={true}
+				enableLegends={true}
+				isInteractive={true}
+			/>
 		</div>
 	);
 

@@ -93,11 +93,7 @@ function BikeType() {
 	return (
 		<Param title="Bike Type" image="/images/cards/patent.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
-				<Select
-					value={bike.type}
-					onChange={handleChange}
-					defaultValue="road"
-				>
+				<Select value={bike.type} onChange={handleChange} defaultValue="road">
 					<MenuItem value="atb">ATB/MTB</MenuItem>
 					<MenuItem value="commuter">Commuter</MenuItem>
 					<MenuItem value="road">Road</MenuItem>

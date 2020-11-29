@@ -49,27 +49,35 @@ export const useStyles = makeStyles((theme: Theme) =>
 type DisplayValue = {
 	value: number;
 	unit: string;
-}
+};
 
 function getContentByType(classes, speedUnit, type: Measurement) {
-	const contentByType: { [K in Measurement]: [ Element | JSX.Element, (m: any) => DisplayValue, number ] } = {
+	const contentByType: { [K in Measurement]: [Element | JSX.Element, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
-			(<span><IconCadence className={classes.inlineIcon} /> Cadence</span>),
+			<span>
+				<IconCadence className={classes.inlineIcon} /> Cadence
+			</span>,
 			(m: CscMeasurements) => ({ value: m ? m.cadence : NaN, unit: 'RPM' }),
 			0,
 		],
 		cycling_power: [
-			(<span><IconPower className={classes.inlineIcon} /> Power</span>),
+			<span>
+				<IconPower className={classes.inlineIcon} /> Power
+			</span>,
 			(m: any) => ({ value: m ? m.power : NaN, unit: 'W' }),
 			0,
 		],
 		cycling_speed: [
-			(<span><IconSpeed className={classes.inlineIcon} /> Speed</span>),
+			<span>
+				<IconSpeed className={classes.inlineIcon} /> Speed
+			</span>,
 			(m: CscMeasurements) => ({ value: m && m.speed ? speedUnit.convTo(m.speed) : NaN, unit: speedUnit.name }),
 			1,
 		],
 		heart_rate: [
-			(<span><IconHeart className={classes.inlineIcon} /> Heart Rate</span>),
+			<span>
+				<IconHeart className={classes.inlineIcon} /> Heart Rate
+			</span>,
 			(m: HrmMeasurements) => ({ value: m ? m.heartRate : NaN, unit: 'BPM' }),
 			1,
 		],
@@ -78,10 +86,10 @@ function getContentByType(classes, speedUnit, type: Measurement) {
 	return contentByType[type];
 }
 
-export default function MeasurementCard({ type, ribbonColor }: { type: Measurement, ribbonColor?: string }) {
+export default function MeasurementCard({ type, ribbonColor }: { type: Measurement; ribbonColor?: string }) {
 	const classes = useStyles();
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
-	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [type])
+	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [type]);
 	const m = useMeasurementByType(type);
 	const { value, unit } = fn(m);
 	const [avg, setAvg] = useState(0);
@@ -109,41 +117,25 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 					<Typography gutterBottom variant="h5" component="h2">
 						{title}
 					</Typography>
-						<Container>
-							<table className={classes.valuesTable}>
-								<tr>
-									<th className={classes.header}>
-										Current:
-									</th>
-									<td className={classes.value}>
-										{Number.isNaN(value) ? '--' : value.toFixed(digits)}
-									</td>
-									<td className={classes.unit}>
-										{unit}
-									</td>
-								</tr>
-								<tr>
-									<th className={classes.header}>
-										Avg:
-									</th>
-									<td className={classes.value}>
-										{avg.toFixed(digits)}
-									</td>
-									<td className={classes.unit}>
-									</td>
-								</tr>
-								<tr>
-									<th className={classes.header}>
-										Max:
-									</th>
-									<td className={classes.value}>
-										{Number.isNaN(max) ? '--' : max.toFixed(digits)}
-									</td>
-									<td className={classes.unit}>
-									</td>
-								</tr>
-							</table>
-						</Container>
+					<Container>
+						<table className={classes.valuesTable}>
+							<tr>
+								<th className={classes.header}>Current:</th>
+								<td className={classes.value}>{Number.isNaN(value) ? '--' : value.toFixed(digits)}</td>
+								<td className={classes.unit}>{unit}</td>
+							</tr>
+							<tr>
+								<th className={classes.header}>Avg:</th>
+								<td className={classes.value}>{avg.toFixed(digits)}</td>
+								<td className={classes.unit}></td>
+							</tr>
+							<tr>
+								<th className={classes.header}>Max:</th>
+								<td className={classes.value}>{Number.isNaN(max) ? '--' : max.toFixed(digits)}</td>
+								<td className={classes.unit}></td>
+							</tr>
+						</table>
+					</Container>
 				</CardContent>
 			</Card>
 		</Grid>

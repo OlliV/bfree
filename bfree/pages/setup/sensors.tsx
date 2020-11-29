@@ -132,7 +132,10 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 	};
 
 	useEffect(() => {
-		navigator.bluetooth.getAvailability().then(v => setBtAvailable(v)).catch(() => {});
+		navigator.bluetooth
+			.getAvailability()
+			.then((v) => setBtAvailable(v))
+			.catch(() => {});
 	}, []);
 
 	useEffect(() => {

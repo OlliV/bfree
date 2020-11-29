@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		avatar: {
 			backgroundColor: red[500],
 		},
-	}),
+	})
 );
 
 function WorkoutCard({ workout, onChange }) {
@@ -78,15 +78,16 @@ function WorkoutCard({ workout, onChange }) {
 		onChange();
 	};
 	const handleDownload = () => {
-		const notes = workout.notes.split('\n').map((s: string) => `// ${s}`).join('\n');
+		const notes = workout.notes
+			.split('\n')
+			.map((s: string) => `// ${s}`)
+			.join('\n');
 		const blob = new Blob([notes, '\n\n', workout.script], { type: 'text/javascript' });
 
 		downloadBlob(blob, `${workout.name}.js`);
 	};
 	const handleFav = () => {
-		toggleWorkoutFav(workout.id)
-			.catch(console.error)
-			.then(onChange());
+		toggleWorkoutFav(workout.id).catch(console.error).then(onChange());
 	};
 	const handleRide = () => {
 		router.push(`/ride/record?type=workout&id=${workout.id}`);
@@ -94,50 +95,50 @@ function WorkoutCard({ workout, onChange }) {
 
 	return (
 		<Grid item xs={10}>
-			<Card variant="outlined" className={classes.cardRoot} >
-      		<CardHeader
-      		  avatar={
-      		    <Avatar aria-label="recipe" className={classes.avatar}>
-      		      R
-      		    </Avatar>
-      		  }
-      		  action={
-				  <div>
-					  <IconButton aria-label="settings" onClick={handleMenuClick}>
-						  <IconMoreVert />
-					  </IconButton>
-					  <Menu
-						  id={`edit-menu-${workout.id}`}
-						  anchorEl={anchorEl}
-						  keepMounted
-						  open={!!anchorEl}
-						  onClose={handleClose}
-					  >
-						  <MenuItem onClick={handleEdit}>Edit</MenuItem>
-						  <MenuItem onClick={handleDelete}>Delete</MenuItem>
-					  </Menu>
-				  </div>
-      		  }
-      		  title={workout.name}
-      		  subheader={getWorkoutDate(workout)}
-      		/>
-			{/* Add preview here */}
-			<CardContent>
-				<Typography variant="body2" color="textSecondary" component="p">
-					{workout.notes}
-				</Typography>
-			</CardContent>
-			<CardActions disableSpacing>
-				<IconButton aria-label="add to favorites" color={workout.fav ? "secondary" : undefined}>
-					<IconFavorite onClick={handleFav} />
-				</IconButton>
-				<IconButton aria-label="download">
-					<IconDownload onClick={handleDownload} />
-				</IconButton>
-				<IconButton aria-label="Ride">
-					<IconBike onClick={handleRide} />
-				</IconButton>
-			</CardActions>
+			<Card variant="outlined" className={classes.cardRoot}>
+				<CardHeader
+					avatar={
+						<Avatar aria-label="recipe" className={classes.avatar}>
+							R
+						</Avatar>
+					}
+					action={
+						<div>
+							<IconButton aria-label="settings" onClick={handleMenuClick}>
+								<IconMoreVert />
+							</IconButton>
+							<Menu
+								id={`edit-menu-${workout.id}`}
+								anchorEl={anchorEl}
+								keepMounted
+								open={!!anchorEl}
+								onClose={handleClose}
+							>
+								<MenuItem onClick={handleEdit}>Edit</MenuItem>
+								<MenuItem onClick={handleDelete}>Delete</MenuItem>
+							</Menu>
+						</div>
+					}
+					title={workout.name}
+					subheader={getWorkoutDate(workout)}
+				/>
+				{/* Add preview here */}
+				<CardContent>
+					<Typography variant="body2" color="textSecondary" component="p">
+						{workout.notes}
+					</Typography>
+				</CardContent>
+				<CardActions disableSpacing>
+					<IconButton aria-label="add to favorites" color={workout.fav ? 'secondary' : undefined}>
+						<IconFavorite onClick={handleFav} />
+					</IconButton>
+					<IconButton aria-label="download">
+						<IconDownload onClick={handleDownload} />
+					</IconButton>
+					<IconButton aria-label="Ride">
+						<IconBike onClick={handleRide} />
+					</IconButton>
+				</CardActions>
 			</Card>
 		</Grid>
 	);
@@ -164,11 +165,16 @@ export default function Workout() {
 				<p>Create and execute scripted workouts.</p>
 
 				<Grid container direction="column" alignItems="center" spacing={2}>
-					{
-						workouts.map((w) => (<WorkoutCard workout={w} onChange={handleChange} key={w.id} />))
-					}
+					{workouts.map((w) => (
+						<WorkoutCard workout={w} onChange={handleChange} key={w.id} />
+					))}
 				</Grid>
-				<Fab color="primary" aria-label="add" className={classes.fab} onClick={() => router.push('/ride/workout/edit')}>
+				<Fab
+					color="primary"
+					aria-label="add"
+					className={classes.fab}
+					onClick={() => router.push('/ride/workout/edit')}
+				>
 					<IconAdd />
 				</Fab>
 			</Box>

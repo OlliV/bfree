@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		distance: {
 			float: 'right',
-		}
+		},
 	})
 );
 

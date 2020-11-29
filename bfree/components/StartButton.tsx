@@ -42,11 +42,11 @@ function WarningDialog({ show, handleCancel, handleContinue }) {
 			aria-labelledby="alert-dialog-title"
 			aria-describedby="alert-dialog-description"
 		>
-			<DialogTitle id="alert-dialog-title">{"Continue without a smart trainer?"}</DialogTitle>
+			<DialogTitle id="alert-dialog-title">{'Continue without a smart trainer?'}</DialogTitle>
 			<DialogContent>
 				<DialogContentText id="alert-dialog-description">
-					There is currently no connection to a smart trainer and
-					therefore trainer control functions will not function.
+					There is currently no connection to a smart trainer and therefore trainer control functions will not
+					function.
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>

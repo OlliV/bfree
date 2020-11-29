@@ -13,10 +13,10 @@ import { useEffect } from 'react';
 import { rollingResistanceCoeff } from '../lib/virtual_params';
 
 const predefinedRollingResistances: [string, number][] = [
-	[ 'Wooden track', rollingResistanceCoeff.wood ],
-	[ 'Concrete', rollingResistanceCoeff.concrete ],
-	[ 'Asphalt road', rollingResistanceCoeff.asphalt ],
-	[ 'Rough road', rollingResistanceCoeff.rough ],
+	['Wooden track', rollingResistanceCoeff.wood],
+	['Concrete', rollingResistanceCoeff.concrete],
+	['Asphalt road', rollingResistanceCoeff.asphalt],
+	['Rough road', rollingResistanceCoeff.rough],
 ];
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,7 +36,13 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function RollingResistance({ rollingResistance, setRollingResistance }: { rollingResistance: number; setRollingResistance: (v: number) => void; }) {
+export default function RollingResistance({
+	rollingResistance,
+	setRollingResistance,
+}: {
+	rollingResistance: number;
+	setRollingResistance: (v: number) => void;
+}) {
 	const classes = useStyles();
 
 	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -66,11 +72,9 @@ export default function RollingResistance({ rollingResistance, setRollingResista
 							value={rollingResistance}
 							onChange={handleChange}
 						>
-							{
-								predefinedRollingResistances.map((r) =>
-									(<MenuItem value={r[1]}>{r[0]}</MenuItem>)
-								)
-							}
+							{predefinedRollingResistances.map((r) => (
+								<MenuItem value={r[1]}>{r[0]}</MenuItem>
+							))}
 						</Select>
 						<br />
 						<TextField

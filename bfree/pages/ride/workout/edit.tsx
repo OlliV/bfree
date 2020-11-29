@@ -66,7 +66,7 @@ export default function RideWorkoutEdit() {
 					/>
 				</Grid>
 			</Box>
-			<WorkoutPreviewModal code={workoutScript} open={showPreview} onClose={() => setShowPreview(false)}/>
+			<WorkoutPreviewModal code={workoutScript} open={showPreview} onClose={() => setShowPreview(false)} />
 		</Container>
 	);
 }

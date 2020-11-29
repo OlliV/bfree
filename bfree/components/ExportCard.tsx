@@ -6,7 +6,17 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { useSetupStyles } from './SetupComponents';
 
-export default function ExportCard({ title, children, onClickTCX, cardContentClassName }: { title: string; children: any; onClickTCX: () => void; cardContentClassName?: string }) {
+export default function ExportCard({
+	title,
+	children,
+	onClickTCX,
+	cardContentClassName,
+}: {
+	title: string;
+	children: any;
+	onClickTCX: () => void;
+	cardContentClassName?: string;
+}) {
 	const classes = useSetupStyles();
 
 	return (

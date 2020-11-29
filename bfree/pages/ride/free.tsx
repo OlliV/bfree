@@ -45,10 +45,14 @@ export default function RideFree() {
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<ResistanceMode mode={resistanceMode} setMode={setResistanceMode} />
-					{
-						resistanceMode === 'slope'
-							? (<RollingResistance rollingResistance={rollingResistance} setRollingResistance={setRollingResistance} />) : (<br />)
-					}
+					{resistanceMode === 'slope' ? (
+						<RollingResistance
+							rollingResistance={rollingResistance}
+							setRollingResistance={setRollingResistance}
+						/>
+					) : (
+						<br />
+					)}
 				</Grid>
 			</Box>
 			<Box width="50%" className={classes.startButton}>

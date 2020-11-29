@@ -153,7 +153,7 @@ export function TrainerCalibrationModal({ open, onClose }) {
 					setCalResult('FAILED');
 				}, 30000); // TODO const for this
 			};
-			cal().catch(console.error)
+			cal().catch(console.error);
 		}
 
 		return () => {
@@ -166,17 +166,16 @@ export function TrainerCalibrationModal({ open, onClose }) {
 				tim = null;
 			}
 		};
-	}, [open])
+	}, [open]);
 
 	const body = (
 		<div style={modalStyle} className={classes.paper}>
 			<h2 id="calibration-modal-title">Calibrate {(btDevice && btDevice.device.name) || 'trainer'}</h2>
 			<p id="calibration-modal-description">Start the calibration by pedaling {targetSpeed}.</p>
-			<p><b>Calibration status:</b> {calResult}</p>
-			<SensorValue
-				sensorType={'smart_trainer'}
-				sensorValue={smartTrainerStatus}
-			/>
+			<p>
+				<b>Calibration status:</b> {calResult}
+			</p>
+			<SensorValue sensorType={'smart_trainer'} sensorValue={smartTrainerStatus} />
 		</div>
 	);
 

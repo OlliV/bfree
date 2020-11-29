@@ -61,8 +61,17 @@ export default function RideResults() {
 				<p>Training ride results.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<InfoCard defaultName={title} onChangeName={handleNameChange} defaultNotes={notes} onChangeNotes={handleNotesChange} />
-					<ExportCard title="Export Data" cardContentClassName={classes.exportCard} onClickTCX={handleTCXExport}>
+					<InfoCard
+						defaultName={title}
+						onChangeName={handleNameChange}
+						defaultNotes={notes}
+						onChangeNotes={handleNotesChange}
+					/>
+					<ExportCard
+						title="Export Data"
+						cardContentClassName={classes.exportCard}
+						onClickTCX={handleTCXExport}
+					>
 						Here you can download the activity log as a file for importing to other services.
 					</ExportCard>
 				</Grid>

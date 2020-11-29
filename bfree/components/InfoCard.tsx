@@ -32,7 +32,8 @@ export default function ExportCard({ defaultName, onChangeName, defaultNotes, on
 							label="Activity Name"
 							defaultValue={defaultName}
 							onChange={onChangeName}
-							className={classes.nameField} />
+							className={classes.nameField}
+						/>
 						<TextField
 							id="act-notes"
 							label="Notes"

@@ -97,11 +97,11 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 
 	return (
 		<div className={classes.trainerStatus}>
-		<Typography className={className}>
-			{power}&nbsp;W
-			<br />
-			{speed}&nbsp;{speedUnit.name}
-		</Typography>
+			<Typography className={className}>
+				{power}&nbsp;W
+				<br />
+				{speed}&nbsp;{speedUnit.name}
+			</Typography>
 			{calRequired ? (
 				<Tooltip title={calRequired}>
 					<div className={classes.calRequired}>

@@ -29,7 +29,7 @@ import { useGlobalState } from '../../lib/global';
 const measurementColors = [
 	'#ffaeae', // heart_rate
 	'#b1e67b', // power
-	'#57baeb'  // speed
+	'#57baeb', // speed
 ];
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -70,7 +70,7 @@ function lap2Series(lap: Lap, speedUnit): Series {
 	const { startTime } = lap;
 
 	const hrData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
-		x:  p.time - startTime,
+		x: p.time - startTime,
 		y: typeof p.hr === 'number' ? p.hr : 0,
 	}));
 	const powerData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
@@ -89,7 +89,7 @@ function lap2Series(lap: Lap, speedUnit): Series {
 		},
 		{
 			id: 'Power [W]',
-			data: powerData
+			data: powerData,
 		},
 		{
 			id: `Speed [${speedUnit.name}]`,
@@ -171,7 +171,7 @@ function WorkoutDashboard() {
 	);
 }
 
-function PauseModal({ show, onClose, children }: { show: boolean; onClose: () => void, children: any }) {
+function PauseModal({ show, onClose, children }: { show: boolean; onClose: () => void; children: any }) {
 	const classes = useStyles();
 
 	return (
@@ -210,7 +210,7 @@ function getDashboardConfig(rideType: string | string[]) {
 				Dashboard: WorkoutDashboard,
 			};
 		default:
-			return { };
+			return {};
 	}
 }
 
@@ -247,8 +247,8 @@ export default function RideRecord() {
 		return () => {
 			wakeLock.release().then(() => console.log('WakeLock released'));
 			wakeLock = null;
-		}
-	}, [])
+		};
+	}, []);
 
 	const pauseRide = () => {
 		setRidePaused(Date.now());
@@ -267,7 +267,7 @@ export default function RideRecord() {
 			currentActivityLog.lapSplit(now, 'Manual');
 			setElapsedLapTime(0);
 		}
-	}
+	};
 	const endRide = () => {
 		setRidePaused(-1);
 		setRideEnded(true);

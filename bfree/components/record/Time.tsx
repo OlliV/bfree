@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		stopWatchCardTime: {
 			float: 'right',
-		}
+		},
 	})
 );
 
@@ -31,9 +31,11 @@ export default function Time() {
 						Time
 					</Typography>
 					<Container>
-						<b>Ride time:</b> <div className={classes.stopWatchCardTime}>{getElapsedTimeStr(elapsedTime)}</div>
+						<b>Ride time:</b>{' '}
+						<div className={classes.stopWatchCardTime}>{getElapsedTimeStr(elapsedTime)}</div>
 						<br />
-						<b>Lap time:</b> <div className={classes.stopWatchCardTime}>{getElapsedTimeStr(elapsedLapTime)}</div>
+						<b>Lap time:</b>{' '}
+						<div className={classes.stopWatchCardTime}>{getElapsedTimeStr(elapsedLapTime)}</div>
 					</Container>
 				</CardContent>
 			</Card>

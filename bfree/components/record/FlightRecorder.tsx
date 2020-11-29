@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { useGlobalState, getGlobalState, setGlobalState } from '../../lib/global';
 import createActivityLog from '../../lib/activity_log';
-import {getCyclingCadenceMeasurement, getCyclingPowerMeasurement, getCyclingSpeedMeasurement, getHeartRateMeasurement} from '../../lib/measurements';
+import {
+	getCyclingCadenceMeasurement,
+	getCyclingPowerMeasurement,
+	getCyclingSpeedMeasurement,
+	getHeartRateMeasurement,
+} from '../../lib/measurements';
 
 export default function FlightRecorder({ startTime }: { startTime: number }) {
 	const [samplingRate] = useGlobalState('samplingRate');
@@ -67,14 +72,16 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 					// jumping to another speed sensor source that doesn't have wheelRevs. We should
 					// probably support the whatever otherways too or implement revs for all speed
 					// sources. (mainly trainer?)
-					calculatedDistance = (speed.cumulativeWheelRevolutions - wheelRevolutionsOffset) * (bikeParams.wheelCircumference / 1000);
+					calculatedDistance =
+						(speed.cumulativeWheelRevolutions - wheelRevolutionsOffset) *
+						(bikeParams.wheelCircumference / 1000);
 				}
 
 				// TODO Do whatever filtering is required
 				const now = Date.now();
 				logger.addTrackPoint({
 					time: now,
-					dist: !speed? undefined: calculatedDistance || 0,
+					dist: !speed ? undefined : calculatedDistance || 0,
 					speed: !speed ? undefined : speed.speed,
 					cadence: !cadence ? undefined : cadence.cadence,
 					power: !power ? undefined : power.power, // TODO Power should averaged over x sec or so?
@@ -92,7 +99,11 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				// TODO Support lap distance
 				setGlobalState('rideDistance', calculatedDistance);
 
-				console.log(`tick! ride: ${(elapsedTime / 1000).toFixed(2)} lap: ${(elapsedLapTime / 1000).toFixed(2)} distance: ${calculatedDistance}`);
+				console.log(
+					`tick! ride: ${(elapsedTime / 1000).toFixed(2)} lap: ${(elapsedLapTime / 1000).toFixed(
+						2
+					)} distance: ${calculatedDistance}`
+				);
 			} catch (err) {
 				// TODO Show an error to the user
 				console.error(err);

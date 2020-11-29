@@ -7,7 +7,12 @@ import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { useEffect, useState, useMemo } from 'react';
 import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { stdBikeFrontalArea, stdBikeDragCoefficient, rollingResistanceCoeff, calcWindResistanceCoeff } from '../../lib/virtual_params';
+import {
+	stdBikeFrontalArea,
+	stdBikeDragCoefficient,
+	rollingResistanceCoeff,
+	calcWindResistanceCoeff,
+} from '../../lib/virtual_params';
 import { useGlobalState } from '../../lib/global';
 
 export type Resistance = 'basic' | 'power' | 'slope';
@@ -26,7 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const objectMap = (obj: any, fn: (v: any, k: string, i: number) => any): any => Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
+const objectMap = (obj: any, fn: (v: any, k: string, i: number) => any): any =>
+	Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
 const valuetext = (value: number) => `${value}`;
 
 const ResistanceSlider = withStyles({
@@ -70,7 +76,7 @@ const params: {
 		maxResistance: number;
 		resistanceUnit: string;
 		defaultResistance: number;
-	}
+	};
 } = {
 	basic: {
 		resistanceControlName: 'Basic Resistance',
@@ -92,9 +98,9 @@ const params: {
 		maxResistance: 40,
 		resistanceUnit: '%',
 		defaultResistance: 5,
-	}
+	},
 };
-const r2marks: { [k in Resistance]: { value: number; label: string }[]} = objectMap(params, (v) => ([
+const r2marks: { [k in Resistance]: { value: number; label: string }[] } = objectMap(params, (v) => [
 	{
 		value: 0,
 		label: `0 ${v.resistanceUnit}`,
@@ -106,18 +112,20 @@ const r2marks: { [k in Resistance]: { value: number; label: string }[]} = object
 	{
 		value: v.maxResistance,
 		label: `${v.maxResistance} ${v.resistanceUnit}`,
-	}
-]));
+	},
+]);
 
-export default function ResistanceControl({ resistance, rollingResistance }: { resistance: Resistance, rollingResistance?: number }) {
+export default function ResistanceControl({
+	resistance,
+	rollingResistance,
+}: {
+	resistance: Resistance;
+	rollingResistance?: number;
+}) {
 	const classes = useStyles();
-	const {
-		resistanceControlName,
-		resistanceStep,
-		maxResistance,
-		resistanceUnit,
-		defaultResistance,
-	} = params[resistance];
+	const { resistanceControlName, resistanceStep, maxResistance, resistanceUnit, defaultResistance } = params[
+		resistance
+	];
 	const marks = r2marks[resistance];
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
 	const [bike] = useGlobalState('bike');
@@ -125,7 +133,10 @@ export default function ResistanceControl({ resistance, rollingResistance }: { r
 	const altitude = 0;
 	const windSpeed = 0;
 	const draftingFactor = 0;
-	const windResistanceCoeff = useMemo(() => calcWindResistanceCoeff(stdBikeFrontalArea[bike.type], stdBikeDragCoefficient[bike.type], altitude), [bike])
+	const windResistanceCoeff = useMemo(
+		() => calcWindResistanceCoeff(stdBikeFrontalArea[bike.type], stdBikeDragCoefficient[bike.type], altitude),
+		[bike]
+	);
 
 	const sendResistance = async (value: number) => {
 		console.log(`Setting resistance: ${value} ${resistanceUnit}`);
@@ -169,7 +180,7 @@ export default function ResistanceControl({ resistance, rollingResistance }: { r
 			<Card variant="outlined">
 				<CardContent className={classes.resistanceControlCard}>
 					<Typography id="resistance-control" gutterBottom variant="h5" component="h2">
-					<IconResistance className={classes.inlineIcon} /> {resistanceControlName}
+						<IconResistance className={classes.inlineIcon} /> {resistanceControlName}
 					</Typography>
 					<Container>
 						<ResistanceSlider

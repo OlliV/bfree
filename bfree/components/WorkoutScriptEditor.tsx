@@ -18,7 +18,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 		},
 		actions: {
 			'& > *': {
-			boxShadow: 'none',
+				boxShadow: 'none',
 				margin: theme.spacing(1),
 			},
 			marginRight: '-2em',
@@ -33,7 +33,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 			overflow: 'scroll',
 			fontFamily: '"Fira code", "Fira Mono", monospace',
 			fontSize: 12,
-		}
+		},
 	})
 );
 
@@ -44,7 +44,7 @@ export default function WorkoutScriptEditor({
 	onCodeChange,
 	onClickSave,
 	onClickDiscard,
-	onClickPreview
+	onClickPreview,
 }: {
 	defaultName: string;
 	defaultNotes: string;
@@ -53,8 +53,7 @@ export default function WorkoutScriptEditor({
 	onClickSave: (e: any, name: string, notes: string) => void;
 	onClickDiscard: (e: any) => void;
 	onClickPreview: (e: any) => void;
-}
-) {
+}) {
 	const classes = useStyles();
 	const [name, setName] = useState(defaultName);
 	const [notes, setNotes] = useState(defaultNotes);
@@ -75,7 +74,12 @@ export default function WorkoutScriptEditor({
 						Workout Script
 					</Typography>
 					<Container className={classes.actions}>
-						<Fab size="small" color="primary" aria-label="save" onClick={(e: any) => onClickSave(e, name, notes)}>
+						<Fab
+							size="small"
+							color="primary"
+							aria-label="save"
+							onClick={(e: any) => onClickSave(e, name, notes)}
+						>
 							<IconSave />
 						</Fab>
 						<Fab size="small" color="secondary" aria-label="discard" onClick={onClickDiscard}>
@@ -92,7 +96,8 @@ export default function WorkoutScriptEditor({
 							label="Name"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
-							className={classes.nameField} />
+							className={classes.nameField}
+						/>
 						<TextField
 							id="act-notes"
 							label="Notes"
@@ -113,8 +118,8 @@ export default function WorkoutScriptEditor({
 							onChange={handleChange}
 							InputProps={{
 								classes: {
-									input: classes.editor
-								}
+									input: classes.editor,
+								},
 							}}
 						/>
 					</form>
