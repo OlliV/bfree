@@ -102,6 +102,7 @@ function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: 
 
 function Sensor(props: { children: any; sensorType: SensorType }) {
 	const pairedWithMessage = (btd) => (btd ? `Paired with\n${btd.device.name}` : 'Not configured');
+	const [btAvailable, setBtAvailable] = useState(false);
 	const [pairingRequest, setPairingRequest] = useState(false);
 	const [isPairing, setIsPairing] = useState(false);
 	// @ts-ignore
@@ -129,6 +130,10 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 			setIsPairing(false);
 		}
 	};
+
+	useEffect(() => {
+		navigator.bluetooth.getAvailability().then(v => setBtAvailable(v)).catch(() => {});
+	}, []);
 
 	useEffect(() => {
 		if (pairingRequest) {
@@ -256,7 +261,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 					)}
 				</CardContent>
 				<CardActions>
-					<ActionButton wait={isPairing} onClick={scanDevices}>
+					<ActionButton wait={isPairing} disabled={!btAvailable} onClick={scanDevices}>
 						Scan
 					</ActionButton>
 					<ActionButton wait={false} disabled={!btDevice} onClick={unpairDevice}>
