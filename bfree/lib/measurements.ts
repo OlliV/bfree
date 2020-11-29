@@ -22,7 +22,7 @@ export type TrainerMeasurements = {
 	cadence?: number;
 	accumulatedDistance?: number;
 	heartRate?: number;
-	powerLimits: 0 | 1 | 2 | 3; // 0 = at target/not set; 1 = too low power; 2 = too high power; 3 = undetermined
+	powerLimits?: 0 | 1 | 2 | 3; // 0 = at target/not set; 1 = too low power; 2 = too high power; 3 = undetermined
 	calStatus: {
 		powerCalRequired: boolean;
 		resistanceCalRequired: boolean;
