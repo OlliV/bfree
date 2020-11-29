@@ -2,10 +2,12 @@ import '../styles/globals.css'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import PropTypes from 'prop-types';
 import createCache from '@emotion/cache';
-import { CacheProvider } from '@emotion/core';
+import { CacheProvider } from '@emotion/react';
 import { useEffect } from 'react';
 
-export const cache = createCache();
+export const cache = createCache({
+	key: 'bfree',
+});
 
 function App({ Component, pageProps }) {
   useEffect(() => {
