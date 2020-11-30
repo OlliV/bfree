@@ -1,9 +1,9 @@
 🚵free
 ======
 
-Bfree is an open source smart trainer software running entirely in a web
-browser. The app is using Web Bluetooth to connect to BLE sensors and a
-trainer. Currently the only trainer vendor supported is TACX.
+Bfree is an open source smart trainer software for indoor cycling running
+entirely in a web browser. The app uses Web Bluetooth to connect to BLE
+sensors and a trainer. 
 
 No data is ever uploaded into any cloud service, and if such a features
 will be ever implemented it will be totally opt-in. All the date remains
@@ -12,6 +12,12 @@ changed to something more secure in the future.
 
 ![Free Ride mode](/doc/images/freeride.png)
 
+Supported Devices
+-----------------
+
+- Tacx smart trainers with BLE connectivity
+- Most BLE HRMs
+- Most BLE cadence and speed sensors
 
 Getting Started
 ----------------
