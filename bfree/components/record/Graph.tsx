@@ -135,7 +135,6 @@ export default function Graph({
 						}
 						useMesh={true}
 						theme={{
-							// @ts-ignore textColor is there
 							textColor: '#a1a1a1',
 						}}
 					/>
