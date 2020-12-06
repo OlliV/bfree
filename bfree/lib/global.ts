@@ -1,6 +1,6 @@
 import { createGlobalState } from 'react-hooks-global-state';
 import { BtDevice } from './ble';
-import createActivityLog from './activity_log';
+import { createActivityLog } from './activity_log';
 import { CscMeasurements, HrmMeasurements } from './measurements';
 
 export type BluetoothServiceType =
