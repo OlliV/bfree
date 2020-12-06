@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useGlobalState, getGlobalState, setGlobalState } from '../../lib/global';
-import createActivityLog from '../../lib/activity_log';
+import { createActivityLog, saveActivityLog } from '../../lib/activity_log';
 import {
 	getCyclingCadenceMeasurement,
 	getCyclingPowerMeasurement,
@@ -100,21 +100,34 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				setGlobalState('rideDistance', calculatedDistance);
 
 				console.log(
-					`tick! ride: ${(elapsedTime / 1000).toFixed(2)} lap: ${(elapsedLapTime / 1000).toFixed(
-						2
-					)} distance: ${calculatedDistance}`
+					'tick! ' +
+					`ride: ${(elapsedTime / 1000).toFixed(2)} ` +
+					`lap: ${(elapsedLapTime / 1000).toFixed(2)} ` +
+					`distance: ${calculatedDistance}`
 				);
 			} catch (err) {
 				// TODO Show an error to the user
-				console.error(err);
+				console.error('tick failed', err);
 			}
 		}, samplingRate * 1000);
+
+		// Backup the recording to local storage every minute to avoid
+		// data loss.
+		const backupIntervalId = setInterval(() => {
+			try {
+				saveActivityLog(logger)
+			} catch (err) {
+				console.error('Backup failed', err);
+			}
+		}, 60e3);
 
 		return () => {
 			// Stop recording
 			clearInterval(intervalId);
+			clearInterval(backupIntervalId);
 			// TODO Might not always be manual trigger
 			logger.endActivityLog(Date.now(), 'Manual');
+			saveActivityLog(logger);
 		};
 	}, [logger]);
 

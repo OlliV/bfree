@@ -25,8 +25,7 @@ export default function RideResults() {
 	const [notes, setNotes] = useState('This is just an example.');
 
 	const handleTCXExport = () => {
-		const date = new Date(logger.getLapStartTime(0) || Date.now()).toISOString().slice(0, 10);
-		const filename = `${date}_${title}.tcx`;
+		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${title}.tcx`;
 		const xmlLines: string[] = [];
 
 		logger.tcx(title, notes, (line: string) => xmlLines.push(line));

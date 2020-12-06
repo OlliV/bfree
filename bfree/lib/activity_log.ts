@@ -40,7 +40,9 @@ const createTcxFooter = (name: string) => `<Training VirtualPartner="false"><Pla
 
 const convTs = (ts: number) => (new Date(ts)).toISOString();
 
-export default function createActivityLog() {
+export function createActivityLog() {
+	let name: string = '';
+	let notes: string = '';
 	const laps: Lap[] = [];
 
 	const calcLapStats = (lap: Lap, time: number, triggerMethod: LapTriggerMethod) => {
@@ -88,6 +90,23 @@ export default function createActivityLog() {
 	}
 
 	return {
+		importJson: (json: string) => {
+			const parsed = JSON.parse(json);
+
+			name = parsed.name;
+			notes = parsed.notes;
+
+			laps.length = 0;
+			for (const lap of parsed.laps) {
+				laps.push(lap);
+			}
+
+			// TODO Attempt to recover incomplete log e.g. summaries missing
+		},
+		setName: (s: string) => name = s,
+		getName: () => name,
+		setNotes: (s: string) => notes = s,
+		getNotes: () => notes,
 		getLapStartTime: (lapIndex?: number): number => {
 			const lap = typeof lapIndex === 'number' ? laps[lapIndex] : laps[laps.length - 1];
 
@@ -96,6 +115,24 @@ export default function createActivityLog() {
 			}
 
 			return lap.startTime;
+		},
+		getStartTime: (): number => {
+			const lap = laps[0];
+
+			if (!lap) {
+				return null;
+			}
+
+			return lap.startTime;
+		},
+		getStartTimeISO: (): string | null => {
+			const lap = laps[0];
+
+			if (!lap) {
+				return null;
+			}
+
+			return new Date(lap.startTime).toISOString();
 		},
 		getCurrentLap: (): undefined | Lap => {
 			return laps[laps.length - 1];
@@ -159,5 +196,55 @@ export default function createActivityLog() {
 			}
 			outputCb(createTcxFooter(name));
 		},
+		json: () => JSON.stringify({ name, notes, laps }),
 	};
+}
+
+export function saveActivityLog(logger: ReturnType<typeof createActivityLog>) {
+	const date = logger.getStartTimeISO();
+
+	if (!date) {
+		throw new Error('Save failed');
+	}
+
+	localStorage.setItem(`activity_log:${date}`, logger.json());
+}
+
+export function getActivityLogs() {
+	const arr = [];
+
+	if (typeof window === 'undefined') {
+		return [];
+	}
+
+
+	for (let i in localStorage) {
+		if (i.startsWith('activity_log:')) {
+			const logger = createActivityLog();
+			logger.importJson(localStorage[i]);
+
+			const ts = logger.getStartTime();
+			const date = new Date(ts);
+			const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+			arr.push({
+				id: i,
+				name: logger.getName(),
+				notes: logger.getNotes(),
+				ts: logger.getStartTime(),
+				date: date.toLocaleDateString([navigator.languages[0], 'en-US'], dateOptions),
+				logger: logger,
+			});
+		}
+	}
+
+	return arr.sort((a, b) => b.ts - a.ts);
+}
+
+export function deleteActivityLog(id: string) {
+	if (!id.startsWith('activity_log:')) {
+		throw new Error('The given id is not an activity log id');
+	}
+
+	localStorage.removeItem(id);
 }
