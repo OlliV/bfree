@@ -92,7 +92,7 @@ export default function createActivityLog() {
 			const lap = typeof lapIndex === 'number' ? laps[lapIndex] : laps[laps.length - 1];
 
 			if (!lap) {
-				throw new Error('Invalid lap index');
+				return NaN;
 			}
 
 			return lap.startTime;

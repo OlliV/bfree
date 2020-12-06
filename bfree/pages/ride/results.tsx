@@ -25,8 +25,8 @@ export default function RideResults() {
 	const [notes, setNotes] = useState('This is just an example.');
 
 	const handleTCXExport = () => {
-		const date = new Date().toISOString().slice(0, 10); // TODO get date from the logger
-		const filename = `${date}_${title}.tcx`; // RFE Re-eval
+		const date = new Date(logger.getLapStartTime(0) || Date.now()).toISOString().slice(0, 10);
+		const filename = `${date}_${title}.tcx`;
 		const xmlLines: string[] = [];
 
 		logger.tcx(title, notes, (line: string) => xmlLines.push(line));
