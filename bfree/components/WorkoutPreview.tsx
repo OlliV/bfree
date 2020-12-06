@@ -159,7 +159,7 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 			];
 
 			let tim;
-			new Promise((resolve, reject) => {
+			new Promise<void>((resolve, reject) => {
 				tim = setTimeout(() => {
 					if (runner) {
 						runner.terminate();
