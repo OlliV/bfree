@@ -225,11 +225,6 @@ export default function RideRecord() {
 	const [rideEnded, setRideEnded] = useState(false);
 	const { title, Dashboard } = useMemo(() => getDashboardConfig(rideType), [rideType]);
 
-	if (!title) {
-		console.log('no title', title);
-		return <DefaultErrorPage statusCode={400} />;
-	}
-
 	// Prevent screen locking while recording
 	useEffect(() => {
 		let wakeLock = null;
@@ -274,25 +269,29 @@ export default function RideRecord() {
 		router.push('/ride/results');
 	};
 
-	return (
-		<Container maxWidth="md">
-			<Head title={title} />
-			<Dashboard />
-			<FlightRecorder startTime={rideStartTime} />
-			<PauseModal show={ridePaused === -1 && !rideEnded} onClose={continueRide}>
-				<p id="pause-modal-description">Tap outside of this area to start the ride.</p>
-			</PauseModal>
-			<PauseModal show={ridePaused > 0} onClose={continueRide}>
-				<p id="pause-modal-description">Tap outside of this area to continue.</p>
-				<Stopwatch className={classes.pauseStopwatch} startTime={ridePaused} />
-			</PauseModal>
-			<Box className={classes.bottomActions}>
-				<BottomNavigation showLabels>
-					<BottomNavigationAction label="Pause" icon={<IconPause />} onClick={pauseRide} />
-					<BottomNavigationAction label="Split" icon={<IconSplit />} onClick={handleSplit} />
-					<BottomNavigationAction label="End" icon={<IconStop />} onClick={endRide} />
-				</BottomNavigation>
-			</Box>
-		</Container>
-	);
+	if (!title) {
+		return <DefaultErrorPage statusCode={400} />;
+	} else {
+		return (
+			<Container maxWidth="md">
+				<Head title={title} />
+				<Dashboard />
+				<FlightRecorder startTime={rideStartTime} />
+				<PauseModal show={ridePaused === -1 && !rideEnded} onClose={continueRide}>
+					<p id="pause-modal-description">Tap outside of this area to start the ride.</p>
+				</PauseModal>
+				<PauseModal show={ridePaused > 0} onClose={continueRide}>
+					<p id="pause-modal-description">Tap outside of this area to continue.</p>
+					<Stopwatch className={classes.pauseStopwatch} startTime={ridePaused} />
+				</PauseModal>
+				<Box className={classes.bottomActions}>
+					<BottomNavigation showLabels>
+						<BottomNavigationAction label="Pause" icon={<IconPause />} onClick={pauseRide} />
+						<BottomNavigationAction label="Split" icon={<IconSplit />} onClick={handleSplit} />
+						<BottomNavigationAction label="End" icon={<IconStop />} onClick={endRide} />
+					</BottomNavigation>
+				</Box>
+			</Container>
+		);
+	}
 }
