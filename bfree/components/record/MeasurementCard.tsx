@@ -99,6 +99,13 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 	useEffect(() => {
 		const v = value;
 
+		// RFE Sometimes avg goes NaN, this should sort of fix it.
+		// Issue #49
+		if (Number.isNaN(avg)) {
+			setAvg(0);
+			setN(0);
+		}
+
 		if (!Number.isNaN(v)) {
 			setAvg(avg + (v - avg) / (n + 1));
 			setN(n + 1);
