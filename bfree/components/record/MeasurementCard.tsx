@@ -104,7 +104,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 			setN(n + 1);
 		}
 
-		if (v > max) {
+		if (Number.isNaN(max) || v > max) {
 			setMax(v);
 		}
 	}, [m]);
