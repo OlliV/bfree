@@ -29,6 +29,11 @@ import SensorValue from '../../components/SensorValue';
 import { TrainerCalibrationModal } from '../../components/TrainerControl';
 import { useGlobalState, SensorType, BluetoothServiceType, getGlobalState } from '../../lib/global';
 
+type InfoMessage = {
+	message: string;
+	severity: Color;
+};
+
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
@@ -101,15 +106,16 @@ function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: 
 }
 
 function Sensor(props: { children: any; sensorType: SensorType }) {
-	const pairedWithMessage = (btd) => (btd ? `Paired with\n${btd.device.name}` : 'Not configured');
+	const pairedWithMessage = (btd): InfoMessage => ({
+		message: btd ? `Paired with\n${btd.device.name}` : 'Not configured',
+		severity: 'info',
+	});
 	const [btAvailable, setBtAvailable] = useState(false);
 	const [pairingRequest, setPairingRequest] = useState(false);
 	const [isPairing, setIsPairing] = useState(false);
 	// @ts-ignore
-	const [severity, setSeverity]: [Color, (s: Color) => void] = useState('info');
-	// @ts-ignore
 	const [btDevice, setBtDevice] = useGlobalState(`btDevice_${props.sensorType}`);
-	let [message, setMessage] = useState(pairedWithMessage(btDevice));
+	let [info, setInfo] = useState<InfoMessage>(pairedWithMessage(btDevice));
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
 	const [smartTrainerControl, setSmartTrainerControl] = useGlobalState('smart_trainer_control');
@@ -121,7 +127,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 				btDevice.disconnect();
 			}
 			setBtDevice(null);
-			setMessage(pairedWithMessage(null));
+			setInfo(pairedWithMessage(null));
 			setBatteryLevel(-1);
 			setSensorValue(null);
 			if (props.sensorType === 'smart_trainer') {
@@ -142,14 +148,13 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 		if (pairingRequest) {
 			setPairingRequest(false);
 			setIsPairing(true);
-			setSeverity('info');
 			if (btDevice && btDevice.device.gatt.connected) {
 				unpairDevice();
 			}
 
 			(async () => {
 				try {
-					setMessage('Requesting BLE Device...');
+					setInfo({ message: 'Requesting BLE Device...', severity: 'info' });
 
 					/* Map internal sensor type to Bt service name */
 					const srvMap: { [key: string]: BluetoothServiceType } = {
@@ -197,24 +202,20 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 								console.error('Invalid sensor type');
 							}
 						} catch (err) {
-							setSeverity('error');
-							setMessage(`${err}`);
+							setInfo({ message: `${err}`, severity: 'error' });
 						}
 					});
 
 					const { device } = newBtDevice;
 					console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);
-					setSeverity('info');
-					setMessage(pairedWithMessage(newBtDevice));
+					setInfo(pairedWithMessage(newBtDevice));
 					setBtDevice(newBtDevice);
 				} catch (err) {
 					const msg = `${err}`;
 					if (msg.startsWith('NotFoundError: User cancelled')) {
-						setSeverity('warning');
-						setMessage('Pairing cancelled');
+						setInfo({ message: 'Pairing cancelled', severity: 'warning' });
 					} else {
-						setSeverity('error');
-						setMessage(`${err}`);
+						setInfo({ message: `${err}`, severity: 'error' });
 					}
 				} finally {
 					setIsPairing(false);
@@ -245,8 +246,8 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
 					</div>
 					<div className={classes.sensorStatus}>
-						<SensorStatus wait={isPairing} severity={severity}>
-							{message.split('\n').map((line, i) => (
+						<SensorStatus wait={isPairing} severity={info.severity}>
+							{info.message.split('\n').map((line, i) => (
 								<span key={i}>
 									{`${line}`}
 									<br />
