@@ -101,9 +101,9 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 
 				console.log(
 					'tick! ' +
-					`ride: ${(elapsedTime / 1000).toFixed(2)} ` +
-					`lap: ${(elapsedLapTime / 1000).toFixed(2)} ` +
-					`distance: ${calculatedDistance}`
+						`ride: ${(elapsedTime / 1000).toFixed(2)} ` +
+						`lap: ${(elapsedLapTime / 1000).toFixed(2)} ` +
+						`distance: ${calculatedDistance}`
 				);
 			} catch (err) {
 				// TODO Show an error to the user
@@ -115,7 +115,7 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 		// data loss.
 		const backupIntervalId = setInterval(() => {
 			try {
-				saveActivityLog(logger)
+				saveActivityLog(logger);
 			} catch (err) {
 				console.error('Backup failed', err);
 			}

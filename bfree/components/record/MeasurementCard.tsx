@@ -129,7 +129,9 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 							<tbody>
 								<tr>
 									<th className={classes.header}>Current:</th>
-									<td className={classes.value}>{Number.isNaN(value) ? '--' : value.toFixed(digits)}</td>
+									<td className={classes.value}>
+										{Number.isNaN(value) ? '--' : value.toFixed(digits)}
+									</td>
 									<td className={classes.unit}>{unit}</td>
 								</tr>
 								<tr>
