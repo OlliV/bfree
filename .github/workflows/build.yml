@@ -17,10 +17,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, and build
+    - name: yarn install, and build
       run: |
         cd bfree
-        npm install
-        npm run build
+        yarn install
+        yarn build
       env:
         CI: true
