@@ -472,19 +472,6 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			};
 		} else if (pageNumber == 18) { // Metabolic rate
 			// TODO Check if TACX has this
-		} else if (pageNumber === 21) { // Stationary specific page
-			const cadence = value.getUint8(offset + 4);
-			const instantPower = value.getUint8(offset + 5) | (value.getUint8(offset + 4) << 8);
-			const fecState = value.getUint8(offset + 7) >> 4;
-
-			pageData = {
-				cadence,
-				instantPower,
-				fecState,
-			};
-
-			result.cadence = cadence;
-			result.power = instantPower;
 		} else if (pageNumber === 25) { // Trainer specific page
 			const updateEventCount = value.getUint8(offset + 1);
 			const instantaneousCadence = value.getUint8(offset + 2);
