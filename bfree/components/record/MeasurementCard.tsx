@@ -101,17 +101,15 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 
 		// RFE Sometimes avg goes NaN, this should sort of fix it.
 		// Issue #49
-		if (Number.isNaN(avg)) {
+		if (Number.isNaN(avg) || avg === Infinity) {
 			setAvg(0);
 			setN(0);
-		}
-
-		if (!Number.isNaN(v)) {
+		} else if (!Number.isNaN(v)) {
 			setAvg(avg + (v - avg) / (n + 1));
 			setN(n + 1);
 		}
 
-		if (Number.isNaN(max) || v > max) {
+		if (Number.isNaN(max) || (v > max && v < Infinity)) {
 			setMax(v);
 		}
 	}, [m]);
