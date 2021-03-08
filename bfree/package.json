@@ -16,7 +16,7 @@
     "@material-ui/core": "5.0.0-alpha.14",
     "@material-ui/icons": "4.11.2",
     "@nivo/line": "0.63.1",
-    "next": "10.0.4",
+    "next": "10.0.8",
     "prop-types": "15.7.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
