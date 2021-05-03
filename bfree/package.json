@@ -23,7 +23,7 @@
     "react-hooks-global-state": "1.0.1"
   },
   "devDependencies": {
-    "@types/node": "14.14.21",
+    "@types/node": "15.0.1",
     "@types/react": "16.9.56",
     "@types/web-bluetooth": "0.0.9",
     "prettier": "2.2.1",
