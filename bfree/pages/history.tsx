@@ -121,8 +121,8 @@ function RideCard({ log, onChange }) {
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing>
-					<IconButton aria-label="download">
-						<IconDownload onClick={handleDownload} />
+					<IconButton aria-label="download" onClick={handleDownload}>
+						<IconDownload />
 					</IconButton>
 				</CardActions>
 			</Card>
