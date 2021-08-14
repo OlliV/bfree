@@ -123,9 +123,8 @@ export default function ResistanceControl({
 	rollingResistance?: number;
 }) {
 	const classes = useStyles();
-	const { resistanceControlName, resistanceStep, maxResistance, resistanceUnit, defaultResistance } = params[
-		resistance
-	];
+	const { resistanceControlName, resistanceStep, maxResistance, resistanceUnit, defaultResistance } =
+		params[resistance];
 	const marks = r2marks[resistance];
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
 	const [bike] = useGlobalState('bike');
