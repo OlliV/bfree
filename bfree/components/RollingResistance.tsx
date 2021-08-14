@@ -73,7 +73,7 @@ export default function RollingResistance({
 							onChange={handleChange}
 						>
 							{predefinedRollingResistances.map((r) => (
-								<MenuItem value={r[1]}>{r[0]}</MenuItem>
+								<MenuItem key={r[0].toLowerCase().replace(/\s/g, '-')} value={r[1]}>{r[0]}</MenuItem>
 							))}
 						</Select>
 						<br />

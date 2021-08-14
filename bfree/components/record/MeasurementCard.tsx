@@ -52,6 +52,7 @@ type DisplayValue = {
 };
 
 function getContentByType(classes, speedUnit, type: Measurement) {
+	/* eslint-disable react/jsx-key */
 	const contentByType: { [K in Measurement]: [Element | JSX.Element, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
 			<span>
@@ -82,6 +83,7 @@ function getContentByType(classes, speedUnit, type: Measurement) {
 			1,
 		],
 	};
+	/* eslint-enable react/jsx-key */
 
 	return contentByType[type];
 }

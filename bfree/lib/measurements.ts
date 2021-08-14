@@ -98,14 +98,19 @@ export function getHeartRateMeasurement(): HrmMeasurements | null {
 }
 
 export function useMeasurementByType(type: Measurement) {
+	// TODO Try to avoid disabling that eslint rule
 	switch (type) {
 		case 'cycling_cadence':
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 			return useCyclingCadenceMeasurement();
 		case 'cycling_power':
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 			return useCyclingPowerMeasurement();
 		case 'cycling_speed':
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 			return useCyclingSpeedMeasurement();
 		case 'heart_rate':
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 			return useHeartRateMeasurement();
 	}
 }
