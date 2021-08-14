@@ -75,7 +75,6 @@ function RideCard({ log, onChange }) {
 	};
 	const handleDownload = () => {
 		const { logger } = log;
-		console.log(logger)
 		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${log.name}.tcx`;
 		const xmlLines: string[] = [];
 

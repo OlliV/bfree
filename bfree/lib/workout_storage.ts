@@ -36,9 +36,13 @@ export function getWorkouts(): WorkoutScript[] {
 
 export function getWorkoutDate(workout: WorkoutScript) {
 	const date = new Date(workout.ts);
-	const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-	return date.toLocaleDateString([navigator.languages[0], 'en-US'], options);
+	return date.toLocaleDateString([navigator.languages[0], 'en-US'], {
+		weekday: 'long',
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
 }
 
 export async function saveWorkout(name: string, notes: string, script: string, ts?: number) {

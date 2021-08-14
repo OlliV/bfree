@@ -223,16 +223,19 @@ export function getActivityLogs() {
 			const logger = createActivityLog();
 			logger.importJson(localStorage[i]);
 
-			const ts = logger.getStartTime();
-			const date = new Date(ts);
-			const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			const date = new Date(logger.getStartTime());
 
 			arr.push({
 				id: i,
 				name: logger.getName(),
 				notes: logger.getNotes(),
 				ts: logger.getStartTime(),
-				date: date.toLocaleDateString([navigator.languages[0], 'en-US'], dateOptions),
+				date: date.toLocaleDateString([navigator.languages[0], 'en-US'], {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				}),
 				logger: logger,
 			});
 		}
