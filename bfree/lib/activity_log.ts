@@ -175,15 +175,15 @@ export function createActivityLog() {
 				outputCb('<Track>\n');
 				lap.trackPoints.forEach((point) => {
 					outputCb(`<Trackpoint><Time>${convTs(point.time)}</Time>\n`);
-					if (typeof point.position === 'number') outputCb(`<Position><LatitudeDegrees>${point.position.lat}</LatitudeDegrees><LongitudeDegrees>${point.position.lon}</LongitudeDegrees></Position>\n`);
+					if (point.position) outputCb(`<Position><LatitudeDegrees>${point.position.lat}</LatitudeDegrees><LongitudeDegrees>${point.position.lon}</LongitudeDegrees></Position>\n`);
 					if (typeof point.alt === 'number') outputCb(`<AltitudeMeters>${point.alt.toFixed(3)}</AltitudeMeters>\n`);
 					if (typeof point.dist === 'number') outputCb(`<DistanceMeters>${point.dist.toFixed(1)}</DistanceMeters>\n`);
 					if (typeof point.hr === 'number') outputCb(`<HeartRateBpm><Value>${point.hr.toFixed(0)}</Value></HeartRateBpm>\n`);
 					if (typeof point.cadence === 'number') outputCb(`<Cadence>${point.cadence.toFixed(0)}</Cadence>\n`);
-					if (typeof point.speed === 'number' || point.power === 'number') {
+					if (typeof point.speed === 'number' || typeof point.power === 'number') {
 						outputCb(`<Extensions><ns2:TPX>\n`);
-						if (point.speed === 'number') outputCb(`<ns2:Speed>${point.speed}</ns2:Speed>\n`);
-						if (point.power === 'number') outputCb(`<ns2:Watts>${point.power}</ns2:Watts>\n`);
+						if (typeof point.speed === 'number') outputCb(`<ns2:Speed>${point.speed}</ns2:Speed>\n`);
+						if (typeof point.power === 'number') outputCb(`<ns2:Watts>${point.power}</ns2:Watts>\n`);
 						outputCb(`</ns2:TPX></Extensions>\n`);
 					}
 					outputCb(`</Trackpoint>\n`);
