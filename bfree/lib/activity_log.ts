@@ -165,25 +165,25 @@ export function createActivityLog() {
 				outputCb(`<TotalTimeSeconds>${lap.totalTime}</TotalTimeSeconds>\n`);
 				outputCb(`<DistanceMeters>${lap.distanceMeters || 0}</DistanceMeters>\n`);
 				outputCb(`<MaximumSpeed>${lap.maxSpeed || 0}</MaximumSpeed>\n`);
-				if (lap.calories !== undefined) outputCb(`<Calories>${lap.calories}</Calories>\n`);
-				if (lap.avgHR !== undefined) outputCb(`<AverageHeartRateBpm><Value>${lap.avgHR.toFixed(0)}</Value></AverageHeartRateBpm>\n`);
-				if (lap.maxHR !== undefined) outputCb(`<MaximumHeartRateBpm><Value>${lap.maxHR.toFixed(0)}</Value></MaximumHeartRateBpm>\n`);
+				if (typeof lap.calories === 'number') outputCb(`<Calories>${lap.calories}</Calories>\n`);
+				if (typeof lap.avgHR === 'number') outputCb(`<AverageHeartRateBpm><Value>${lap.avgHR.toFixed(0)}</Value></AverageHeartRateBpm>\n`);
+				if (typeof lap.maxHR === 'number') outputCb(`<MaximumHeartRateBpm><Value>${lap.maxHR.toFixed(0)}</Value></MaximumHeartRateBpm>\n`);
 				outputCb(`<Intensity>${lap.intensity}</Intensity>\n`);
-				if (lap.cadence !== undefined) outputCb(`<Cadence>${lap.cadence}</Cadence>\n`);
+				if (typeof lap.cadence === 'number') outputCb(`<Cadence>${lap.cadence}</Cadence>\n`);
 				outputCb(`<TriggerMethod>${lap.triggerMethod || 'Manual'}</TriggerMethod>\n`);
 
 				outputCb('<Track>\n');
 				lap.trackPoints.forEach((point) => {
 					outputCb(`<Trackpoint><Time>${convTs(point.time)}</Time>\n`);
-					if (point.position !== undefined) outputCb(`<Position><LatitudeDegrees>${point.position.lat}</LatitudeDegrees><LongitudeDegrees>${point.position.lon}</LongitudeDegrees></Position>\n`);
-					if (point.alt !== undefined) outputCb(`<AltitudeMeters>${point.alt.toFixed(3)}</AltitudeMeters>\n`);
-					if (point.dist !== undefined) outputCb(`<DistanceMeters>${point.dist.toFixed(1)}</DistanceMeters>\n`);
-					if (point.hr !== undefined) outputCb(`<HeartRateBpm><Value>${point.hr.toFixed(0)}</Value></HeartRateBpm>\n`);
-					if (point.cadence !== undefined) outputCb(`<Cadence>${point.cadence.toFixed(0)}</Cadence>\n`);
-					if (point.speed !== undefined || point.power !== undefined) {
+					if (typeof point.position === 'number') outputCb(`<Position><LatitudeDegrees>${point.position.lat}</LatitudeDegrees><LongitudeDegrees>${point.position.lon}</LongitudeDegrees></Position>\n`);
+					if (typeof point.alt === 'number') outputCb(`<AltitudeMeters>${point.alt.toFixed(3)}</AltitudeMeters>\n`);
+					if (typeof point.dist === 'number') outputCb(`<DistanceMeters>${point.dist.toFixed(1)}</DistanceMeters>\n`);
+					if (typeof point.hr === 'number') outputCb(`<HeartRateBpm><Value>${point.hr.toFixed(0)}</Value></HeartRateBpm>\n`);
+					if (typeof point.cadence === 'number') outputCb(`<Cadence>${point.cadence.toFixed(0)}</Cadence>\n`);
+					if (typeof point.speed === 'number' || point.power === 'number') {
 						outputCb(`<Extensions><ns2:TPX>\n`);
-						if (point.speed !== undefined) outputCb(`<ns2:Speed>${point.speed}</ns2:Speed>\n`);
-						if (point.power !== undefined) outputCb(`<ns2:Watts>${point.power}</ns2:Watts>\n`);
+						if (point.speed === 'number') outputCb(`<ns2:Speed>${point.speed}</ns2:Speed>\n`);
+						if (point.power === 'number') outputCb(`<ns2:Watts>${point.power}</ns2:Watts>\n`);
 						outputCb(`</ns2:TPX></Extensions>\n`);
 					}
 					outputCb(`</Trackpoint>\n`);

@@ -74,13 +74,15 @@ function RideCard({ log, onChange }) {
 		onChange();
 	};
 	const handleDownload = () => {
-		const notes = log.notes
-			.split('\n')
-			.map((s: string) => `// ${s}`)
-			.join('\n');
-		//const blob = new Blob([notes, '\n\n', workout.script], { type: 'text/javascript' });
+		const { logger } = log;
+		console.log(logger)
+		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${log.name}.tcx`;
+		const xmlLines: string[] = [];
 
-		//downloadBlob(blob, `${workout.name}.js`);
+		logger.tcx(log.name, log.notes, (line: string) => xmlLines.push(line));
+		const blob = new Blob(xmlLines, { type: 'application/vnd.garmin.tcx+xml' });
+
+		downloadBlob(blob, filename);
 	};
 
 	return (
