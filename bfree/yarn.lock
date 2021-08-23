@@ -577,10 +577,10 @@
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.2.tgz#1a62f89525723dde24ba1b01b092bf5df8ad4d39"
   integrity sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==
 
-"@types/web-bluetooth@0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.10.tgz#965a5938d99ed9bfe165bfe320b7d1d97c3a15bd"
-  integrity sha512-PcRei374vqqXZyPh9OhrrTzfufFDkrjR09VFXve6F42poTuImOHt5fymh4Q48FSo5GgoCFf68dkvDamd9sXgGA==
+"@types/web-bluetooth@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.11.tgz#2dc7ae7a809b70723e064b58245103028d5ea616"
+  integrity sha512-2CF3Kk2Rcvg/c2QzO7mXUhY7eL9CC3aKzrF+dNWNmp7Q8bmlvjmUM1nFPMSngawdJ+CcIdu8eJlQRytBgAZR9w==
 
 "@typescript-eslint/parser@^4.20.0":
   version "4.29.1"
