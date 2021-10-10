@@ -25,6 +25,8 @@ export default function RideWorkoutEdit() {
 	const [showPreview, setShowPreview] = useState(false);
 
 	useEffect(() => {
+		if (!router.isReady) return;
+
 		if (typeof id === 'string') {
 			const w = readWorkout(id);
 			if (!w) {
@@ -36,7 +38,7 @@ export default function RideWorkoutEdit() {
 				console.log(`Loaded workout script: ${id}`);
 			}
 		}
-	}, [id]);
+	}, [router.isReady, id]);
 
 	const onClickSave = (e: any, name: string, notes: string) => {
 		saveWorkout(name, notes, workoutScript)
