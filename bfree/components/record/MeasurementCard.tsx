@@ -91,30 +91,34 @@ function getContentByType(classes, speedUnit: UnitConv[""], type: Measurement) {
 export default function MeasurementCard({ type, ribbonColor }: { type: Measurement; ribbonColor?: string }) {
 	const classes = useStyles();
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
-	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [type]);
+	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [type, speedUnit]);
 	const m = useMeasurementByType(type);
 	const { value, unit } = fn(m);
-	const [avg, setAvg] = useState(0);
-	const [max, setMax] = useState(NaN);
-	const [n, setN] = useState(0);
+	const [{ avg, max }, setAgg] = useState({ avg: 0, max: NaN, n: 0 });
 
 	useEffect(() => {
-		const v = value;
+		const { value: v } = fn(m);
 
-		// RFE Sometimes avg goes NaN, this should sort of fix it.
-		// Issue #49
-		if (Number.isNaN(avg) || avg === Infinity) {
-			setAvg(0);
-			setN(0);
-		} else if (!Number.isNaN(v)) {
-			setAvg(avg + (v - avg) / (n + 1));
-			setN(n + 1);
-		}
+		setAgg((prev) => {
+			const newValue = { ...prev };
 
-		if (Number.isNaN(max) || (v > max && v < Infinity)) {
-			setMax(v);
-		}
-	}, [m]);
+			// RFE Sometimes avg goes NaN, this should sort of fix it.
+			// Issue #49
+			if (Number.isNaN(prev.avg) || prev.avg === Infinity) {
+				newValue.avg = 0;
+				newValue.n = 0;
+			} else if (!Number.isNaN(v)) {
+				newValue.avg = prev.avg + (v - prev.avg) / (prev.n + 1),
+				newValue.n++;
+			}
+
+			if (Number.isNaN(prev.max) || (v > prev.max && v < Infinity)) {
+				newValue.max = v;
+			}
+
+			return newValue;
+		});
+	}, [fn, m, setAgg]);
 
 	return (
 		<Grid item xs={4}>
