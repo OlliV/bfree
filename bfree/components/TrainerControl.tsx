@@ -139,7 +139,7 @@ export function TrainerCalibrationModal({ open, onClose }) {
 		};
 
 		if (open && smartTrainerControl) {
-			console.log(`Sending a calibration request to ${btDevice && btDevice.device.name}`);
+			console.log(`Sending a calibration request to the trainer`);
 			setCalResult('PENDING');
 			const cal = async () => {
 				await smartTrainerControl.sendCalibrationReq();
