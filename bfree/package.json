@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next dev",
     "build": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next build",
+    "clean": "rm -rf .next",
     "start": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next start",
     "prettier": "prettier --write './{pages,components}/**/*.{ts,tsx}'",
     "lint": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next lint"
@@ -16,7 +17,7 @@
     "@emotion/styled": "11.3.0",
     "@material-ui/core": "5.0.0-alpha.14",
     "@material-ui/icons": "4.11.2",
-    "@nivo/line": "0.63.1",
+    "@nivo/line": "0.74.0",
     "next": "11.1.0",
     "prop-types": "15.7.2",
     "react": "17.0.2",
