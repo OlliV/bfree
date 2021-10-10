@@ -25,12 +25,12 @@
     "react-hooks-global-state": "1.0.2"
   },
   "devDependencies": {
-    "@types/node": "16.6.1",
+    "@types/node": "16.10.3",
     "@types/react": "17.0.18",
     "@types/web-bluetooth": "0.0.10",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.0",
-    "prettier": "2.3.2",
+    "prettier": "2.4.1",
     "typescript": "4.3.5"
   }
 }
