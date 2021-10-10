@@ -38,7 +38,7 @@ export default function RideWorkoutEdit() {
 				console.log(`Loaded workout script: ${id}`);
 			}
 		}
-	}, [router.isReady, id]);
+	}, [router.isReady, id]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const onClickSave = (e: any, name: string, notes: string) => {
 		saveWorkout(name, notes, workoutScript)

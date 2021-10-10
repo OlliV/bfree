@@ -49,7 +49,7 @@ export default function RideResults() {
 			setGlobalState('elapsedLapTime', 0);
 			setGlobalState('rideDistance', 0);
 		};
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// TODO Show an error if logger is missing
 	return (
