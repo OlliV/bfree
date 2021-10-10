@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next dev",
     "build": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next build",
+    "clean": "rm -rf .next",
     "start": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next start",
     "prettier": "prettier --write './{pages,components}/**/*.{ts,tsx}'",
     "lint": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next lint"
@@ -24,7 +25,7 @@
     "react-hooks-global-state": "1.0.2"
   },
   "devDependencies": {
-    "@types/node": "16.6.1",
+    "@types/node": "16.10.3",
     "@types/react": "17.0.18",
     "@types/web-bluetooth": "0.0.10",
     "eslint": "7.32.0",
