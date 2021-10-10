@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useState, useEffect, useMemo } from 'react';
-import { speedUnitConv } from '../../lib/units';
+import { UnitConv, speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
 
 export const useStyles = makeStyles((theme: Theme) =>
@@ -51,7 +51,7 @@ type DisplayValue = {
 	unit: string;
 };
 
-function getContentByType(classes, speedUnit, type: Measurement) {
+function getContentByType(classes, speedUnit: UnitConv[""], type: Measurement) {
 	/* eslint-disable react/jsx-key */
 	const contentByType: { [K in Measurement]: [Element | JSX.Element, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
