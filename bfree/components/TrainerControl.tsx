@@ -170,7 +170,7 @@ export function TrainerCalibrationModal({ open, onClose }) {
 		},
 		// We don't actually care if smartTrainerControl changes because the user
 		// in that case the user should just reopen the modal.
-		[open] // eslint-ignore-line react-hooks/exhaustive-deps
+		[open] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	const body = (

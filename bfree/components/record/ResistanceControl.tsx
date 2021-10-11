@@ -168,7 +168,7 @@ export default function ResistanceControl({
 			// Reset resistance to zero
 			sendResistance(0).catch(console.error);
 		};
-	}, []); // eslint-ignore-line react-hooks/exhaustive-deps
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const handleChange = (_ev: never, value: number) => {
 		setEnabled(false);

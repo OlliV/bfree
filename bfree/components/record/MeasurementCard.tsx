@@ -108,7 +108,8 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 				newValue.avg = 0;
 				newValue.n = 0;
 			} else if (!Number.isNaN(v)) {
-				(newValue.avg = prev.avg + (v - prev.avg) / (prev.n + 1)), newValue.n++;
+				newValue.avg = prev.avg + (v - prev.avg) / (prev.n + 1);
+				newValue.n++;
 			}
 
 			if (Number.isNaN(prev.max) || (v > prev.max && v < Infinity)) {
