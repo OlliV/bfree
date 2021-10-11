@@ -82,7 +82,7 @@ export default function RollingResistance({
 							error={rollingResistance <= 0}
 							onChange={handleChange}
 							id="outlined-basic"
-							label="fff"
+							label="Coefficient"
 							variant="outlined"
 						/>
 					</FormControl>
