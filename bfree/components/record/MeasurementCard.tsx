@@ -91,7 +91,7 @@ function getContentByType(classes, speedUnit: UnitConv[""], type: Measurement) {
 export default function MeasurementCard({ type, ribbonColor }: { type: Measurement; ribbonColor?: string }) {
 	const classes = useStyles();
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
-	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [type, speedUnit]);
+	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [classes, type, speedUnit]);
 	const m = useMeasurementByType(type);
 	const { value, unit } = fn(m);
 	const [{ avg, max }, setAgg] = useState({ avg: 0, max: NaN, n: 0 });
