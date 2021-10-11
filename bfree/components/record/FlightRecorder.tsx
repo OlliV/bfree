@@ -40,6 +40,7 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 
 			let wheelRevolutionsOffset: number;
 			let calculatedDistance: number;
+			let altitude: number = 0;
 			const intervalId = setInterval(() => {
 				try {
 					if (getGlobalState('ridePaused') != 0) {
@@ -56,6 +57,7 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 					const power = getCyclingPowerMeasurement();
 					const speed = getCyclingSpeedMeasurement();
 					const heartRate = getHeartRateMeasurement();
+					const { slope } = getGlobalState('control_params');
 					//const smartTrainer = getGlobalState('smart_trainer');
 
 					if (speed && speed.cumulativeWheelRevolutions) {
@@ -71,17 +73,27 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 						//
 						// TODO As ble_cscp is state preserving, this is likely happening because we are
 						// jumping to another speed sensor source that doesn't have wheelRevs. We should
-						// probably support the whatever otherways too or implement revs for all speed
+						// probably support the whatever other ways too or implement revs for all speed
 						// sources. (mainly trainer?)
+						const prevCalculatedDistance = calculatedDistance;
 						calculatedDistance =
 							(speed.cumulativeWheelRevolutions - wheelRevolutionsOffset) *
 							(bikeParams.wheelCircumference / 1000);
+
+						// Calculate the elevation difference.
+						if (slope !== undefined) {
+							const distDiff = calculatedDistance - prevCalculatedDistance;
+							const elevDiff = (slope / 100) * distDiff;
+							altitude += elevDiff;
+						}
 					}
+					const loggedAlt = slope === undefined ? undefined : altitude;
 
 					// TODO Do whatever filtering is required
 					const now = Date.now();
 					logger.addTrackPoint({
 						time: now,
+						alt: loggedAlt,
 						dist: !speed ? undefined : calculatedDistance || 0,
 						speed: !speed ? undefined : speed.speed,
 						cadence: !cadence ? undefined : cadence.cadence,
@@ -104,7 +116,8 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 						'tick! ' +
 							`ride: ${(elapsedTime / 1000).toFixed(2)} ` +
 							`lap: ${(elapsedLapTime / 1000).toFixed(2)} ` +
-							`distance: ${calculatedDistance}`
+							`distance: ${calculatedDistance} ` +
+							`alt: ${loggedAlt}`
 					);
 				} catch (err) {
 					// TODO Show an error to the user

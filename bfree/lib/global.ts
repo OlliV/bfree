@@ -21,6 +21,11 @@ export type SensorSourceType = {
 	name: string;
 }
 
+// All the control params that we need to know globally for logging.
+export type ControlParams = {
+	slope?: number;
+}
+
 export const cadenceSourceTypes: SensorSourceType[] = [
 	{
 		id: 'cycling_cadence',
@@ -106,6 +111,7 @@ export type GlobalState = {
 	heart_rate: null | HrmMeasurements;
 	smart_trainer: any;
 	// Control
+	control_params: ControlParams;
 	smart_trainer_control: any;
 	// Recording state
 	currentActivityLog: null | ReturnType<typeof createActivityLog>;
@@ -152,6 +158,7 @@ const initialState: GlobalState = {
 	heart_rate: null,
 	smart_trainer: null,
 	// Control
+	control_params: {},
 	smart_trainer_control: null,
 	// Recording state
 	currentActivityLog: null,

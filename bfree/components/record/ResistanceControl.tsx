@@ -13,7 +13,7 @@ import {
 	rollingResistanceCoeff,
 	calcWindResistanceCoeff,
 } from '../../lib/virtual_params';
-import { useGlobalState } from '../../lib/global';
+import { useGlobalState, ControlParams } from '../../lib/global';
 
 export type Resistance = 'basic' | 'power' | 'slope';
 
@@ -127,11 +127,12 @@ export default function ResistanceControl({
 		params[resistance];
 	const marks = r2marks[resistance];
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
+	const [_controlParams, setControlParams] = useGlobalState('control_params');
 	const [bike] = useGlobalState('bike');
 	const [enabled, setEnabled] = useState(false);
 	const altitude = 0;
-	const windSpeed = 0;
-	const draftingFactor = 0;
+	const windSpeed = 0; // head/tail component.
+	const draftingFactor = 1.0; // 0.0 would be no air resistance simulation, where as 1.0 means no drafting effect.
 	const windResistanceCoeff = useMemo(
 		() => calcWindResistanceCoeff(stdBikeFrontalArea[bike.type], stdBikeDragCoefficient[bike.type], altitude),
 		[bike]
@@ -150,6 +151,7 @@ export default function ResistanceControl({
 				case 'slope':
 					await smartTrainerControl.sendWindResistance(windResistanceCoeff, windSpeed, draftingFactor);
 					await smartTrainerControl.sendSlope(value, rollingResistance || rollingResistanceCoeff.asphalt);
+					setControlParams((prev: ControlParams) => ({ ...prev, slope: value }));
 					break;
 			}
 		}
@@ -165,8 +167,15 @@ export default function ResistanceControl({
 			.then(() => setEnabled(true));
 
 		return () => {
-			// Reset resistance to zero
+			// Reset resistance to zero.
 			sendResistance(0).catch(console.error);
+			setControlParams((prev: ControlParams) => {
+				const newParams = { ...prev };
+
+				delete newParams.slope;
+
+				return newParams;
+			});
 		};
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
