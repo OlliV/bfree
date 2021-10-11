@@ -1,38 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getElapsedTimeStr } from '../../lib/format';
 
 export default function Stopwatch({
 	startTime,
-	isStopped,
+	isPaused,
 	className,
 }: {
 	startTime: number;
-	isStopped?: boolean;
+	isPaused?: boolean;
 	className?: any;
 }) {
 	const [time, setTime] = useState(() => Date.now() - startTime);
-	const [reset, setReset] = useState(false);
-
-	// Reset time if startTime changes
-	useEffect(() => {
-		setReset(true);
-	}, [startTime]);
+	const intervalId = useRef(null);
 
 	useEffect(() => {
-		if (isStopped) {
+		if (!isPaused) {
+			setTime((_prev) => Date.now() - startTime);
+		}
+	}, [startTime, isPaused])
+
+	useEffect(() => {
+		if (intervalId.current) {
+			clearInterval(intervalId.current);
+			intervalId.current = null;
+		}
+
+		if (isPaused) {
 			return;
 		}
 
 		let offset = Date.now();
-		let t = time;
-
-		if (reset) {
-			t = 0;
-			setTime(t);
-			setReset(false);
-		}
-
-		const intervalId = setInterval(() => {
+		intervalId.current = setInterval(() => {
 			const delta = () => {
 				const now = Date.now();
 				const d = now - offset;
@@ -41,14 +39,13 @@ export default function Stopwatch({
 				return d;
 			};
 
-			t += delta();
-			setTime(t);
+			setTime((prevTime) => prevTime + delta());
 		}, 50);
 
 		return () => {
-			clearInterval(intervalId);
+			clearInterval(intervalId.current);
 		};
-	}, [startTime, isStopped, reset]);
+	}, [isPaused]);
 
 	return <div className={className}>{getElapsedTimeStr(time)}</div>;
 }

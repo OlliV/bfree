@@ -282,7 +282,7 @@ export default function RideRecord() {
 				</PauseModal>
 				<PauseModal show={ridePaused > 0} onClose={continueRide}>
 					<p id="pause-modal-description">Tap outside of this area to continue.</p>
-					<Stopwatch className={classes.pauseStopwatch} startTime={ridePaused} />
+					<Stopwatch className={classes.pauseStopwatch} startTime={ridePaused} isPaused={ridePaused === 0 || ridePaused === -1} />
 				</PauseModal>
 				<Box className={classes.bottomActions}>
 					<BottomNavigation showLabels>
