@@ -9,7 +9,7 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { rollingResistanceCoeff } from '../lib/virtual_params';
 
 const predefinedRollingResistances: [string, number][] = [
@@ -41,7 +41,7 @@ export default function RollingResistance({
 	setRollingResistance,
 }: {
 	rollingResistance: number;
-	setRollingResistance: (v: number) => void;
+	setRollingResistance: ReturnType<typeof useState>[1];
 }) {
 	const classes = useStyles();
 
@@ -51,10 +51,8 @@ export default function RollingResistance({
 	};
 
 	useEffect(() => {
-		if (Number.isNaN(rollingResistance)) {
-			setRollingResistance(predefinedRollingResistances[2][1]);
-		}
-	}, []);
+		setRollingResistance((prev) => Number.isNaN(prev) ? predefinedRollingResistances[2][1] : prev);
+	}, [setRollingResistance]);
 
 	return (
 		<Grid item xs={4}>
@@ -69,7 +67,7 @@ export default function RollingResistance({
 						<Select
 							labelId="resistance-mode-select-label"
 							id="resistance-mode-select"
-							value={rollingResistance}
+							value={rollingResistance || 0}
 							onChange={handleChange}
 						>
 							{predefinedRollingResistances.map((r) => (
@@ -78,7 +76,7 @@ export default function RollingResistance({
 						</Select>
 						<br />
 						<TextField
-							value={rollingResistance}
+							value={rollingResistance || 0}
 							error={rollingResistance <= 0}
 							onChange={handleChange}
 							id="outlined-basic"
