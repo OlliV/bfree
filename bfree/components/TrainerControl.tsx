@@ -119,57 +119,59 @@ export function TrainerCalibrationModal({ open, onClose }) {
 		onClose();
 	};
 
-	useEffect(() => {
-		let tim;
-		const statusListener = (data) => {
-			console.log(data);
-			if (data.targetSpeed) {
-				// TODO How to mi/h
-				setTargetSpeed(`around ${data.targetSpeed.toFixed(0)} km/h`);
-			}
-			// TODO We should read spinDownCalRes here!!
-			// data.spinDownCalRes true/false === passed/failed if req was received
-			// spinDownCalStat == pending
-			// use  speedCond, // 0 = NA; 1 = too low; 2 = ok
-			if (data.spindownTimeRes > 0) {
-				setCalResult('PASSED');
-				clearTimeout(tim);
-			}
-			// TODO When fail?
-		};
-
-		if (open && smartTrainerControl) {
-			console.log(`Sending a calibration request to the trainer`);
-			setCalResult('PENDING');
-			const cal = async () => {
-				await smartTrainerControl.sendCalibrationReq();
-				await smartTrainerControl.sendSpinDownCalibrationReq();
-
-				smartTrainerControl.addPageListener(1, statusListener);
-				smartTrainerControl.addPageListener(2, statusListener);
-
-				// YOLO timeout
-				tim = setTimeout(() => {
-					setCalResult('FAILED');
-				}, 30000); // TODO const for this
-			};
-			cal().catch(console.error);
-		}
-
-		return () => {
-			if (smartTrainerControl) {
-				if (tim) {
-					clearTimeout(tim);
-					smartTrainerControl.removePageListener(1, statusListener);
-					smartTrainerControl.removePageListener(2, statusListener);
+	useEffect(
+		() => {
+			let tim;
+			const statusListener = (data) => {
+				console.log(data);
+				if (data.targetSpeed) {
+					// TODO How to mi/h
+					setTargetSpeed(`around ${data.targetSpeed.toFixed(0)} km/h`);
 				}
-				tim = null;
+				// TODO We should read spinDownCalRes here!!
+				// data.spinDownCalRes true/false === passed/failed if req was received
+				// spinDownCalStat == pending
+				// use  speedCond, // 0 = NA; 1 = too low; 2 = ok
+				if (data.spindownTimeRes > 0) {
+					setCalResult('PASSED');
+					clearTimeout(tim);
+				}
+				// TODO When fail?
+			};
+
+			if (open && smartTrainerControl) {
+				console.log(`Sending a calibration request to the trainer`);
+				setCalResult('PENDING');
+				const cal = async () => {
+					await smartTrainerControl.sendCalibrationReq();
+					await smartTrainerControl.sendSpinDownCalibrationReq();
+
+					smartTrainerControl.addPageListener(1, statusListener);
+					smartTrainerControl.addPageListener(2, statusListener);
+
+					// YOLO timeout
+					tim = setTimeout(() => {
+						setCalResult('FAILED');
+					}, 30000); // TODO const for this
+				};
+				cal().catch(console.error);
 			}
-		};
-	},
-	// We don't actually care if smartTrainerControl changes because the user
-	// in that case the user should just reopen the modal.
-	[open]); // eslint-ignore-line react-hooks/exhaustive-deps
+
+			return () => {
+				if (smartTrainerControl) {
+					if (tim) {
+						clearTimeout(tim);
+						smartTrainerControl.removePageListener(1, statusListener);
+						smartTrainerControl.removePageListener(2, statusListener);
+					}
+					tim = null;
+				}
+			};
+		},
+		// We don't actually care if smartTrainerControl changes because the user
+		// in that case the user should just reopen the modal.
+		[open] // eslint-ignore-line react-hooks/exhaustive-deps
+	);
 
 	const body = (
 		<div style={modalStyle} className={classes.paper}>

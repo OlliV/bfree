@@ -157,7 +157,7 @@ export default function ResistanceControl({
 
 	// Set the initial resistance and mode + register a cleanup.
 	// Note: defaultResistance is not in the deps because we don't care
-    //       if it changes.
+	//       if it changes.
 	// TODO sendResistance could change in theory
 	useEffect(() => {
 		sendResistance(defaultResistance)

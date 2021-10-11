@@ -51,7 +51,7 @@ type DisplayValue = {
 	unit: string;
 };
 
-function getContentByType(classes, speedUnit: UnitConv[""], type: Measurement) {
+function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
 	/* eslint-disable react/jsx-key */
 	const contentByType: { [K in Measurement]: [Element | JSX.Element, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
@@ -108,8 +108,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 				newValue.avg = 0;
 				newValue.n = 0;
 			} else if (!Number.isNaN(v)) {
-				newValue.avg = prev.avg + (v - prev.avg) / (prev.n + 1),
-				newValue.n++;
+				(newValue.avg = prev.avg + (v - prev.avg) / (prev.n + 1)), newValue.n++;
 			}
 
 			if (Number.isNaN(prev.max) || (v > prev.max && v < Infinity)) {

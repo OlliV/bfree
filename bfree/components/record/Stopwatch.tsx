@@ -17,7 +17,7 @@ export default function Stopwatch({
 		if (!isPaused) {
 			setTime((_prev) => Date.now() - startTime);
 		}
-	}, [startTime, isPaused])
+	}, [startTime, isPaused]);
 
 	useEffect(() => {
 		if (intervalId.current) {

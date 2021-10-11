@@ -51,7 +51,7 @@ export default function RollingResistance({
 	};
 
 	useEffect(() => {
-		setRollingResistance((prev) => Number.isNaN(prev) ? predefinedRollingResistances[2][1] : prev);
+		setRollingResistance((prev) => (Number.isNaN(prev) ? predefinedRollingResistances[2][1] : prev));
 	}, [setRollingResistance]);
 
 	return (
@@ -71,7 +71,9 @@ export default function RollingResistance({
 							onChange={handleChange}
 						>
 							{predefinedRollingResistances.map((r) => (
-								<MenuItem key={r[0].toLowerCase().replace(/\s/g, '-')} value={r[1]}>{r[0]}</MenuItem>
+								<MenuItem key={r[0].toLowerCase().replace(/\s/g, '-')} value={r[1]}>
+									{r[0]}
+								</MenuItem>
 							))}
 						</Select>
 						<br />
