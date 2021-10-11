@@ -156,6 +156,9 @@ export default function ResistanceControl({
 	};
 
 	// Set the initial resistance and mode + register a cleanup.
+	// Note: defaultResistance is not in the deps because we don't care
+    //       if it changes.
+	// TODO sendResistance could change in theory
 	useEffect(() => {
 		sendResistance(defaultResistance)
 			.catch(console.error)
@@ -165,7 +168,7 @@ export default function ResistanceControl({
 			// Reset resistance to zero
 			sendResistance(0).catch(console.error);
 		};
-	}, []);
+	}, []); // eslint-ignore-line react-hooks/exhaustive-deps
 
 	const handleChange = (_ev: never, value: number) => {
 		setEnabled(false);
