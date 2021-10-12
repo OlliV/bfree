@@ -3,6 +3,14 @@ let pwr_limit = false;
 let interval;
 self.addEventListener('message', function(e) {
   const { data: msg } = e;
+  /*
+   * message:
+   * {
+   *   time,
+   *   distance,
+   *   speed,
+   * }
+   */
   let power;
   let endRide = false;
 
@@ -24,6 +32,19 @@ self.addEventListener('message', function(e) {
     }
   }
 
+  /*
+   * response:
+   * {
+   *   time: msg.time,
+   *   message, // Optional message shown to the rider
+   *   doSplit, // add a split by setting this to one of these: 'Distance', 'Location', 'Time', 'HeartRate'
+   *   doStop, // stop the workout by making this truthy
+   *   // One of the following:
+   *   basicLoad,
+   *   power,
+   *   slope,
+   * }
+   */
   self.postMessage({
     time: msg.time,
     power,

@@ -12,9 +12,6 @@ import scriptExample from '../../../lib/workout_script_example';
 
 const defaultName = 'My Workout';
 const defaultNotes = 'This is just an example.';
-// TODO Commands that can be sent back
-// - split
-// - end ride
 
 export default function RideWorkoutEdit() {
 	const router = useRouter();

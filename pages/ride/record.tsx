@@ -17,14 +17,16 @@ import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
 import Head from '../../components/Head';
 import MeasurementCard from '../../components/record/MeasurementCard';
-import WorkoutStats from '../../components/record/WorkoutStats';
+import WorkoutController from '../../components/record/WorkoutController';
 import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
 import Ride from '../../components/record/Ride';
 import Stopwatch from '../../components/record/Stopwatch';
 import Title from '../../components/Title';
-import { Lap } from '../../lib/activity_log';
+import { Lap, LapTriggerMethod } from '../../lib/activity_log';
 import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
+
+type RideType = 'free' | 'workout';
 
 const measurementColors = [
 	'#ffaeae', // heart_rate
@@ -145,11 +147,12 @@ function FreeRideDashboard() {
 	);
 }
 
-function WorkoutDashboard() {
+function WorkoutDashboard({ doSplit, endRide }: { doSplit: (time: number, triggerMethod: LapTriggerMethod) => void, endRide: () => void }) {
 	const router = useRouter();
 	const classes = useStyles();
 	const { id } = router.query;
 
+	// TODO should also check if router.isReady
 	if (typeof id !== 'string') {
 		return <DefaultErrorPage statusCode={400} />;
 	}
@@ -160,7 +163,7 @@ function WorkoutDashboard() {
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
-				<WorkoutStats />
+				<WorkoutController doSplit={doSplit} endRide={endRide} />
 				<MeasurementCard type="cycling_cadence" />
 				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
@@ -197,7 +200,17 @@ function PauseModal({ show, onClose, children }: { show: boolean; onClose: () =>
 	);
 }
 
-function getDashboardConfig(rideType: string | string[]) {
+function getRideType(rideType: string | string[]): RideType {
+	switch (rideType) {
+		case 'free':
+		case 'workout':
+			return rideType;
+		default:
+			return undefined;
+	}
+}
+
+function getDashboardConfig(rideType: RideType) {
 	switch (rideType) {
 		case 'free':
 			return {
@@ -217,13 +230,13 @@ function getDashboardConfig(rideType: string | string[]) {
 export default function RideRecord() {
 	const classes = useStyles();
 	const router = useRouter();
-	const { type: rideType } = router.query;
+	const rideType = getRideType(router.query.type);
 	const [ridePaused, setRidePaused] = useGlobalState('ridePaused');
 	const [currentActivityLog] = useGlobalState('currentActivityLog');
 	const [rideStartTime, setRideStartTime] = useState(0);
 	const [elapsedLapTime, setElapsedLapTime] = useGlobalState('elapsedLapTime');
-	const [rideEnded, setRideEnded] = useState(false);
-	const { title, Dashboard } = useMemo(() => getDashboardConfig(rideType), [rideType]);
+	const [rideEnded, setRideEnded] = useState<boolean>(false);
+	const { title, Dashboard } = useMemo(() => getDashboardConfig(rideType), [router.isReady, rideType]);
 
 	// Prevent screen locking while recording
 	useEffect(() => {
@@ -250,18 +263,20 @@ export default function RideRecord() {
 	};
 	const continueRide = () => {
 		if (rideStartTime === 0) {
-			console.log('set start time');
-			setRideStartTime(Date.now());
+			const now = Date.now();
+			console.log(`Set ride start time: ${now}`);
+			setRideStartTime(now);
 		}
 		setRidePaused(0);
 	};
-	const handleSplit = () => {
+	const doSplit = (time: number, triggerMethod: LapTriggerMethod) => {
 		if (currentActivityLog) {
-			const now = Date.now();
-
-			currentActivityLog.lapSplit(now, 'Manual');
+			currentActivityLog.lapSplit(time, triggerMethod);
 			setElapsedLapTime(0);
 		}
+	};
+	const handleSplit = () => {
+		doSplit(Date.now(), 'Manual');
 	};
 	const endRide = () => {
 		setRidePaused(-1);
@@ -275,7 +290,7 @@ export default function RideRecord() {
 		return (
 			<Container maxWidth="md">
 				<Head title={title} />
-				<Dashboard />
+				<Dashboard doSplit={doSplit} endRide={endRide} />
 				<FlightRecorder startTime={rideStartTime} />
 				<PauseModal show={ridePaused === -1 && !rideEnded} onClose={continueRide}>
 					<p id="pause-modal-description">Tap outside of this area to start the ride.</p>

@@ -7,13 +7,13 @@ import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import { useEffect, useState, useMemo } from 'react';
 import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useGlobalState, ControlParams } from '../../lib/global';
 import {
 	stdBikeFrontalArea,
 	stdBikeDragCoefficient,
 	rollingResistanceCoeff,
 	calcWindResistanceCoeff,
 } from '../../lib/virtual_params';
-import { useGlobalState, ControlParams } from '../../lib/global';
 
 export type Resistance = 'basic' | 'power' | 'slope';
 
