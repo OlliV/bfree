@@ -36,7 +36,7 @@ export default function Home() {
 						Manage and export previous rides.
 					</MenuCard>
 					<MenuCard title="Setup" href="/setup">
-						Configure parameters and connect to sensors and a trainer.
+						Configure parameters and connect to a trainer and sensors.
 					</MenuCard>
 				</Grid>
 			</main>
