@@ -38,7 +38,13 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export default function WorkoutController({ doSplit, endRide }: { doSplit: (time: number, lapTrigger: LapTriggerMethod) => void, endRide: () => void }) {
+export default function WorkoutController({
+	doSplit,
+	endRide,
+}: {
+	doSplit: (time: number, lapTrigger: LapTriggerMethod) => void;
+	endRide: () => void;
+}) {
 	const classes = useStyles();
 	const router = useRouter();
 	const [elapsedTime] = useGlobalState('elapsedTime');
@@ -96,8 +102,7 @@ export default function WorkoutController({ doSplit, endRide }: { doSplit: (time
 				wr = createWorkoutRunner(script);
 				wr.onMessage((msg: RunnerResponse) => {
 					// TODO Technically we should check that msg.time makes sense
-					if ((+!!msg.basicLoad + +!!msg.power + +!!msg.slope +
-						 +msg.doStop) > 1) {
+					if (+!!msg.basicLoad + +!!msg.power + +!!msg.slope + +msg.doStop > 1) {
 						// TODO Better error handling
 						console.error('Only one of the three resistance controls can be set at once');
 						return;

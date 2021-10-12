@@ -147,7 +147,13 @@ function FreeRideDashboard() {
 	);
 }
 
-function WorkoutDashboard({ doSplit, endRide }: { doSplit: (time: number, triggerMethod: LapTriggerMethod) => void, endRide: () => void }) {
+function WorkoutDashboard({
+	doSplit,
+	endRide,
+}: {
+	doSplit: (time: number, triggerMethod: LapTriggerMethod) => void;
+	endRide: () => void;
+}) {
 	const router = useRouter();
 	const classes = useStyles();
 	const { id } = router.query;
