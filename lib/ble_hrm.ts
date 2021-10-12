@@ -16,7 +16,7 @@ export async function startHRMNotifications(server: BluetoothRemoteGATTServer, c
 
 		let index = 1;
 		if (rate16Bits) {
-			result.heartRate = value.getUint16(index, /*littleEndian=*/true);
+			result.heartRate = value.getUint16(index, /*littleEndian=*/ true);
 			index += 2;
 		} else {
 			result.heartRate = value.getUint8(index);
@@ -29,14 +29,14 @@ export async function startHRMNotifications(server: BluetoothRemoteGATTServer, c
 		}
 		const energyPresent = flags & 0x8;
 		if (energyPresent) {
-			result.energyExpended = value.getUint16(index, /*littleEndian=*/true);
+			result.energyExpended = value.getUint16(index, /*littleEndian=*/ true);
 			index += 2;
 		}
 		const rrIntervalPresent = flags & 0x10;
 		if (rrIntervalPresent) {
 			let rrIntervals = [];
 			for (; index + 1 < value.byteLength; index += 2) {
-				rrIntervals.push(value.getUint16(index, /*littleEndian=*/true));
+				rrIntervals.push(value.getUint16(index, /*littleEndian=*/ true));
 			}
 			result.rrIntervals = rrIntervals;
 		}

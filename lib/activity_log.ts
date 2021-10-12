@@ -35,10 +35,11 @@ const LANG_ID = 'en';
 const PART_NUMBER = '000-00000-00';
 const tcxHeader =
 	'<?xml version="1.0" encoding="utf-8"?>\n<TrainingCenterDatabase xsi:schemaLocation="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 https://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd" xmlns:ns5="http://www.garmin.com/xmlschemas/ActivityGoals/v1" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2" xmlns:ns2="http://www.garmin.com/xmlschemas/UserProfile/v2" xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns4="http://www.garmin.com/xmlschemas/ProfileExtension/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\n<Activities><Activity Sport="Biking">\n';
-const createNote = (text: string) => `<Notes>${text}</Notes>\n`
-const createTcxFooter = (name: string) => `<Training VirtualPartner="false"><Plan Type="Course" IntervalWorkout="false"><Name>${name}</Name></Plan></Training>\n<Creator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Device_t"><Name>${PRODUCT_NAME}</Name><UnitId>${UNIT_ID}</UnitId><ProductID>${PRODUCT_ID}</ProductID><Version><VersionMajor>${VERSION[0]}</VersionMajor><VersionMinor>${VERSION[1]}</VersionMinor><BuildMajor>${BUILD[0]}</BuildMajor><BuildMinor>${BUILD[1]}</BuildMinor></Version></Creator>\n</Activity></Activities>\n<Author xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Application_t"><Name>${PRODUCT_NAME}</Name><Build><Version><VersionMajor>${VERSION[0]}</VersionMajor><VersionMinor>${VERSION[1]}</VersionMinor><BuildMajor>${BUILD[0]}</BuildMajor><BuildMinor>${BUILD[1]}</BuildMinor></Version></Build><LangID>${LANG_ID}</LangID><PartNumber>${PART_NUMBER}</PartNumber></Author>\n</TrainingCenterDatabase>\n`;
+const createNote = (text: string) => `<Notes>${text}</Notes>\n`;
+const createTcxFooter = (name: string) =>
+	`<Training VirtualPartner="false"><Plan Type="Course" IntervalWorkout="false"><Name>${name}</Name></Plan></Training>\n<Creator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Device_t"><Name>${PRODUCT_NAME}</Name><UnitId>${UNIT_ID}</UnitId><ProductID>${PRODUCT_ID}</ProductID><Version><VersionMajor>${VERSION[0]}</VersionMajor><VersionMinor>${VERSION[1]}</VersionMinor><BuildMajor>${BUILD[0]}</BuildMajor><BuildMinor>${BUILD[1]}</BuildMinor></Version></Creator>\n</Activity></Activities>\n<Author xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Application_t"><Name>${PRODUCT_NAME}</Name><Build><Version><VersionMajor>${VERSION[0]}</VersionMajor><VersionMinor>${VERSION[1]}</VersionMinor><BuildMajor>${BUILD[0]}</BuildMajor><BuildMinor>${BUILD[1]}</BuildMinor></Version></Build><LangID>${LANG_ID}</LangID><PartNumber>${PART_NUMBER}</PartNumber></Author>\n</TrainingCenterDatabase>\n`;
 
-const convTs = (ts: number) => (new Date(ts)).toISOString();
+const convTs = (ts: number) => new Date(ts).toISOString();
 
 export function createActivityLog() {
 	let name: string = '';
@@ -51,29 +52,28 @@ export function createActivityLog() {
 		lap.totalTime = time - lap.startTime;
 		lap.triggerMethod = triggerMethod;
 
-		const {
-			maxSpeed,
-			avgHR,
-			maxHR,
-		} = trackPoints.reduce<any>((acc, cur: TrackPoint, i, arr) => {
-			if (acc.maxSpeed < cur.speed) {
-				acc.maxSpeed = cur.speed;
-			}
-			if (acc.maxHR < cur.hr) {
-				acc.maxHR = cur.hr;
-			}
+		const { maxSpeed, avgHR, maxHR } = trackPoints.reduce<any>(
+			(acc, cur: TrackPoint, i, arr) => {
+				if (acc.maxSpeed < cur.speed) {
+					acc.maxSpeed = cur.speed;
+				}
+				if (acc.maxHR < cur.hr) {
+					acc.maxHR = cur.hr;
+				}
 
-			acc.avgHR += cur.hr;
-			if (i === arr.length - 1) {
-				acc.avgHR /= arr.length;
-			}
+				acc.avgHR += cur.hr;
+				if (i === arr.length - 1) {
+					acc.avgHR /= arr.length;
+				}
 
-			return acc;
-		}, {
-			maxSpeed: null,
-			avgHR: null,
-			maxHR: null,
-		});
+				return acc;
+			},
+			{
+				maxSpeed: null,
+				avgHR: null,
+				maxHR: null,
+			}
+		);
 
 		if (maxSpeed !== null) {
 			lap.maxSpeed = maxSpeed;
@@ -85,9 +85,9 @@ export function createActivityLog() {
 			lap.maxHR = maxHR;
 		}
 
-		lap.distanceMeters = (trackPoints.length > 0) ? (trackPoints[trackPoints.length - 1].dist || 0) : 0;
+		lap.distanceMeters = trackPoints.length > 0 ? trackPoints[trackPoints.length - 1].dist || 0 : 0;
 		lap.calories = 0; // TODO not supported yet.
-	}
+	};
 
 	return {
 		importJson: (json: string) => {
@@ -103,9 +103,9 @@ export function createActivityLog() {
 
 			// TODO Attempt to recover incomplete log e.g. summaries missing
 		},
-		setName: (s: string) => name = s,
+		setName: (s: string) => (name = s),
 		getName: () => name,
-		setNotes: (s: string) => notes = s,
+		setNotes: (s: string) => (notes = s),
 		getNotes: () => notes,
 		getLapStartTime: (lapIndex?: number): number => {
 			const lap = typeof lapIndex === 'number' ? laps[lapIndex] : laps[laps.length - 1];
@@ -166,8 +166,10 @@ export function createActivityLog() {
 				outputCb(`<DistanceMeters>${lap.distanceMeters || 0}</DistanceMeters>\n`);
 				outputCb(`<MaximumSpeed>${lap.maxSpeed || 0}</MaximumSpeed>\n`);
 				if (typeof lap.calories === 'number') outputCb(`<Calories>${lap.calories}</Calories>\n`);
-				if (typeof lap.avgHR === 'number') outputCb(`<AverageHeartRateBpm><Value>${lap.avgHR.toFixed(0)}</Value></AverageHeartRateBpm>\n`);
-				if (typeof lap.maxHR === 'number') outputCb(`<MaximumHeartRateBpm><Value>${lap.maxHR.toFixed(0)}</Value></MaximumHeartRateBpm>\n`);
+				if (typeof lap.avgHR === 'number')
+					outputCb(`<AverageHeartRateBpm><Value>${lap.avgHR.toFixed(0)}</Value></AverageHeartRateBpm>\n`);
+				if (typeof lap.maxHR === 'number')
+					outputCb(`<MaximumHeartRateBpm><Value>${lap.maxHR.toFixed(0)}</Value></MaximumHeartRateBpm>\n`);
 				outputCb(`<Intensity>${lap.intensity}</Intensity>\n`);
 				if (typeof lap.cadence === 'number') outputCb(`<Cadence>${lap.cadence}</Cadence>\n`);
 				outputCb(`<TriggerMethod>${lap.triggerMethod || 'Manual'}</TriggerMethod>\n`);
@@ -175,10 +177,16 @@ export function createActivityLog() {
 				outputCb('<Track>\n');
 				lap.trackPoints.forEach((point) => {
 					outputCb(`<Trackpoint><Time>${convTs(point.time)}</Time>\n`);
-					if (point.position) outputCb(`<Position><LatitudeDegrees>${point.position.lat}</LatitudeDegrees><LongitudeDegrees>${point.position.lon}</LongitudeDegrees></Position>\n`);
-					if (typeof point.alt === 'number') outputCb(`<AltitudeMeters>${point.alt.toFixed(3)}</AltitudeMeters>\n`);
-					if (typeof point.dist === 'number') outputCb(`<DistanceMeters>${point.dist.toFixed(1)}</DistanceMeters>\n`);
-					if (typeof point.hr === 'number') outputCb(`<HeartRateBpm><Value>${point.hr.toFixed(0)}</Value></HeartRateBpm>\n`);
+					if (point.position)
+						outputCb(
+							`<Position><LatitudeDegrees>${point.position.lat}</LatitudeDegrees><LongitudeDegrees>${point.position.lon}</LongitudeDegrees></Position>\n`
+						);
+					if (typeof point.alt === 'number')
+						outputCb(`<AltitudeMeters>${point.alt.toFixed(3)}</AltitudeMeters>\n`);
+					if (typeof point.dist === 'number')
+						outputCb(`<DistanceMeters>${point.dist.toFixed(1)}</DistanceMeters>\n`);
+					if (typeof point.hr === 'number')
+						outputCb(`<HeartRateBpm><Value>${point.hr.toFixed(0)}</Value></HeartRateBpm>\n`);
 					if (typeof point.cadence === 'number') outputCb(`<Cadence>${point.cadence.toFixed(0)}</Cadence>\n`);
 					if (typeof point.speed === 'number' || typeof point.power === 'number') {
 						outputCb(`<Extensions><ns2:TPX>\n`);
@@ -224,7 +232,6 @@ export function getActivityLogs(): {
 		return [];
 	}
 
-
 	for (let i in localStorage) {
 		if (i.startsWith('activity_log:')) {
 			const logger = createActivityLog();
@@ -242,7 +249,7 @@ export function getActivityLogs(): {
 					weekday: 'long',
 					year: 'numeric',
 					month: 'long',
-					day: 'numeric'
+					day: 'numeric',
 				}),
 				logger: logger,
 			});

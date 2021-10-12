@@ -1,4 +1,4 @@
-export default function defer(): Promise<any> & { resolve: (v: any) => void, reject: (err: Error) => void } {
+export default function defer(): Promise<any> & { resolve: (v: any) => void; reject: (err: Error) => void } {
 	let res;
 	let rej;
 	const promise = new Promise((resolve, reject) => {

@@ -7,7 +7,7 @@
     "build": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next build",
     "clean": "rm -rf .next",
     "start": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next start",
-    "prettier": "prettier --write './{pages,components}/**/*.{ts,tsx}'",
+    "prettier": "prettier --write './{pages,components,lib}/**/*.{ts,tsx}'",
     "lint": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next lint"
   },
   "dependencies": {

@@ -1,7 +1,10 @@
 import { CscMeasurements } from './measurements';
 import { getGlobalState } from './global';
 
-export async function startCyclingSpeedAndCadenceMeasurementNotifications(server: BluetoothRemoteGATTServer, cb: (res: CscMeasurements) => void) {
+export async function startCyclingSpeedAndCadenceMeasurementNotifications(
+	server: BluetoothRemoteGATTServer,
+	cb: (res: CscMeasurements) => void
+) {
 	const service = await server.getPrimaryService('cycling_speed_and_cadence');
 	const characteristic = await service.getCharacteristic('csc_measurement');
 	const { wheelCircumference } = getGlobalState('bike');
@@ -38,16 +41,17 @@ export async function startCyclingSpeedAndCadenceMeasurementNotifications(server
 
 				// @ts-ignore sensorValue is never undefined here
 				const curLastWheelEvent = lastWheelEvent;
-				const deltaWheelEvents = curLastWheelEvent >= prevLastWheelEvent
-					? curLastWheelEvent - prevLastWheelEvent
-					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
+				const deltaWheelEvents =
+					curLastWheelEvent >= prevLastWheelEvent
+						? curLastWheelEvent - prevLastWheelEvent
+						: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
 
 				// 1024 = as per CSCS_SPECv10:
 				// > The ‘wheel event time’ is a free-running-count of
 				// > 1/1024 second units and it represents the time when the
 				// > wheel revolution was detected by the wheel rotation sensor.
 				// The final result is m/s
-				speed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 1024)) || 0;
+				speed = (circumferenceM * deltaRevs) / (deltaWheelEvents / 1024) || 0;
 			}
 			prevCumulativeWheelRevolutions = cumulativeWheelRevolutions;
 			prevLastWheelEvent = lastWheelEvent;
@@ -59,16 +63,15 @@ export async function startCyclingSpeedAndCadenceMeasurementNotifications(server
 			if (prevLastCrankEvent !== null && prevLastWheelEvent !== null) {
 				const prevRevs = prevCumulativeCrankRevolutions;
 				const curRevs = cumulativeCrankRevolutions;
-				const deltaRevs = curRevs >= prevRevs
-					? curRevs - prevRevs
-					: 0xffff - prevRevs + curRevs + 1;
+				const deltaRevs = curRevs >= prevRevs ? curRevs - prevRevs : 0xffff - prevRevs + curRevs + 1;
 
 				const curLastCrankEvent = lastCrankEvent;
-				const deltaLastCrankEvent = curLastCrankEvent >= prevLastCrankEvent
-					? curLastCrankEvent - prevLastCrankEvent
-					: 0xffff - prevLastCrankEvent + curLastCrankEvent + 1;
+				const deltaLastCrankEvent =
+					curLastCrankEvent >= prevLastCrankEvent
+						? curLastCrankEvent - prevLastCrankEvent
+						: 0xffff - prevLastCrankEvent + curLastCrankEvent + 1;
 
-				cadence = ((deltaRevs / deltaLastCrankEvent) * 60) || 0;
+				cadence = (deltaRevs / deltaLastCrankEvent) * 60 || 0;
 			}
 			prevCumulativeCrankRevolutions = cumulativeCrankRevolutions;
 			prevLastCrankEvent = lastCrankEvent;

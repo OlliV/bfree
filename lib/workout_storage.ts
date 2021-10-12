@@ -1,12 +1,12 @@
 import { base64ToString, digestSHA1, stringToBase64 } from './ab';
 
 type WorkoutScript = {
-	id: string,
-	name: string,
-	notes: string,
-	ts: number, // ms
-	fav?: boolean,
-	script: string,
+	id: string;
+	name: string;
+	notes: string;
+	ts: number; // ms
+	fav?: boolean;
+	script: string;
 };
 
 export function getWorkouts(): WorkoutScript[] {
@@ -26,7 +26,7 @@ export function getWorkouts(): WorkoutScript[] {
 				notes: v.notes,
 				ts: v.ts,
 				fav: v.fav,
-				script: base64ToString(v.script)
+				script: base64ToString(v.script),
 			});
 		}
 	}
@@ -41,7 +41,7 @@ export function getWorkoutDate(workout: WorkoutScript) {
 		weekday: 'long',
 		year: 'numeric',
 		month: 'long',
-		day: 'numeric'
+		day: 'numeric',
 	});
 }
 

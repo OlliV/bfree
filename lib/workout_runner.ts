@@ -3,15 +3,15 @@ export type RunnerMessage = {
 	distance: number; // m
 	speed: number; // m/s
 	// TODO other measurements
-}
+};
 
 export type RunnerResponse = {
 	time: number; // sec
-	basicLoad?: number,
-	power?: number,
-	slope?: number,
+	basicLoad?: number;
+	power?: number;
+	slope?: number;
 	// TODO wind, road params
-}
+};
 
 export default function createWorkoutRunner(script: string) {
 	if (typeof script !== 'string') {
@@ -25,6 +25,6 @@ export default function createWorkoutRunner(script: string) {
 	return {
 		terminate: () => worker.terminate(),
 		sendMessage: (msg: RunnerMessage) => worker.postMessage(msg),
-		onMessage: (cb: (msg: RunnerResponse) => void) => worker.onmessage = (e) => cb(e.data),
+		onMessage: (cb: (msg: RunnerResponse) => void) => (worker.onmessage = (e) => cb(e.data)),
 	};
 }

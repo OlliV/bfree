@@ -1,4 +1,4 @@
-import { BluetoothServiceType } from "./global";
+import { BluetoothServiceType } from './global';
 
 export interface BtDevice {
 	device: BluetoothDevice;
@@ -7,11 +7,14 @@ export interface BtDevice {
 
 async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServer> {
 	try {
-		const server = await exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
+		const server = await exponentialBackoff(
+			3 /* max retries */,
+			2 /* seconds delay */,
 			async (): Promise<BluetoothRemoteGATTServer> => {
 				time(`Connecting to Bluetooth Device (${device.name})...`);
 				return await device.gatt.connect();
-			});
+			}
+		);
 
 		console.log(`Bluetooth Device connected (${device.name}).`);
 		// TODO The typing of exponentialBackoff() is not correct
@@ -28,22 +31,24 @@ async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServ
 export async function pairDevice(service: BluetoothServiceType, connectCb: (dev: BtDevice) => Promise<void>) {
 	const options = {
 		//acceptAllDevices: true,
-		filters: [ { services: [service] } ],
+		filters: [{ services: [service] }],
 		optionalServices: ['battery_service'],
 	};
 
 	const device = await navigator.bluetooth.requestDevice(options);
 	const onDisconnected = (e) => {
 		console.log('> Bluetooth Device disconnected'); // TODO Show the name
-		connect(device).then(async (server) => {
-			const btDevice = {
-				device,
-				server,
-			};
+		connect(device)
+			.then(async (server) => {
+				const btDevice = {
+					device,
+					server,
+				};
 
-			await connectCb(btDevice);
-		}).catch(console.error);
-	}
+				await connectCb(btDevice);
+			})
+			.catch(console.error);
+	};
 
 	device.addEventListener('gattserverdisconnected', onDisconnected);
 	const server = await connect(device);
@@ -58,7 +63,7 @@ export async function pairDevice(service: BluetoothServiceType, connectCb: (dev:
 			console.log(`> Disconnecting ${device.name}`);
 			device.removeEventListener('gattserverdisconnected', onDisconnected);
 			device.gatt.disconnect();
-		}
+		},
 	};
 }
 
@@ -97,12 +102,12 @@ async function exponentialBackoff(max: number, delay: number, toTry) {
 async function _exponentialBackoff(max: number, delay: number, toTry, success, fail) {
 	try {
 		success(await toTry());
-	} catch(error) {
+	} catch (error) {
 		if (max === 0) {
 			return fail(error);
 		}
 		time('Retrying in ' + delay + 's... (' + max + ' tries left)');
-		setTimeout(function() {
+		setTimeout(function () {
 			_exponentialBackoff(--max, delay * 2, toTry, success, fail);
 		}, delay * 1000);
 	}

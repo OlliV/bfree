@@ -10,7 +10,7 @@ export async function readCyclingPowerFeature(service) {
 		crankRevolutionData: boolean;
 		extremeMagnitudes: boolean;
 		extremeAngles: boolean;
-		deadSpotAngles: boolean; /* Top Dead Spot Present and Bottom Dead Spot Present bits of the Cycling Power Measurement characteristic */
+		deadSpotAngles: boolean /* Top Dead Spot Present and Bottom Dead Spot Present bits of the Cycling Power Measurement characteristic */;
 		accumulatedEnergy: boolean;
 		offsetCompensationIndicator: boolean;
 		sensorMeasurementContext: 'force' | 'torque';
@@ -87,9 +87,10 @@ export async function startCyclingPowerMeasurementNotifications(server: Bluetoot
 				const deltaRevs = curRevs - prevRevs;
 
 				const curLastWheelEvent = lastWheelEvent;
-				const deltaWheelEvents = curLastWheelEvent >= prevLastWheelEvent
-					? curLastWheelEvent - prevLastWheelEvent
-					: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
+				const deltaWheelEvents =
+					curLastWheelEvent >= prevLastWheelEvent
+						? curLastWheelEvent - prevLastWheelEvent
+						: 0xffff - prevLastWheelEvent + curLastWheelEvent + 1;
 
 				// TODO This should be configurable!
 				// mm => m
@@ -99,7 +100,7 @@ export async function startCyclingPowerMeasurementNotifications(server: Bluetoot
 				// > 1/2048 second units and it represents the time when the wheel
 				// > revolution was detected by the wheel rotation sensor.
 				// The final result is m/s
-				instantaneousSpeed = ((circumferenceM * deltaRevs) / (deltaWheelEvents / 2048)) || 0;
+				instantaneousSpeed = (circumferenceM * deltaRevs) / (deltaWheelEvents / 2048) || 0;
 			}
 			prevRevs = cumulativeWheelRevolutions;
 			prevLastWheelEvent = lastWheelEvent;

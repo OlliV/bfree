@@ -6,5 +6,4 @@ export function isValidUnsigned(value) {
 		return false;
 	}
 	return true;
-};
-
+}

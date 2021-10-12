@@ -1,6 +1,6 @@
 export function arrayBufferToString(buffer: ArrayBuffer, encoding: string): Promise<string> {
 	return new Promise((resolve) => {
-		const blob = new Blob([buffer], { type:'text/plain' });
+		const blob = new Blob([buffer], { type: 'text/plain' });
 		const reader = new FileReader();
 
 		reader.onload = (e) => resolve(e.target.result as string);

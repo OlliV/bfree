@@ -3,7 +3,7 @@ export interface UnitConv {
 		name: string;
 		convTo: (v: number) => number;
 		convToBase: (v: number) => number;
-	}
+	};
 }
 
 export const timeUnitConv: UnitConv = {
@@ -26,7 +26,7 @@ export const timeUnitConv: UnitConv = {
 		name: 'hour',
 		convTo: (v) => v / 3600,
 		convToBase: (v) => v * 3600,
-	}
+	},
 };
 
 export const speedUnitConv: UnitConv = {
@@ -58,4 +58,4 @@ export const distanceUnitConv: UnitConv = {
 		convTo: (d) => d * 0.000621,
 		convToBase: (d) => d * 1609, // to m
 	},
-}
+};

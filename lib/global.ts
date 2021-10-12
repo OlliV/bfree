@@ -4,27 +4,27 @@ import { createActivityLog } from './activity_log';
 import { CscMeasurements, HrmMeasurements } from './measurements';
 
 export type BluetoothServiceType =
-	'cycling_power' |
-	'cycling_speed_and_cadence' |
-	'heart_rate' |
-	'6e40fec1-b5a3-f393-e0a9-e50e24dcca9e'; // TACX ANT+ FE-C over BLE
+	| 'cycling_power'
+	| 'cycling_speed_and_cadence'
+	| 'heart_rate'
+	| '6e40fec1-b5a3-f393-e0a9-e50e24dcca9e'; // TACX ANT+ FE-C over BLE
 export type SensorType =
-	'cycling_cadence' |
-	'cycling_power' |
-	'cycling_speed' |
-	'cycling_speed_and_cadence' |
-	'heart_rate' |
-	'smart_trainer';
+	| 'cycling_cadence'
+	| 'cycling_power'
+	| 'cycling_speed'
+	| 'cycling_speed_and_cadence'
+	| 'heart_rate'
+	| 'smart_trainer';
 
 export type SensorSourceType = {
 	id: SensorType;
 	name: string;
-}
+};
 
 // All the control params that we need to know globally for logging.
 export type ControlParams = {
 	slope?: number;
-}
+};
 
 export const cadenceSourceTypes: SensorSourceType[] = [
 	{
@@ -115,11 +115,11 @@ export type GlobalState = {
 	smart_trainer_control: any;
 	// Recording state
 	currentActivityLog: null | ReturnType<typeof createActivityLog>;
-	ridePaused: number, // -1 = not started; 0 = not paused; anything else is a timestamp
-	elapsedTime: number,
-	elapsedLapTime: number,
-	rideDistance: number,
-}
+	ridePaused: number; // -1 = not started; 0 = not paused; anything else is a timestamp
+	elapsedTime: number;
+	elapsedLapTime: number;
+	rideDistance: number;
+};
 
 const LOCAL_STORAGE_KEY = 'settings';
 const initialState: GlobalState = {
@@ -173,14 +173,14 @@ const initialState: GlobalState = {
 const { useGlobalState: _useGlobalState, getGlobalState, setGlobalState } = createGlobalState(initialState);
 
 type ConfigKey =
-	'samplingRate' |
-	'cadenceSources' |
-	'speedSources' |
-	'powerSources' |
-	'unitDistance' |
-	'unitSpeed' |
-	'rider' |
-	'bike';
+	| 'samplingRate'
+	| 'cadenceSources'
+	| 'speedSources'
+	| 'powerSources'
+	| 'unitDistance'
+	| 'unitSpeed'
+	| 'rider'
+	| 'bike';
 
 function useGlobalState(key: keyof GlobalState) {
 	const [value, setValue] = _useGlobalState(key);
@@ -210,11 +210,6 @@ function saveConfig() {
 	};
 
 	localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
-};
-
-export {
-	useGlobalState,
-	getGlobalState,
-	setGlobalState,
-	saveConfig,
 }
+
+export { useGlobalState, getGlobalState, setGlobalState, saveConfig };

@@ -16,23 +16,23 @@ export const stdBikeFrontalArea: { [k in GlobalState['bike']['type']]: number } 
 };
 
 export const stdBikeDragCoefficient: { [k in GlobalState['bike']['type']]: number } = {
-	atb: 1.20,
+	atb: 1.2,
 	commuter: 1.15,
-	road: 1.00,
+	road: 1.0,
 	racing: 0.88,
 };
 
 // From U.S. Standard Atmosphere 1976: Standard Atmosphere Air Properties
 const stdAtmAirDensity = [
-	1.347,	// -1000 m
-	1.225,	// 0 m
-	1.112,	// 1000 m
-	1.007,	// 2000 m
+	1.347, // -1000 m
+	1.225, // 0 m
+	1.112, // 1000 m
+	1.007, // 2000 m
 	0.9093, // 3000 m
 	0.8194, // 4000 m
 	0.7364, // 5000 m
 	0.6601, // 6000 m
-	0.5900, // 7000 m
+	0.59, // 7000 m
 	0.5258, // 8000 m
 	0.4671, // 9000 m
 	0.4135, // 10000 m

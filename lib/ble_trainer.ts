@@ -20,18 +20,21 @@ function calcChecksum(buf: DataView) {
 }
 
 function setSendHeader(msg: DataView, len: number) {
-		msg.setUint8(0, 0xa4); // sync
-		msg.setUint8(1, len);  // len
-		msg.setUint8(2, 0x4f); // type
-		msg.setUint8(3, 0x05); // channel
+	msg.setUint8(0, 0xa4); // sync
+	msg.setUint8(1, len); // len
+	msg.setUint8(2, 0x4f); // type
+	msg.setUint8(3, 0x05); // channel
 }
 
-export async function createSmartTrainerController(server: BluetoothRemoteGATTServer, measurementsCb: (res: TrainerMeasurements) => void) {
+export async function createSmartTrainerController(
+	server: BluetoothRemoteGATTServer,
+	measurementsCb: (res: TrainerMeasurements) => void
+) {
 	const service = await server.getPrimaryService(TACX_FEC_OVER_BLE_SERVICE_UUID);
 	const txCharacteristic = await service.getCharacteristic(TACX_FEC_CHARACTERISTIC_RX);
 	const rxCharacteristic = await service.getCharacteristic(TACX_FEC_CHARACTERISTIC_TX);
 
-	const pageReqQueue: {[k in PageNumber]: (ReturnType<typeof defer>)[]} = {
+	const pageReqQueue: { [k in PageNumber]: ReturnType<typeof defer>[] } = {
 		'1': [],
 		'2': [],
 		'16': [],
@@ -49,7 +52,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		'80': [],
 		'81': [],
 	};
-	const pageListeners: {[k in PageNumber]: PageListener[]} = {
+	const pageListeners: { [k in PageNumber]: PageListener[] } = {
 		'1': [],
 		'2': [],
 		'16': [],
@@ -108,7 +111,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			powerCalRequired: false,
 			resistanceCalRequired: false,
 			userConfigRequired: false,
-		}
+		},
 	};
 
 	const sendBasicResistance = async (value: number) => {
@@ -231,10 +234,10 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 
 		userWeightKg = Math.round(userWeightKg * 100) & 0xffff; // Unit 0.01 kg
 		bikeWeightKg = Math.round(bikeWeightKg * 0.05) & 0x0fff; // Unit 0.05 kg
-		const bikeWheelDiameter = Math.floor(100 * wheelCircumference / (10 * Math.PI)) & 0xff; // Unit 0.01 m
+		const bikeWheelDiameter = Math.floor((100 * wheelCircumference) / (10 * Math.PI)) & 0xff; // Unit 0.01 m
 		// RFE floor or round?
 		// RFE Does it always stay around 10 mm this way?
-		const wheelOffset = Math.round(wheelCircumference /Math.PI - bikeWheelDiameter * 10) & 0x0f; // mm
+		const wheelOffset = Math.round(wheelCircumference / Math.PI - bikeWheelDiameter * 10) & 0x0f; // mm
 
 		// Header
 		setSendHeader(msg, 0x09);
@@ -242,10 +245,10 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		// Payload
 		msg.setUint8(4, 0x37); // page
 		msg.setUint8(5, userWeightKg & 0xff);
-		msg.setUint8(6, (userWeightKg & 0xff00) >> 8);  // user weight msb, unit 0.01 kg, invalid = 0xffff
+		msg.setUint8(6, (userWeightKg & 0xff00) >> 8); // user weight msb, unit 0.01 kg, invalid = 0xffff
 		msg.setUint8(7, 0xff);
-		msg.setUint8(8, wheelOffset | ((bikeWeightKg & 0xf) << 4));  // bike weight lsb bits 4-7
-		msg.setUint8(9, (0x0ff0 & bikeWeightKg) >> 4);  // bike weight msb unit 0.05 kg
+		msg.setUint8(8, wheelOffset | ((bikeWeightKg & 0xf) << 4)); // bike weight lsb bits 4-7
+		msg.setUint8(9, (0x0ff0 & bikeWeightKg) >> 4); // bike weight msb unit 0.05 kg
 		msg.setUint8(10, bikeWheelDiameter);
 		msg.setUint8(11, 0x00); // TODO DI2 could set this?
 
@@ -328,7 +331,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		const deferredResponse = deferResponse(page);
 		await txCharacteristic.writeValue(buf);
 		return await deferredResponse;
-	}
+	};
 
 	rxCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
 		// @ts-ignore
@@ -372,7 +375,8 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 		const pageNumber = value.getUint8(offset);
 		//console.log('FEC-C received page', pageNumber);
 		let pageData; // This will be sent to listeners and queued reqs
-		if (pageNumber === 1) { // Calibration request and response
+		if (pageNumber === 1) {
+			// Calibration request and response
 			const calibrationRes = value.getUint8(offset + 1);
 			const spinDownCalRes = !!(calibrationRes & 0x80);
 			const zeroOffsetCalRes = !!(calibrationRes & 0x40);
@@ -380,10 +384,10 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			let temperature = value.getUint8(offset + 3); // Celsius
 			temperature = temperature === 0xff ? -1 : temperature * 0.5 - 25;
 
-			let zeroOffsetRes = value.getUint8(offset + 4) | value.getUint8(offset + 5) << 8;
+			let zeroOffsetRes = value.getUint8(offset + 4) | (value.getUint8(offset + 5) << 8);
 			zeroOffsetRes = zeroOffsetRes === 0xffff ? -1 : zeroOffsetRes;
 
-			let spindownTimeRes = value.getUint8(offset + 6) | value.getUint8(offset + 7) << 8;
+			let spindownTimeRes = value.getUint8(offset + 6) | (value.getUint8(offset + 7) << 8);
 			spindownTimeRes = spindownTimeRes === 0xffff ? -1 : spindownTimeRes;
 
 			pageData = {
@@ -392,8 +396,9 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				temperature,
 				zeroOffsetRes,
 				spindownTimeRes,
-			}
-		} else if (pageNumber === 2) { // Calibration in progress
+			};
+		} else if (pageNumber === 2) {
+			// Calibration in progress
 			// Calibration status
 			const calStatus = value.getUint8(offset + 1);
 			const spinDownCalStat = !!(calStatus & 0x80);
@@ -409,11 +414,11 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			currentTemp = currentTemp === 0xff ? -1 : currentTemp * 0.5 - 25;
 
 			// Target speed [km/h]
-			let targetSpeed = value.getUint8(offset + 4) | value.getUint8(offset + 5) << 8;
+			let targetSpeed = value.getUint8(offset + 4) | (value.getUint8(offset + 5) << 8);
 			targetSpeed = targetSpeed === 0xffff ? -1 : targetSpeed * 0.001 * 3.6;
 
 			// Target spin-down time
-			let targetSpinDownTime = value.getUint8(offset + 6) | value.getUint8(offset + 7) << 8;
+			let targetSpinDownTime = value.getUint8(offset + 6) | (value.getUint8(offset + 7) << 8);
 			targetSpinDownTime = targetSpinDownTime === 0xffff ? -1 : targetSpinDownTime / 1000;
 
 			pageData = {
@@ -424,18 +429,20 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				currentTemp,
 				targetSpeed,
 				targetSpinDownTime,
-			}
-		} else if (pageNumber === 16) { // General data page
-			const equipmentType = {
-				16: 'General',
-				19: 'Treadmill',
-				20: 'Elliptical',
-				21: 'Stationary bike',
-				22: 'Rower',
-				23: 'Climber',
-				24: 'Nordic Skier',
-				25: 'Trainer',
-			}[value.getUint8(offset + 1) & 0x1f] || 'Unknown';
+			};
+		} else if (pageNumber === 16) {
+			// General data page
+			const equipmentType =
+				{
+					16: 'General',
+					19: 'Treadmill',
+					20: 'Elliptical',
+					21: 'Stationary bike',
+					22: 'Rower',
+					23: 'Climber',
+					24: 'Nordic Skier',
+					25: 'Trainer',
+				}[value.getUint8(offset + 1) & 0x1f] || 'Unknown';
 			const elapsedTime = value.getUint8(offset + 2) * 0.25; // Unit 0.25 sec; rollover 64 sec
 			const accumulatedDistance = value.getUint8(offset + 3); // meters
 			const speed = (value.getUint8(offset + 4) | (value.getUint8(offset + 5) << 8)) * 0.001;
@@ -445,7 +452,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				hrSource: !!(capabilityBits & 0x3),
 				distanceCap: !!(capabilityBits & 0x4),
 				speedIsVirtual: !!(capabilityBits & 0x8),
-			}
+			};
 
 			pageData = {
 				equipmentType,
@@ -460,7 +467,8 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			result.speed = speed;
 			result.accumulatedDistance = accumulatedDistance;
 			result.heartRate = heartRate;
-		} else if (pageNumber === 17) { // General settings
+		} else if (pageNumber === 17) {
+			// General settings
 			const cycleLen = value.getUint8(offset + 5) * 0.01; // m
 			const incline = value.getUint8(offset + 5) | (value.getUint8(offset + 4) << 8);
 			const resistanceLevel = value.getUint8(offset + 6) * 0.5;
@@ -470,13 +478,15 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				incline,
 				resistanceLevel,
 			};
-		} else if (pageNumber == 18) { // Metabolic rate
+		} else if (pageNumber == 18) {
+			// Metabolic rate
 			// TODO Check if TACX has this
-		} else if (pageNumber === 25) { // Trainer specific page
+		} else if (pageNumber === 25) {
+			// Trainer specific page
 			const updateEventCount = value.getUint8(offset + 1);
 			const instantaneousCadence = value.getUint8(offset + 2);
-			const accumulatedPower = value.getUint8(offset + 3) | value.getUint8(offset + 4) << 8;
-			const instantaneousPower = value.getUint8(offset + 5) | (value.getUint8(offset + 6) & 0x0f) << 8;
+			const accumulatedPower = value.getUint8(offset + 3) | (value.getUint8(offset + 4) << 8);
+			const instantaneousPower = value.getUint8(offset + 5) | ((value.getUint8(offset + 6) & 0x0f) << 8);
 
 			const calBits = (value.getUint8(offset + 6) & 0xf0) >> 4;
 			const powerCalRequired = !!(calBits & 0x1);
@@ -497,7 +507,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 					powerCalRequired,
 					resistanceCalRequired,
 					userConfigRequired,
-				}
+				},
 			};
 
 			result.accumulatedPower = accumulatedPower;
@@ -507,11 +517,12 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 			result.calStatus.powerCalRequired = powerCalRequired;
 			result.calStatus.resistanceCalRequired = resistanceCalRequired;
 			result.calStatus.userConfigRequired = userConfigRequired;
-		} else if (pageNumber === 26) { // Trainer torque page
+		} else if (pageNumber === 26) {
+			// Trainer torque page
 			const updateEventCount = value.getUint8(offset + 1);
 			const wheelRevolutions = value.getUint8(offset + 2); // Rollover 256
-			const wheelAccumulatedPeriod = value.getUint8(offset + 3) | value.getUint8(offset + 4) << 8;
-			const accumulatedTorque = value.getUint8(offset + 5) | value.getUint8(offset + 6) << 8;
+			const wheelAccumulatedPeriod = value.getUint8(offset + 3) | (value.getUint8(offset + 4) << 8);
+			const accumulatedTorque = value.getUint8(offset + 5) | (value.getUint8(offset + 6) << 8);
 			const fecState = value.getUint8(offset + 7) >> 4;
 
 			pageData = {
@@ -521,19 +532,22 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				accumulatedTorque,
 				fecState,
 			};
-		} else if (pageNumber === 48) { // Basic resistance
+		} else if (pageNumber === 48) {
+			// Basic resistance
 			const totalResistance = value.getUint8(offset + 7) * 0.5;
 
 			pageData = {
 				totalResistance,
 			};
-		} else if (pageNumber === 49) { // Target power
-			const targetPower = (value.getUint8(offset + 6) | value.getUint8(offset + 7) << 8) * 0.25
+		} else if (pageNumber === 49) {
+			// Target power
+			const targetPower = (value.getUint8(offset + 6) | (value.getUint8(offset + 7) << 8)) * 0.25;
 
 			pageData = {
 				targetPower,
 			};
-		} else if (pageNumber === 50) { // Wind resistance
+		} else if (pageNumber === 50) {
+			// Wind resistance
 			const windResistanceCoeff = value.getUint8(offset + 5) * 0.01;
 			const windSpeed = value.getUint8(offset + 6) - 127; //km/h
 			const draftingFactor = value.getUint8(offset + 7) * 0.01;
@@ -543,26 +557,29 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				windSpeed,
 				draftingFactor,
 			};
-		} else if (pageNumber === 51) { // Track resistance
-			const grade = (value.getUint8(offset + 5) | value.getUint8(offset + 6) << 8) * 0.01; // %
+		} else if (pageNumber === 51) {
+			// Track resistance
+			const grade = (value.getUint8(offset + 5) | (value.getUint8(offset + 6) << 8)) * 0.01; // %
 			const rollingResistanceCoeff = value.getUint8(offset + 6) * 0.00005; // coeff * 5 * 10^(-5)
 
 			pageData = {
 				grade,
 				rollingResistanceCoeff,
 			};
-		} else if (pageNumber === 54) { // FE Trainer capabilities
-			const maxResistance = value.getUint8(offset + 5) | value.getUint8(offset + 6) << 8;
+		} else if (pageNumber === 54) {
+			// FE Trainer capabilities
+			const maxResistance = value.getUint8(offset + 5) | (value.getUint8(offset + 6) << 8);
 			const capabilities = value.getUint8(offset + 7); // TODO
 
 			pageData = {
 				maxResistance,
 				capabilities,
 			};
-		} else if (pageNumber === 55) { // User configuration
-			const userWeightKg = (value.getUint8(offset + 1) | value.getUint8(offset + 2) << 8) * 0.01;
+		} else if (pageNumber === 55) {
+			// User configuration
+			const userWeightKg = (value.getUint8(offset + 1) | (value.getUint8(offset + 2) << 8)) * 0.01;
 			const wheelOffset = (value.getUint8(offset + 4) & 0xf0) >> 4; // mm
-			const bikeWeightKg = ((value.getUint8(offset + 4) & 0x0f) | value.getUint8(offset + 5) << 8) * 0.05;
+			const bikeWeightKg = ((value.getUint8(offset + 4) & 0x0f) | (value.getUint8(offset + 5) << 8)) * 0.05;
 			const bikeWheelDiameter = value.getUint8(offset + 6) * 0.01;
 			const gearRatio = value.getUint8(offset + 7) * 0.03;
 
@@ -574,12 +591,15 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 				bikeWheelDiameter,
 				gearRatio,
 			};
-		} else if (pageNumber === 70) { // Request data
-		} else if (pageNumber === 71) { // Command status
+		} else if (pageNumber === 70) {
+			// Request data
+		} else if (pageNumber === 71) {
+			// Command status
 			const lastCommandReceived = value.getUint8(offset + 1);
 			const lastCommandSeq = value.getUint8(offset + 2);
 			const lastCommandStatus = value.getUint8(offset + 3);
-			if (lastCommandReceived === 48) { // FE basic resistance
+			if (lastCommandReceived === 48) {
+				// FE basic resistance
 				const setResistanceAck = value.getUint8(offset + 7) / 2;
 
 				pageData = {
@@ -587,15 +607,17 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 					lastCommandStatus,
 					setResistanceAck,
 				};
-			} else if (lastCommandReceived === 49) { // FE target power
-				const targetPowerAck = value.getUint8(offset + 6) >> 2 | value.getUint8(offset + 7) << 6;
+			} else if (lastCommandReceived === 49) {
+				// FE target power
+				const targetPowerAck = (value.getUint8(offset + 6) >> 2) | (value.getUint8(offset + 7) << 6);
 
 				pageData = {
 					lastCommandSeq,
 					lastCommandStatus,
 					targetPowerAck,
 				};
-			} else if (lastCommandReceived === 50) { // Wind resistance
+			} else if (lastCommandReceived === 50) {
+				// Wind resistance
 				const windResistanceAck = value.getUint8(offset + 5) * 0.01;
 				const windSpeedAck = value.getUint8(offset + 6);
 				const draftingFactorAck = value.getUint8(offset + 7);
@@ -607,8 +629,9 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 					windSpeedAck,
 					draftingFactorAck,
 				};
-			} else if (lastCommandReceived === 51) { // Track resistance
-				const setGradeAck = (value.getUint8(5) | value.getUint8(6) << 8) * 0.01;
+			} else if (lastCommandReceived === 51) {
+				// Track resistance
+				const setGradeAck = (value.getUint8(5) | (value.getUint8(6) << 8)) * 0.01;
 				const setRollingResistanceAck = value.getUint8(7);
 
 				pageData = {
@@ -618,24 +641,26 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 					setRollingResistanceAck,
 				};
 			}
-		} else if (pageNumber === 80) { // Manufacturer ID
+		} else if (pageNumber === 80) {
+			// Manufacturer ID
 			const hwRevision = value.getUint8(offset + 3);
-			const manufacturerId = value.getUint8(offset + 4) | value.getUint8(offset + 5) << 8
-			const modelNo = value.getUint8(offset + 6) | value.getUint8(offset + 7) << 8
+			const manufacturerId = value.getUint8(offset + 4) | (value.getUint8(offset + 5) << 8);
+			const modelNo = value.getUint8(offset + 6) | (value.getUint8(offset + 7) << 8);
 
 			pageData = {
 				hwRevision,
 				manufacturerId,
 				modelNo,
 			};
-		} else if (pageNumber === 81) { // Product info
+		} else if (pageNumber === 81) {
+			// Product info
 			const swRevisionSupplemental = value.getUint8(offset + 2);
 			const swRevisionMain = value.getUint8(offset + 3);
 			const serialNumber =
 				value.getUint8(offset + 4) |
-				value.getUint8(offset + 5) << 8 |
-				value.getUint8(offset + 6) << 16 |
-				value.getUint8(offset + 7) << 24;
+				(value.getUint8(offset + 5) << 8) |
+				(value.getUint8(offset + 6) << 16) |
+				(value.getUint8(offset + 7) << 24);
 
 			pageData = {
 				swRevisionSupplemental,
@@ -658,7 +683,7 @@ export async function createSmartTrainerController(server: BluetoothRemoteGATTSe
 
 		// We probably shouldn't be mutating a result object but always
 		// create a new copy, thus we make a copy here.
-		prevResult = JSON.parse(JSON.stringify(result))
+		prevResult = JSON.parse(JSON.stringify(result));
 
 		measurementsCb(result);
 	});

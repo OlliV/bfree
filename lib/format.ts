@@ -6,4 +6,3 @@ export function getElapsedTimeStr(t: number) {
 
 	return `${zeroPad(min, 2)}:${zeroPad(sec, 2)}`;
 }
-

@@ -17,6 +17,5 @@ export function getClientLang(): string {
 }
 
 export function getDayPeriod(date: Date): string {
-	return new Intl.DateTimeFormat(getClientLang(), { dayPeriod: "short"}).format(date);
+	return new Intl.DateTimeFormat(getClientLang(), { dayPeriod: 'short' }).format(date);
 }
-
