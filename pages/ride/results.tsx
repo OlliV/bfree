@@ -10,6 +10,7 @@ import Title from '../../components/Title';
 import { useGlobalState, setGlobalState } from '../../lib/global';
 import downloadBlob from '../../lib/download_blob';
 import { saveActivityLog } from '../../lib/activity_log';
+import { getDayPeriod } from '../../lib/locale';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -22,7 +23,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 export default function RideResults() {
 	const classes = useStyles();
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
-	const [title, setTitle] = useState('My Training');
+	const [title, setTitle] = useState(() => `Training ${getDayPeriod(new Date())}`);
 	const [notes, setNotes] = useState('This is just an example.');
 
 	const handleTCXExport = () => {
