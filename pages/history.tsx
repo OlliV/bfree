@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function RideCard({ log, onChange }) {
+function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1]; onChange: () => void }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

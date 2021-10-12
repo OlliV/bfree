@@ -210,8 +210,15 @@ export function saveActivityLog(logger: ReturnType<typeof createActivityLog>) {
 	localStorage.setItem(`activity_log:${date}`, logger.json());
 }
 
-export function getActivityLogs() {
-	const arr = [];
+export function getActivityLogs(): {
+	id: string;
+	name: string;
+	notes: string;
+	ts: number;
+	date: string;
+	logger: ReturnType<typeof createActivityLog>;
+}[] {
+	const arr: ReturnType<typeof getActivityLogs> = [];
 
 	if (typeof window === 'undefined') {
 		return [];
@@ -223,13 +230,14 @@ export function getActivityLogs() {
 			const logger = createActivityLog();
 			logger.importJson(localStorage[i]);
 
-			const date = new Date(logger.getStartTime());
+			const startTime = logger.getStartTime();
+			const date = new Date(startTime);
 
 			arr.push({
 				id: i,
 				name: logger.getName(),
 				notes: logger.getNotes(),
-				ts: logger.getStartTime(),
+				ts: startTime,
 				date: date.toLocaleDateString([navigator.languages[0], 'en-US'], {
 					weekday: 'long',
 					year: 'numeric',

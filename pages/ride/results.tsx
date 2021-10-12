@@ -9,6 +9,7 @@ import InfoCard from '../../components/InfoCard';
 import Title from '../../components/Title';
 import { useGlobalState, setGlobalState } from '../../lib/global';
 import downloadBlob from '../../lib/download_blob';
+import { saveActivityLog } from '../../lib/activity_log';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -36,6 +37,14 @@ export default function RideResults() {
 
 	const handleNameChange = (e) => setTitle(e.target.value);
 	const handleNotesChange = (e) => setNotes(e.target.value);
+
+	useEffect(() => {
+		if (logger) {
+			logger.setName(title);
+			logger.setNotes(notes);
+			saveActivityLog(logger);
+		}
+	}, [logger, title, notes]);
 
 	// Cleanup the logger after the user exists this page.
 	useEffect(() => {
