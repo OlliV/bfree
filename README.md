@@ -12,6 +12,8 @@ changed to something more secure in the future.
 
 ![Free Ride mode](/doc/images/freeride.png)
 
+[Try Now](https://bfree.vercel.app/) at https://bfree.vercel.app/
+
 Supported Devices
 -----------------
 
