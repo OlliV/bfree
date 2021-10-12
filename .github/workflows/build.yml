@@ -19,7 +19,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: yarn install, build, and lint
       run: |
-        cd bfree
         yarn install
         yarn build
         yarn lint
