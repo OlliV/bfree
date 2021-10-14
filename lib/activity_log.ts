@@ -12,6 +12,7 @@ export type TrackPoint = {
 	hr?: number;
 };
 export type LapTriggerMethod = 'Manual' | 'Distance' | 'Location' | 'Time' | 'HeartRate';
+export type Intensity = 'Active' | 'Resting';
 export type Lap = {
 	trackPoints: TrackPoint[];
 	startTime: number;
@@ -21,7 +22,7 @@ export type Lap = {
 	calories?: number;
 	avgHR?: number; // Heart rate BPM
 	maxHR?: number; // Heart rate BPM
-	intensity: 'Active' | 'Resting';
+	intensity: Intensity;
 	cadence?: number;
 	triggerMethod?: LapTriggerMethod;
 };
@@ -137,7 +138,7 @@ export function createActivityLog() {
 		getCurrentLap: (): undefined | Lap => {
 			return laps[laps.length - 1];
 		},
-		lapSplit: (time: number, triggerMethod: LapTriggerMethod) => {
+		lapSplit: (time: number, triggerMethod: LapTriggerMethod, intensity?: Intensity) => {
 			if (laps.length > 0) {
 				calcLapStats(laps[laps.length - 1], time, triggerMethod);
 			}
@@ -146,7 +147,7 @@ export function createActivityLog() {
 				trackPoints: [],
 				startTime: time,
 				totalTime: 0, // placeholder
-				intensity: 'Active', // TODO Does it ever change?
+				intensity: intensity || 'Active'
 			});
 		},
 		addTrackPoint: (trackPoint: TrackPoint) => {
@@ -157,7 +158,7 @@ export function createActivityLog() {
 				calcLapStats(laps[laps.length - 1], time, triggerMethod);
 			}
 		},
-		tcx: (name: string, notes: string | null, outputCb: (line: string) => void) => {
+		tcx: (outputCb: (line: string) => void) => {
 			outputCb(tcxHeader);
 			outputCb(`<Id>${convTs(laps[0].trackPoints[0].time)}</Id>\n`);
 			laps.forEach((lap) => {
@@ -199,7 +200,7 @@ export function createActivityLog() {
 				outputCb('</Track>\n');
 				outputCb('</Lap>\n');
 			});
-			if (notes) {
+			if (notes && notes.length > 0) {
 				outputCb(createNote(notes));
 			}
 			outputCb(createTcxFooter(name));

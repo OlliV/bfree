@@ -2,14 +2,14 @@ import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import ExportCard from '../../components/ExportCard';
 import Head from '../../components/Head';
 import InfoCard from '../../components/InfoCard';
 import Title from '../../components/Title';
 import { useGlobalState, setGlobalState } from '../../lib/global';
 import downloadBlob from '../../lib/download_blob';
-import { saveActivityLog } from '../../lib/activity_log';
+import { createActivityLog, saveActivityLog } from '../../lib/activity_log';
 import { getDayPeriod } from '../../lib/locale';
 
 export const useStyles = makeStyles((theme: Theme) =>
@@ -20,38 +20,58 @@ export const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
+function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?: string, notes?: string } {
+	if (!logger) {
+		return {};
+	}
+
+	if (logger.getName().length === 0) {
+		logger.setName(`Training ${getDayPeriod(new Date(logger.getStartTime() || Date.now()))}`);
+	}
+	if (logger.getNotes().length === 0) {
+		logger.setNotes('This is just an example.');
+	}
+
+	return {
+		name: logger.getName(),
+		notes: logger.getNotes(),
+	}
+}
+
 export default function RideResults() {
 	const classes = useStyles();
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
-	const [title, setTitle] = useState(() => `Training ${getDayPeriod(new Date())}`);
-	const [notes, setNotes] = useState('This is just an example.');
+	const { name: defaultName, notes: defaultNotes } = useMemo(() => maybeSetDefaults(logger), [logger]);
 
 	const handleTCXExport = () => {
-		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${title}.tcx`;
+		const name = logger.getName();
+		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${name}.tcx`;
 		const xmlLines: string[] = [];
 
-		logger.tcx(title, notes, (line: string) => xmlLines.push(line));
+		logger.tcx((line: string) => xmlLines.push(line));
 		const blob = new Blob(xmlLines, { type: 'application/vnd.garmin.tcx+xml' });
 
 		downloadBlob(blob, filename);
 	};
-
-	const handleNameChange = (e) => setTitle(e.target.value);
-	const handleNotesChange = (e) => setNotes(e.target.value);
-
-	useEffect(() => {
+	const handleNameChange = (e) => {
 		if (logger) {
-			logger.setName(title);
-			logger.setNotes(notes);
+			logger.setName(e.target.value);
 			saveActivityLog(logger);
 		}
-	}, [logger, title, notes]);
+	};
+	const handleNotesChange = (e) => {
+		if (logger) {
+			logger.setNotes(e.target.value);
+			saveActivityLog(logger);
+		}
+	};
 
 	// Cleanup the logger after the user exists this page.
 	useEffect(() => {
 		return () => {
+
 			console.log('Discarding the active logger');
-			setLogger(null);
+			setLogger(() => null);
 
 			// Make sure the user won't see old time values at the beginning
 			// of the next recording session.
@@ -59,7 +79,7 @@ export default function RideResults() {
 			setGlobalState('elapsedLapTime', 0);
 			setGlobalState('rideDistance', 0);
 		};
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+	}, []);
 
 	// TODO Show an error if logger is missing
 	return (
@@ -71,9 +91,9 @@ export default function RideResults() {
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<InfoCard
-						defaultName={title}
+						defaultName={defaultName}
 						onChangeName={handleNameChange}
-						defaultNotes={notes}
+						defaultNotes={defaultNotes}
 						onChangeNotes={handleNotesChange}
 					/>
 					<ExportCard

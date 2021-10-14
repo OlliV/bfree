@@ -78,7 +78,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${log.name}.tcx`;
 		const xmlLines: string[] = [];
 
-		logger.tcx(log.name, log.notes, (line: string) => xmlLines.push(line));
+		logger.tcx((line: string) => xmlLines.push(line));
 		const blob = new Blob(xmlLines, { type: 'application/vnd.garmin.tcx+xml' });
 
 		downloadBlob(blob, filename);
