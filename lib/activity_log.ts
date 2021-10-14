@@ -147,7 +147,7 @@ export function createActivityLog() {
 				trackPoints: [],
 				startTime: time,
 				totalTime: 0, // placeholder
-				intensity: intensity || 'Active'
+				intensity: intensity || 'Active',
 			});
 		},
 		addTrackPoint: (trackPoint: TrackPoint) => {

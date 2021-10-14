@@ -20,7 +20,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?: string, notes?: string } {
+function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?: string; notes?: string } {
 	if (!logger) {
 		return {};
 	}
@@ -35,7 +35,7 @@ function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?
 	return {
 		name: logger.getName(),
 		notes: logger.getNotes(),
-	}
+	};
 }
 
 export default function RideResults() {
@@ -69,7 +69,6 @@ export default function RideResults() {
 	// Cleanup the logger after the user exists this page.
 	useEffect(() => {
 		return () => {
-
 			console.log('Discarding the active logger');
 			setLogger(() => null);
 
