@@ -19,10 +19,11 @@ import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGlobalState } from '../../../lib/global';
 import Head from '../../../components/Head';
 import Title from '../../../components/Title';
+import WarningDialog from '../../../components/WarningDialog';
 import downloadBlob from '../../../lib/download_blob';
 import {
 	generateSystemWorkouts,
@@ -69,6 +70,10 @@ function WorkoutCard({ workout, onChange }) {
 	const classes = useStyles();
 	const router = useRouter();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [showWarning, setShowWarning] = useState(false);
+	const [btDevice_smart_trainer] = useGlobalState('btDevice_smart_trainer');
+	const href = useMemo(() => `/ride/record?type=workout&id=${workout.id}`, [workout.id]);
+
 	const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -96,8 +101,20 @@ function WorkoutCard({ workout, onChange }) {
 	const handleFav = () => {
 		toggleWorkoutFav(workout.id).catch(console.error).then(onChange());
 	};
-	const handleRide = () => {
-		router.push(`/ride/record?type=workout&id=${workout.id}`);
+	const handleRide = (e) => {
+		if (!btDevice_smart_trainer) {
+			e.preventDefault();
+			setShowWarning(true);
+		} else {
+			router.push(href);
+		}
+	};
+	const handleCancel = () => {
+		setShowWarning(false);
+	};
+	const handleContinue = () => {
+		setShowWarning(false);
+		router.push(href);
 	};
 
 	return (
@@ -154,6 +171,15 @@ function WorkoutCard({ workout, onChange }) {
 						<IconBike />
 					</IconButton>
 				</CardActions>
+				<WarningDialog
+					title={'Continue without a smart trainer?'}
+					show={showWarning}
+					handleCancel={handleCancel}
+					handleContinue={handleContinue}
+				>
+					There is currently no connection to a smart trainer and therefore the workout script will not be
+					able to control the smart trainer.
+				</WarningDialog>
 			</Card>
 		</Grid>
 	);
