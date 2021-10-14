@@ -21,6 +21,15 @@ export type SensorSourceType = {
 	name: string;
 };
 
+export type Rider = {
+	weight: number;
+	ftp: number;
+	heartRate: {
+		rest: number;
+		max: number;
+	};
+};
+
 // All the control params that we need to know globally for logging.
 export type ControlParams = {
 	slope?: number;
@@ -83,14 +92,7 @@ export type GlobalState = {
 	powerSources: SensorSourceType[];
 	unitDistance: 'km' | 'm' | 'mi';
 	unitSpeed: 'kmph' | 'mph';
-	rider: {
-		weight: number;
-		ftp: number;
-		heartRate: {
-			rest: number;
-			max: number;
-		};
-	};
+	rider: Rider;
 	bike: {
 		wheelCircumference: number;
 		weight: number;

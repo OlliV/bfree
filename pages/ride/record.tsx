@@ -123,6 +123,7 @@ function DataGraph() {
 function FreeRideDashboard() {
 	const router = useRouter();
 	const classes = useStyles();
+	const [logger] = useGlobalState('currentActivityLog');
 	const { resistance } = router.query;
 	const rollingResistance = Number(router.query.rollingResistance);
 
@@ -136,7 +137,11 @@ function FreeRideDashboard() {
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
-				<ResistanceControl resistance={resistance as Resistance} rollingResistance={rollingResistance} />
+				{logger ? (
+					<ResistanceControl resistance={resistance as Resistance} rollingResistance={rollingResistance} />
+				) : (
+					''
+				)}
 				<MeasurementCard type="cycling_cadence" />
 				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
@@ -148,14 +153,17 @@ function FreeRideDashboard() {
 }
 
 function WorkoutDashboard({
+	setMeta,
 	doSplit,
 	endRide,
 }: {
+	setMeta: (avatar: string, name: string) => void;
 	doSplit: (time: number, triggerMethod: LapTriggerMethod) => void;
-	endRide: () => void;
+	endRide: (notes?: string) => void;
 }) {
 	const router = useRouter();
 	const classes = useStyles();
+	const [logger] = useGlobalState('currentActivityLog');
 	const { id } = router.query;
 
 	// TODO should also check if router.isReady
@@ -169,7 +177,7 @@ function WorkoutDashboard({
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
-				<WorkoutController doSplit={doSplit} endRide={endRide} />
+				{logger ? <WorkoutController setMeta={setMeta} doSplit={doSplit} endRide={endRide} /> : ''}
 				<MeasurementCard type="cycling_cadence" />
 				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
@@ -284,10 +292,26 @@ export default function RideRecord() {
 	const handleSplit = () => {
 		doSplit(Date.now(), 'Manual');
 	};
-	const endRide = () => {
+	const setMeta = (avatar: string, name: string) => {
+		currentActivityLog.setAvatar(avatar);
+		currentActivityLog.setName(name);
+	};
+	const endRide = (notes?: string) => {
+		if (notes) {
+			currentActivityLog.setNotes(notes);
+		}
 		setRidePaused(-1);
 		setRideEnded(true);
 		router.push('/ride/results');
+	};
+	const handleEndRide = () => {
+		if (rideType === 'workout') {
+			// Typically a workout would give us some results as notes at the
+			// end of the ride.
+			endRide('Inconclusive.');
+		} else {
+			endRide();
+		}
 	};
 
 	if (!title) {
@@ -296,7 +320,7 @@ export default function RideRecord() {
 		return (
 			<Container maxWidth="md">
 				<Head title={title} />
-				<Dashboard doSplit={doSplit} endRide={endRide} />
+				<Dashboard setMeta={setMeta} doSplit={doSplit} endRide={endRide} />
 				<FlightRecorder startTime={rideStartTime} />
 				<PauseModal show={ridePaused === -1 && !rideEnded} onClose={continueRide}>
 					<p id="pause-modal-description">Tap outside of this area to start the ride.</p>
@@ -313,7 +337,7 @@ export default function RideRecord() {
 					<BottomNavigation showLabels>
 						<BottomNavigationAction label="Pause" icon={<IconPause />} onClick={pauseRide} />
 						<BottomNavigationAction label="Split" icon={<IconSplit />} onClick={handleSplit} />
-						<BottomNavigationAction label="End" icon={<IconStop />} onClick={endRide} />
+						<BottomNavigationAction label="End" icon={<IconStop />} onClick={handleEndRide} />
 					</BottomNavigation>
 				</Box>
 			</Container>

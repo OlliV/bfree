@@ -1,37 +1,41 @@
+import { Rider } from './global';
 import { base64ToString, digestSHA1, stringToBase64 } from './ab';
+import generateFTPTest from './workouts/ftp';
 
-type WorkoutScript = {
+export type WorkoutScript = {
 	id: string;
 	name: string;
 	notes: string;
 	ts: number; // ms
 	fav?: boolean;
+	avatar?: string;
 	script: string;
 };
 
 export function getWorkouts(): WorkoutScript[] {
-	const a = [];
+	const workouts = [];
 
 	if (typeof window === 'undefined') {
-		return [];
+		return workouts;
 	}
 
 	for (let i in localStorage) {
 		if (i.startsWith('workout:')) {
 			const v = JSON.parse(localStorage[i]);
 
-			a.push({
+			workouts.push({
 				id: i,
 				name: v.name,
 				notes: v.notes,
 				ts: v.ts,
 				fav: v.fav,
+				avatar: v.avatar || 'W',
 				script: base64ToString(v.script),
 			});
 		}
 	}
 
-	return a.sort((a, b) => b.fav - a.fav || b.ts - a.ts);
+	return workouts.sort((a, b) => b.fav - a.fav || b.ts - a.ts);
 }
 
 export function getWorkoutDate(workout: WorkoutScript) {
@@ -45,7 +49,32 @@ export function getWorkoutDate(workout: WorkoutScript) {
 	});
 }
 
-export async function saveWorkout(name: string, notes: string, script: string, ts?: number) {
+export async function generateSystemWorkouts(rider: Rider) {
+	const systemWorkouts: Array<[string, string, string]> = [
+		['FTP Test', 'Test your FTP.', generateFTPTest(rider.ftp)],
+	];
+
+	await Promise.all(systemWorkouts.map((w) => saveSystemWorkout(...w)));
+}
+
+export async function saveSystemWorkout(name: string, notes: string, script: string): Promise<string> {
+	const id = `workout:${name.split(' ').join('').toLowerCase()}`;
+
+	localStorage.setItem(
+		id,
+		JSON.stringify({
+			name,
+			notes,
+			ts: 0,
+			avatar: 'T',
+			script: await stringToBase64(script),
+		})
+	);
+
+	return id;
+}
+
+export async function saveWorkout(name: string, notes: string, script: string, ts?: number): Promise<string> {
 	const digest = await digestSHA1(name);
 	const id = `workout:${digest}`;
 
@@ -90,6 +119,7 @@ export function readWorkout(id: string): WorkoutScript {
 		notes: w.notes,
 		ts: w.ts,
 		fav: w.fav,
+		avatar: w.avatar || 'W',
 		script: base64ToString(w.script),
 	};
 }

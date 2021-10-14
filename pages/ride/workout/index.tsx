@@ -20,10 +20,17 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import { useGlobalState } from '../../../lib/global';
 import Head from '../../../components/Head';
 import Title from '../../../components/Title';
 import downloadBlob from '../../../lib/download_blob';
-import { getWorkouts, getWorkoutDate, deleteWorkout, toggleWorkoutFav } from '../../../lib/workout_storage';
+import {
+	generateSystemWorkouts,
+	getWorkouts,
+	getWorkoutDate,
+	deleteWorkout,
+	toggleWorkoutFav,
+} from '../../../lib/workout_storage';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -99,28 +106,32 @@ function WorkoutCard({ workout, onChange }) {
 				<CardHeader
 					avatar={
 						<Avatar aria-label="recipe" className={classes.avatar}>
-							R
+							{workout.avatar || 'W'}
 						</Avatar>
 					}
 					action={
-						<div>
-							<IconButton aria-label="settings" onClick={handleMenuClick}>
-								<IconMoreVert />
-							</IconButton>
-							<Menu
-								id={`edit-menu-${workout.id}`}
-								anchorEl={anchorEl}
-								keepMounted
-								open={!!anchorEl}
-								onClose={handleClose}
-							>
-								<MenuItem onClick={handleEdit}>Edit</MenuItem>
-								<MenuItem onClick={handleDelete}>Delete</MenuItem>
-							</Menu>
-						</div>
+						workout.ts !== 0 ? (
+							<div>
+								<IconButton aria-label="settings" onClick={handleMenuClick}>
+									<IconMoreVert />
+								</IconButton>
+								<Menu
+									id={`edit-menu-${workout.id}`}
+									anchorEl={anchorEl}
+									keepMounted
+									open={!!anchorEl}
+									onClose={handleClose}
+								>
+									<MenuItem onClick={handleEdit}>Edit</MenuItem>
+									<MenuItem onClick={handleDelete}>Delete</MenuItem>
+								</Menu>
+							</div>
+						) : (
+							''
+						)
 					}
 					title={workout.name}
-					subheader={getWorkoutDate(workout)}
+					subheader={workout.ts != 0 ? getWorkoutDate(workout) : ''}
 				/>
 				{/* Add preview here */}
 				<CardContent>
@@ -129,14 +140,18 @@ function WorkoutCard({ workout, onChange }) {
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing>
-					<IconButton aria-label="add to favorites" color={workout.fav ? 'secondary' : undefined}>
-						<IconFavorite onClick={handleFav} />
+					<IconButton
+						aria-label="add to favorites"
+						color={workout.fav ? 'secondary' : undefined}
+						onClick={handleFav}
+					>
+						<IconFavorite />
 					</IconButton>
-					<IconButton aria-label="download">
-						<IconDownload onClick={handleDownload} />
+					<IconButton aria-label="download" onClick={handleDownload}>
+						<IconDownload />
 					</IconButton>
-					<IconButton aria-label="Ride">
-						<IconBike onClick={handleRide} />
+					<IconButton aria-label="Ride" onClick={handleRide}>
+						<IconBike />
 					</IconButton>
 				</CardActions>
 			</Card>
@@ -147,6 +162,7 @@ function WorkoutCard({ workout, onChange }) {
 export default function Workout() {
 	const classes = useStyles();
 	const router = useRouter();
+	const [rider] = useGlobalState('rider');
 	const [workouts, setWorkouts] = useState(() => getWorkouts());
 	const handleChange = () => setWorkouts(getWorkouts());
 
@@ -154,8 +170,10 @@ export default function Workout() {
 	// Otherwise we'd show stale data after an edit.
 	// Interestingly there is a short delay
 	useEffect(() => {
-		setWorkouts(getWorkouts());
-	}, []);
+		generateSystemWorkouts(rider)
+			.then(() => setWorkouts(getWorkouts()))
+			.catch(console.error);
+	}, [rider]);
 
 	return (
 		<Container maxWidth="sm">

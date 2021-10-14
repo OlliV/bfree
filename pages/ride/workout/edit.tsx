@@ -8,7 +8,7 @@ import Title from '../../../components/Title';
 import WorkoutPreviewModal from '../../../components/WorkoutPreview';
 import WorkoutScriptEditor from '../../../components/WorkoutScriptEditor';
 import { saveWorkout, readWorkout } from '../../../lib/workout_storage';
-import scriptExample from '../../../lib/workout_script_example';
+import scriptExample from '../../../lib/workouts/workout_script_example';
 
 const defaultName = 'My Workout';
 const defaultNotes = 'This is just an example.';

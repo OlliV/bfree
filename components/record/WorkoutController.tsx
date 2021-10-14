@@ -23,6 +23,7 @@ import {
 	getCyclingSpeedMeasurement,
 	getHeartRateMeasurement,
 } from '../../lib/measurements';
+import { getDayPeriod } from '../../lib/locale';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -39,11 +40,13 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function WorkoutController({
+	setMeta,
 	doSplit,
 	endRide,
 }: {
+	setMeta: (avatar: string, name: string) => void;
 	doSplit: (time: number, lapTrigger: LapTriggerMethod) => void;
-	endRide: () => void;
+	endRide: (notes?: string) => void;
 }) {
 	const classes = useStyles();
 	const router = useRouter();
@@ -78,14 +81,11 @@ export default function WorkoutController({
 	// Load workout runner
 	useEffect(() => {
 		let wr: ReturnType<typeof createWorkoutRunner>;
-		if (!smartTrainerControl) {
-			// TODO Show error
-			console.error('No smart trainer registered');
-			return;
-		}
 
 		const { id: workoutId, type: rideType } = router.query;
 		if (router.isReady && rideType === 'workout' && typeof workoutId === 'string') {
+			let prevType;
+			let prevValue;
 			setWorkoutRunner((prevRunner) => {
 				if (prevRunner) {
 					// Hopefully we'll never end up doing this because this
@@ -93,9 +93,19 @@ export default function WorkoutController({
 					prevRunner.terminate();
 				}
 
-				const { script } = readWorkout(workoutId) || {};
+				const { avatar, name, script } = readWorkout(workoutId) || {};
 				if (!script) {
 					// TODO We should show an error
+					return null;
+				}
+
+				setMeta(avatar, `${name} ${getDayPeriod(new Date(Date.now()))}`);
+
+				if (!smartTrainerControl) {
+					// We cannot continue further on without
+					// a smartTrainerControl
+					// TODO Show error
+					console.error('No smart trainer registered');
 					return null;
 				}
 
@@ -108,16 +118,30 @@ export default function WorkoutController({
 						return;
 					}
 
-					if (msg.basicLoad) {
-						sendBasic(msg.basicLoad).catch(console.error);
-					} else if (msg.power) {
-						sendPower(msg.power).catch(console.error);
-					} else if (msg.slope) {
-						sendSlope(msg.slope).catch(console.error);
-					} else if (msg.doSplit) {
+					if (msg.doSplit) {
 						doSplit(msg.time, msg.doSplit);
+					} else if (msg.doStop && typeof msg.doStop === 'string') {
+						endRide(msg.doStop);
 					} else if (msg.doStop) {
 						endRide();
+					} else if (msg.basicLoad) {
+						if (prevType != 'basicLoad' || prevValue != msg.basicLoad) {
+							sendBasic(msg.basicLoad).catch(console.error);
+						}
+						prevType = 'basicLoad';
+						prevValue = msg.basicLoad;
+					} else if (msg.power) {
+						if (prevType != 'power' || prevValue != msg.power) {
+							sendPower(msg.power).catch(console.error);
+						}
+						prevType = 'power';
+						prevValue = msg.power;
+					} else if (msg.slope) {
+						if (prevType != 'slope' || prevValue != msg.slope) {
+							sendSlope(msg.slope).catch(console.error);
+						}
+						prevType = 'slope';
+						prevValue = msg.slope;
 					}
 
 					if (msg.message) {

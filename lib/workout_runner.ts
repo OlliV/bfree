@@ -14,7 +14,7 @@ export type RunnerResponse = {
 	time: number; // sec
 	message?: string; // Message shown to the rider
 	doSplit?: LapTriggerMethod; // add a split
-	doStop?: boolean; // stop the workout
+	doStop?: boolean | string; // stop the workout
 	basicLoad?: number;
 	power?: number;
 	slope?: number;

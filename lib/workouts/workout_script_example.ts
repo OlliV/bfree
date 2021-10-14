@@ -38,7 +38,7 @@ self.addEventListener('message', function(e) {
    *   time: msg.time,
    *   message, // Optional message shown to the rider
    *   doSplit, // add a split by setting this to one of these: 'Distance', 'Location', 'Time', 'HeartRate'
-   *   doStop, // stop the workout by making this truthy
+   *   doStop, // stop the workout by making this truthy; If a string is given it will be set as a note to the log
    *   // One of the following:
    *   basicLoad,
    *   power,
@@ -48,7 +48,7 @@ self.addEventListener('message', function(e) {
   self.postMessage({
     time: msg.time,
     power,
-    endRide,
+    doStop: endRide,
   });
 }, false);
 `;

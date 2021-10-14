@@ -90,7 +90,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 				<CardHeader
 					avatar={
 						<Avatar aria-label="recipe" className={classes.avatar}>
-							R
+							{log.logger.getAvatar()}
 						</Avatar>
 					}
 					action={

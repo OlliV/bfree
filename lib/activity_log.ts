@@ -45,6 +45,7 @@ const convTs = (ts: number) => new Date(ts).toISOString();
 export function createActivityLog() {
 	let name: string = '';
 	let notes: string = '';
+	let avatar: string = 'R';
 	const laps: Lap[] = [];
 
 	const calcLapStats = (lap: Lap, time: number, triggerMethod: LapTriggerMethod) => {
@@ -94,8 +95,9 @@ export function createActivityLog() {
 		importJson: (json: string) => {
 			const parsed = JSON.parse(json);
 
-			name = parsed.name;
-			notes = parsed.notes;
+			name = parsed.name || '';
+			notes = parsed.notes || '';
+			avatar = parsed.avatar || 'R';
 
 			laps.length = 0;
 			for (const lap of parsed.laps) {
@@ -104,10 +106,12 @@ export function createActivityLog() {
 
 			// TODO Attempt to recover incomplete log e.g. summaries missing
 		},
-		setName: (s: string) => (name = s),
+		setName: (s: string) => (name = s || ''),
 		getName: () => name,
-		setNotes: (s: string) => (notes = s),
+		setNotes: (s: string) => (notes = s || ''),
 		getNotes: () => notes,
+		setAvatar: (s: string) => (avatar = s || 'R'),
+		getAvatar: () => avatar,
 		getLapStartTime: (lapIndex?: number): number => {
 			const lap = typeof lapIndex === 'number' ? laps[lapIndex] : laps[laps.length - 1];
 
@@ -205,7 +209,7 @@ export function createActivityLog() {
 			}
 			outputCb(createTcxFooter(name));
 		},
-		json: () => JSON.stringify({ name, notes, laps }),
+		json: () => JSON.stringify({ name, notes, avatar, laps }),
 	};
 }
 
