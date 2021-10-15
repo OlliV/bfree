@@ -1,4 +1,3 @@
-import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
@@ -6,6 +5,7 @@ import { speedUnitConv, distanceUnitConv } from '../lib/units';
 import createWorkoutRunner, { RunnerResponse } from '../lib/workout_runner';
 import Graph, { Series } from './record/Graph';
 import { useGlobalState } from '../lib/global';
+import MyModal from './MyModal';
 
 const graphColors = [
 	'#b1e67b', // load resistance
@@ -131,8 +131,6 @@ function PreviewParams({
 }
 
 export default function WorkoutPreviewModal({ code, open, onClose }) {
-	const classes = useModalStyles();
-	const modalStyle = getModalStyle();
 	const [params, setParams] = useState({ endTime: 0, endDistance: 0, speed: 0 });
 	const [series, setSeries] = useState([]);
 
@@ -141,7 +139,7 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 	};
 
 	useEffect(() => {
-		let runner;
+		let runner: ReturnType<typeof createWorkoutRunner>;
 
 		if (open && typeof code === 'string') {
 			console.log('Creating a worker');
@@ -157,7 +155,7 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 				},
 			];
 
-			let tim;
+			let tim: ReturnType<typeof setTimeout>;
 			new Promise<void>((resolve, reject) => {
 				tim = setTimeout(() => {
 					if (runner) {
@@ -193,6 +191,9 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 						time: time,
 						distance: params.speed * time,
 						speed: params.speed,
+						cadence: 50, // TODO Could be a param
+						power: 200, // TODO Could be p param
+						heartRate: 120, // TODO Could be a param
 					});
 				}
 			})
@@ -218,12 +219,13 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 		};
 	}, [open, code, params]);
 
-	const body = (
-		<div style={modalStyle} className={classes.paper}>
-			<h2 id="workout-preview-modal-title">Workout Preview</h2>
-			<p id="workout-preview-modal-description">
-				Adjust the parameters below to see how they affect to the workout.
-			</p>
+	return (
+		<MyModal
+			title="Workout Preview"
+			description="Adjust the parameters below to see how they affect to the workout."
+			open={open}
+			onClose={handleClose}
+		>
 			<PreviewParams onChange={setParams} />
 			<Graph
 				series={series}
@@ -233,17 +235,6 @@ export default function WorkoutPreviewModal({ code, open, onClose }) {
 				enableLegends={true}
 				isInteractive={true}
 			/>
-		</div>
-	);
-
-	return (
-		<Modal
-			open={open}
-			onClose={handleClose}
-			aria-labelledby="workout-preview-modal-title"
-			aria-describedby="workout-preview-modal-description"
-		>
-			{body}
-		</Modal>
+		</MyModal>
 	);
 }
