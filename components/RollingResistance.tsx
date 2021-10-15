@@ -57,7 +57,7 @@ export default function RollingResistance({
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardMedia className={classes.media} image="/images/cards/roller.jpg" title="Filler image" />
+				<CardMedia className={classes.media} image="/images/cards/slope.jpg" title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
 					Rolling Resistance
 				</Typography>
