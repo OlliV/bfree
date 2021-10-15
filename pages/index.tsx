@@ -2,7 +2,7 @@ import Grid from '@material-ui/core/Grid';
 import Image from 'next/image';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import styles from '../styles/Home.module.css';
-import Head from '../components/Head';
+import MyHead from '../components/MyHead';
 import MenuCard from '../components/MenuCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -22,7 +22,7 @@ export default function Home() {
 
 	return (
 		<div className={styles.container}>
-			<Head title="Cycling App" />
+			<MyHead title="Cycling App" />
 
 			<Image src="/images/bfree.jpg" alt="Bfree forever" width="1200" height={150} className={classes.pic} />
 			<main className={styles.main}>

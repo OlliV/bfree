@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import StartButton from '../../components/StartButton';
 import ResistanceMode from '../../components/ResistanceMode';
 import RollingResistance from '../../components/RollingResistance';
@@ -38,7 +38,7 @@ export default function RideFree() {
 
 	return (
 		<Container maxWidth="md">
-			<Head title="Free Ride" />
+			<MyHead title="Free Ride" />
 			<Box>
 				<Title href="/ride">Free Ride</Title>
 				<p>Start a free ride exercise.</p>

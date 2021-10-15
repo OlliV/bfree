@@ -8,7 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useSetupStyles } from './SetupComponents';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

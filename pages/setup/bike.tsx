@@ -6,7 +6,7 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import { useState } from 'react';
 import Title from '../../components/Title';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import { isValidUnsigned } from '../../lib/validation';
 import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
@@ -107,7 +107,7 @@ function BikeType() {
 export default function SetupBike() {
 	return (
 		<Container maxWidth="md">
-			<Head title="Bike" />
+			<MyHead title="Bike" />
 			<Box>
 				<Title href="/setup">Bike</Title>
 				<p>Setup the bike measurements.</p>

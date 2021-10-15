@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
 import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import MeasurementCard from '../../components/record/MeasurementCard';
 import WorkoutController from '../../components/record/WorkoutController';
 import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
@@ -319,7 +319,7 @@ export default function RideRecord() {
 	} else {
 		return (
 			<Container maxWidth="md">
-				<Head title={title} />
+				<MyHead title={title} />
 				<Dashboard setMeta={setMeta} doSplit={doSplit} endRide={endRide} />
 				<FlightRecorder startTime={rideStartTime} />
 				<PauseModal show={ridePaused === -1 && !rideEnded} onClose={continueRide}>

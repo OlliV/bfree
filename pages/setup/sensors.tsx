@@ -18,7 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import { useEffect, useState } from 'react';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import { pairDevice, readBatteryLevel } from '../../lib/ble';
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble_cpp';
 import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble_cscp';
@@ -293,7 +293,7 @@ export default function SetupSensors() {
 
 	return (
 		<Container maxWidth="md">
-			<Head title="Senors" />
+			<MyHead title="Senors" />
 			<Box>
 				<Title>Sensors</Title>
 				<p>Connect your smart trainer, HRM, and other sensors using BLE.</p>

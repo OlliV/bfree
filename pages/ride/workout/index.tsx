@@ -21,7 +21,7 @@ import { red } from '@material-ui/core/colors';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useGlobalState } from '../../../lib/global';
-import Head from '../../../components/Head';
+import MyHead from '../../../components/MyHead';
 import Title from '../../../components/Title';
 import WarningDialog from '../../../components/WarningDialog';
 import downloadBlob from '../../../lib/download_blob';
@@ -203,7 +203,7 @@ export default function Workout() {
 
 	return (
 		<Container maxWidth="sm">
-			<Head title="Workout" />
+			<MyHead title="Workout" />
 			<Box>
 				<Title href="/ride">Workout</Title>
 				<p>Create and execute scripted workouts.</p>

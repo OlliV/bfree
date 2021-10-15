@@ -7,8 +7,6 @@ import Battery80Icon from '@material-ui/icons/Battery80';
 import Battery90Icon from '@material-ui/icons/Battery90';
 import Battery100Icon from '@material-ui/icons/BatteryFull';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-
-import Box from '@material-ui/core/Box';
 import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -77,7 +77,7 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 		if (sensorValue.power != null) {
 			power = sensorValue.power;
 		}
-		speed = sensorValue && sensorValue.speed != null ? speedUnit.convTo(sensorValue.speed).toFixed(1) : '--';
+		speed = sensorValue.speed != null ? speedUnit.convTo(sensorValue.speed).toFixed(1) : '--';
 
 		const warns = [];
 		const { calStatus } = sensorValue;

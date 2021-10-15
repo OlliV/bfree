@@ -2,13 +2,13 @@ import Title from '../../components/Title';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import MenuCard from '../../components/MenuCard';
 
 export default function Setup() {
 	return (
 		<Container maxWidth="md">
-			<Head title="Setup" />
+			<MyHead title="Setup" />
 			<Box>
 				<Title href="/">Setup</Title>
 				<p>Configure your trainer setup here.</p>

@@ -16,7 +16,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import Head from '../components/Head';
+import MyHead from '../components/MyHead';
 import Title from '../components/Title';
 import downloadBlob from '../lib/download_blob';
 import { getActivityLogs, deleteActivityLog } from '../lib/activity_log';
@@ -141,7 +141,7 @@ export default function History() {
 
 	return (
 		<Container maxWidth="sm">
-			<Head title="Previous Rides" />
+			<MyHead title="Previous Rides" />
 			<Box>
 				<Title href="/">Previous Rides</Title>
 				<p>Manage and export previous rides.</p>

@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function SetupDialog({ btnText, title, children }) {
-	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {

@@ -2,9 +2,9 @@ import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import ExportCard from '../../components/ExportCard';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import InfoCard from '../../components/InfoCard';
 import Title from '../../components/Title';
 import { useGlobalState, setGlobalState } from '../../lib/global';
@@ -83,7 +83,7 @@ export default function RideResults() {
 	// TODO Show an error if logger is missing
 	return (
 		<Container maxWidth="md">
-			<Head title="Ride Results" />
+			<MyHead title="Ride Results" />
 			<Box>
 				<Title href="/">Results</Title>
 				<p>Training ride results.</p>

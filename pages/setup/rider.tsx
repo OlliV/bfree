@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import TextField from '@material-ui/core/TextField';
 import Title from '../../components/Title';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -155,7 +155,7 @@ function HeartRate() {
 export default function SetupRider() {
 	return (
 		<Container maxWidth="md">
-			<Head title="Rider" />
+			<MyHead title="Rider" />
 			<Box>
 				<Title href="/setup">Rider</Title>
 				<p>Set the rider weight and other measurements.</p>

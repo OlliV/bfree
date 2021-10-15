@@ -1,9 +1,8 @@
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
-import { timeUnitConv, speedUnitConv, distanceUnitConv } from '../lib/units';
+import { speedUnitConv, distanceUnitConv } from '../lib/units';
 import createWorkoutRunner, { RunnerResponse } from '../lib/workout_runner';
 import Graph, { Series } from './record/Graph';
 import { useGlobalState } from '../lib/global';
@@ -89,13 +88,13 @@ function PreviewParams({
 	};
 
 	const handleSpeedChange = (e) => {
-		const speed: number = Number(e.target.value);
+		const newSpeed: number = Number(e.target.value);
 
-		setSpeed(speed);
+		setSpeed(newSpeed);
 		if (prev === 'time') {
-			setEndDistance(distanceUnit.convTo(speedUnit.convToBase(speed) * (endTime * 60)));
+			setEndDistance(distanceUnit.convTo(speedUnit.convToBase(newSpeed) * (endTime * 60)));
 		} else if (prev === 'distance') {
-			setEndTime(distanceUnit.convToBase(endDistance) / speedUnit.convToBase(speed) / 60);
+			setEndTime(distanceUnit.convToBase(endDistance) / speedUnit.convToBase(newSpeed) / 60);
 		}
 
 		propagateChange();

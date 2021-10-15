@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';
 import { useSetupStyles as useStyles } from '../../components/SetupComponents';
 import PriorityList from '../../components/PriorityList';
@@ -60,7 +60,7 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 export default function SetupMeasurements() {
 	return (
 		<Container maxWidth="md">
-			<Head title="Measurements" />
+			<MyHead title="Measurements" />
 			<Box>
 				<Title href="/setup">Measurements</Title>
 				<p>Select measurement sources for recording.</p>

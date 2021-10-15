@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import Head from '../../../components/Head';
+import MyHead from '../../../components/MyHead';
 import Title from '../../../components/Title';
 import WorkoutPreviewModal from '../../../components/WorkoutPreview';
 import WorkoutScriptEditor from '../../../components/WorkoutScriptEditor';
@@ -48,7 +48,7 @@ export default function RideWorkoutEdit() {
 
 	return (
 		<Container maxWidth="md">
-			<Head title="Edit Workout" />
+			<MyHead title="Edit Workout" />
 			<Box>
 				<Title disableBack={true}>Edit Workout</Title>
 				<p>Create or edit a workout.</p>

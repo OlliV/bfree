@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Head from '../../components/Head';
+import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';
 import { EnumConfigParam, UnsignedConfigParam } from '../../components/SetupComponents';
 import { UnitConv, distanceUnitConv, speedUnitConv } from '../../lib/units';
@@ -13,7 +13,7 @@ const distanceUnits: [string, string][] = gen(distanceUnitConv);
 export default function SetupGeneral() {
 	return (
 		<Container maxWidth="md">
-			<Head title="General" />
+			<MyHead title="General" />
 			<Box>
 				<Title href="/setup">General</Title>
 				<p>Configure measurement units and UX settings.</p>
