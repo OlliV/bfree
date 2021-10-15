@@ -1,42 +1,34 @@
 import Modal, { ModalProps } from '@material-ui/core/Modal';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
-function getModalStyle() {
+const defaultModalStyle = {
+	width: '80vw',
+	height: '68vh',
+};
+
+const useModalStyles = makeStyles((theme: Theme) => {
 	const top = 50;
 	const left = 50;
 
-	return {
-		top: `${top}%`,
-		left: `${left}%`,
-		transform: `translate(-${top}%, -${left}%)`,
-	};
-}
-
-const useModalStyles = makeStyles((theme: Theme) =>
-	createStyles({
+	return createStyles({
 		paper: {
 			position: 'absolute',
-			width: '80vw',
-			height: '68vh',
+			top: `${top}%`,
+			left: `${left}%`,
+			transform: `translate(-${top}%, -${left}%)`,
 			backgroundColor: theme.palette.background.paper,
 			border: '2px solid #000',
 			boxShadow: theme.shadows[5],
 			padding: theme.spacing(2, 4, 3),
 		},
-		trainerControl: {
-			marginTop: '1em',
-			margin: 'auto',
-			width: '80%',
-		},
 	})
-);
+});
 
 export default function MyModal(
-	props: { title: string; description: string; children: any } & Omit<ModalProps, 'children'>
+	props: { title: string; description: string; modalStyle?: any, children: any } & Omit<ModalProps, 'children'>
 ) {
 	const classes = useModalStyles();
-	const modalStyle = getModalStyle();
-	const { title, description, open, onClose, children, ...rest } = props;
+	const { title, description, open, onClose, modalStyle, children, ...rest } = props;
 
 	return (
 		<Modal
@@ -46,7 +38,7 @@ export default function MyModal(
 			aria-labelledby="modal-title"
 			aria-describedby="modal-description"
 		>
-			<div style={modalStyle} className={classes.paper}>
+			<div style={modalStyle || defaultModalStyle} className={classes.paper}>
 				<h2 id="modal-title">{title}</h2>
 				<p id="modal-description">{description}</p>
 				{children}
