@@ -225,8 +225,6 @@ export function saveActivityLog(logger: ReturnType<typeof createActivityLog>) {
 
 export function getActivityLogs(): {
 	id: string;
-	name: string;
-	notes: string;
 	ts: number;
 	date: string;
 	logger: ReturnType<typeof createActivityLog>;
@@ -247,8 +245,6 @@ export function getActivityLogs(): {
 
 			arr.push({
 				id: i,
-				name: logger.getName(),
-				notes: logger.getNotes(),
 				ts: startTime,
 				date: date.toLocaleDateString([navigator.languages[0], 'en-US'], {
 					weekday: 'long',

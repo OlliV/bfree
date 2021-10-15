@@ -10,21 +10,12 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
+import EditActionButtons from './EditActionButtons';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		card: {
 			height: '45em',
-		},
-		actions: {
-			'& > *': {
-				boxShadow: 'none',
-				margin: theme.spacing(1),
-			},
-			marginRight: '-2em',
-			marginTop: '-3.8em',
-			marginBottom: '1em',
-			textAlign: 'right',
 		},
 		nameField: {
 			paddingBottom: '2.5em',
@@ -73,23 +64,11 @@ export default function WorkoutScriptEditor({
 					<Typography gutterBottom variant="h5" component="h2">
 						Workout Script
 					</Typography>
-					<Container className={classes.actions}>
-						<Fab
-							size="small"
-							color="primary"
-							aria-label="save"
-							onClick={(e: any) => onClickSave(e, name, notes)}
-						>
-							<IconSave />
-						</Fab>
-						<Fab size="small" color="secondary" aria-label="discard" onClick={onClickDiscard}>
-							<IconCancel />
-						</Fab>
-						<Fab size="small" variant="extended" aria-label="preview" onClick={onClickPreview}>
-							<IconTimeLine />
-							Preview
-						</Fab>
-					</Container>
+					<EditActionButtons
+						onClickSave={(e: any) => onClickSave(e, name, notes)}
+						onClickDiscard={onClickDiscard}
+						onClickPreview={onClickPreview}
+					/>
 					<form>
 						<TextField
 							id="act-name"

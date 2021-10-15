@@ -150,7 +150,7 @@ function WorkoutCard({ workout, onChange }) {
 					title={workout.name}
 					subheader={workout.ts != 0 ? getWorkoutDate(workout) : ''}
 				/>
-				{/* Add preview here */}
+				{/* TODO Add preview here */}
 				<CardContent>
 					<Typography variant="body2" color="textSecondary" component="p">
 						{workout.notes}

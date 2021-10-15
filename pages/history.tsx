@@ -7,19 +7,23 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import IconMoreVert from '@material-ui/icons/MoreVert';
 import IconDownload from '@material-ui/icons/GetApp';
+import IconMoreVert from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import MyHead from '../components/MyHead';
+import MyModal from '../components/MyModal';
 import Title from '../components/Title';
+import InfoCard from '../components/InfoCard';
+import EditActionButtons from '../components/EditActionButtons';
 import downloadBlob from '../lib/download_blob';
-import { getActivityLogs, deleteActivityLog } from '../lib/activity_log';
+import { createActivityLog, deleteActivityLog, getActivityLogs, saveActivityLog } from '../lib/activity_log';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -51,13 +55,84 @@ const useStyles = makeStyles((theme: Theme) =>
 		avatar: {
 			backgroundColor: red[500],
 		},
+		nameField: {
+			paddingBottom: '2.5em',
+		},
 	})
 );
 
+const editModalStyle = {
+	width: '20em',
+	height: '30em',
+};
+
+function EditModal({
+	open,
+	onClose,
+	logger,
+}: {
+	open: boolean;
+	onClose: () => void;
+	logger: ReturnType<typeof createActivityLog>;
+}) {
+	const classes = useStyles();
+	const [newName, setNewName] = useState(() => logger.getName());
+	const [newNotes, setNewNotes] = useState(() => logger.getNotes());
+
+	const handleNameChange = (e) => {
+		setNewName(e.target.value);
+	};
+	const handleNotesChange = (e) => {
+		setNewNotes(e.target.value);
+	};
+	const onClickSave = () => {
+		logger.setName(newName);
+		logger.setNotes(newNotes);
+		saveActivityLog(logger);
+		onClose();
+	};
+	const onClickDiscard = (e: any) => {
+		onClose();
+	};
+
+	return (
+		<MyModal title="Edit Ride" description="Here you can edit the activity metadata." modalStyle={editModalStyle} open={open} onClose={onClose}>
+			{open ? (
+				<Grid item>
+					<form>
+						<TextField
+							id="act-name"
+							label="Activity Name"
+							defaultValue={logger.getName()}
+							onChange={handleNameChange}
+							className={classes.nameField}
+						/>
+						<TextField
+							id="act-notes"
+							label="Notes"
+							multiline
+							rows={4}
+							defaultValue={logger.getNotes()}
+							onChange={handleNotesChange}
+							variant="outlined"
+						/>
+					</form>
+					<EditActionButtons style={{ marginTop: 0 }} onClickSave={onClickSave} onClickDiscard={onClickDiscard} />
+				</Grid>
+			) : (
+				''
+			)}
+		</MyModal>
+	);
+}
+
 function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1]; onChange: () => void }) {
 	const classes = useStyles();
-	const router = useRouter();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [showEditModal, setShowEditModal] = useState(false);
+	const name = log.logger.getName();
+	const notes = log.logger.getNotes();
+
 	const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -66,7 +141,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 	};
 	const handleEdit = () => {
 		setAnchorEl(null);
-		//router.push(`/ride/workout/edit?id=${workout.id}`);
+		setShowEditModal(true);
 	};
 	const handleDelete = () => {
 		setAnchorEl(null);
@@ -75,7 +150,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 	};
 	const handleDownload = () => {
 		const { logger } = log;
-		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${log.name}.tcx`;
+		const filename = `${logger.getStartTimeISO().slice(0, 10)}_${logger.getName()}.tcx`;
 		const xmlLines: string[] = [];
 
 		logger.tcx((line: string) => xmlLines.push(line));
@@ -110,13 +185,13 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 							</Menu>
 						</div>
 					}
-					title={log.name}
+					title={name}
 					subheader={log.date}
 				/>
 				{/* Add preview here */}
 				<CardContent>
 					<Typography variant="body2" color="textSecondary" component="p">
-						{log.notes}
+						{notes}
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing>
@@ -125,6 +200,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 					</IconButton>
 				</CardActions>
 			</Card>
+			<EditModal open={showEditModal} onClose={() => setShowEditModal(false)} logger={log.logger} />
 		</Grid>
 	);
 }
