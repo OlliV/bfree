@@ -19,6 +19,7 @@ import MyHead from '../../components/MyHead';
 import MeasurementCard from '../../components/record/MeasurementCard';
 import WorkoutController from '../../components/record/WorkoutController';
 import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
+import DummyCard from '../../components/record/DummyCard';
 import Ride from '../../components/record/Ride';
 import Stopwatch from '../../components/record/Stopwatch';
 import Title from '../../components/Title';
@@ -140,7 +141,7 @@ function FreeRideDashboard() {
 				{logger ? (
 					<ResistanceControl resistance={resistance as Resistance} rollingResistance={rollingResistance} />
 				) : (
-					''
+					<DummyCard />
 				)}
 				<MeasurementCard type="cycling_cadence" />
 				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
@@ -177,7 +178,7 @@ function WorkoutDashboard({
 
 			<Grid container direction="row" alignItems="center" spacing={2}>
 				<Ride />
-				{logger ? <WorkoutController setMeta={setMeta} doSplit={doSplit} endRide={endRide} /> : ''}
+				{logger ? <WorkoutController setMeta={setMeta} doSplit={doSplit} endRide={endRide} /> : <DummyCard />}
 				<MeasurementCard type="cycling_cadence" />
 				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
 				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
