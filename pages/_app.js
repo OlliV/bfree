@@ -1,3 +1,4 @@
+import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import '../styles/globals.css'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import PropTypes from 'prop-types';
@@ -7,6 +8,14 @@ import { useEffect } from 'react';
 
 export const cache = createCache({
 	key: 'bfree',
+});
+
+// See https://mui.com/guides/migration-v4/
+const theme = createMuiTheme();
+const useStyles = makeStyles((theme) => {
+	root: {
+		// some css that access to theme
+	}
 });
 
 function App({ Component, pageProps }) {
