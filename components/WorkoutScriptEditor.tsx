@@ -1,11 +1,6 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Container from '@mui/material/Container';
-import Fab from '@mui/material/Fab';
 import Grid from '@mui/material/Grid';
-import IconCancel from '@mui/icons-material/Cancel';
-import IconSave from '@mui/icons-material/Save';
-import IconTimeLine from '@mui/icons-material/Timeline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
@@ -16,12 +11,6 @@ import EditActionButtons from './EditActionButtons';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
-		card: {
-			height: '45em',
-		},
-		nameField: {
-			paddingBottom: '2.5em',
-		},
 		editor: {
 			overflow: 'scroll',
 			fontFamily: '"Fira code", "Fira Mono", monospace',
@@ -62,7 +51,7 @@ export default function WorkoutScriptEditor({
 	return (
 		<Grid item xs={12}>
 			<Card variant="outlined">
-				<CardContent className={classes.card}>
+				<CardContent sx={{ height: '45em' }}>
 					<Typography gutterBottom variant="h5" component="h2">
 						Workout Script
 					</Typography>
@@ -77,7 +66,7 @@ export default function WorkoutScriptEditor({
 							label="Name"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
-							className={classes.nameField}
+							sx={{ marginBottom: '1em' }}
 						/>
 						<TextField
 							id="act-notes"
@@ -88,11 +77,13 @@ export default function WorkoutScriptEditor({
 							value={notes}
 							onChange={(e) => setNotes(e.target.value)}
 							variant="outlined"
+							sx={{ marginBottom: '1em' }}
 						/>
 						<TextField
+							label="Script"
 							multiline
 							fullWidth
-							rows={14}
+							rows={19}
 							variant="outlined"
 							margin="none"
 							value={code}
