@@ -1,5 +1,6 @@
 import IconReportProblem from '@mui/icons-material/ReportProblem';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { Tooltip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { SensorType, useGlobalState } from '../lib/global';
@@ -64,6 +65,16 @@ export function SensorValueHRM({ sensorValue, className }) {
 	return <Typography className={className}>{sensorValue ? sensorValue.heartRate : '--'}&nbsp;BPM</Typography>;
 }
 
+export function SensorWarn({ text }: { text: string }) {
+	return (
+		<Box sx={{ position: 'absolute', width: '1em', right: 0.5, zIndex: 10 }}>
+			<Tooltip title={text} describeChild={true} enterTouchDelay={10}>
+				<IconReportProblem />
+			</Tooltip>
+		</Box>
+	);
+}
+
 export function SensorValueSmartTrainer({ sensorValue, className }) {
 	const [unitSpeed] = useGlobalState('unitSpeed');
 	const speedUnit = speedUnitConv[unitSpeed];
@@ -97,20 +108,16 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 
 	return (
 		<div className={classes.trainerStatus}>
+			{calRequired ? (
+				<SensorWarn text={calRequired} />
+			) : (
+				''
+			)}
 			<Typography className={className}>
 				{power}&nbsp;W
 				<br />
 				{speed}&nbsp;{speedUnit.name}
 			</Typography>
-			{calRequired ? (
-				<Tooltip title={calRequired}>
-					<div className={classes.calRequired}>
-						<IconReportProblem />
-					</div>
-				</Tooltip>
-			) : (
-				''
-			)}
 		</div>
 	);
 }
