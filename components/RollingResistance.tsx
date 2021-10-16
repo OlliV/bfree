@@ -36,6 +36,22 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
+function getTrackImg(rollingResistance: number) {
+	if (rollingResistance <= predefinedRollingResistances[0][1]) {
+		// wooden
+		return '/images/cards/wooden.jpg';
+	} else if (rollingResistance <= predefinedRollingResistances[1][1]) {
+		// Concrete
+		return '/images/cards/concrete.jpg';
+	} else if (rollingResistance <= predefinedRollingResistances[2][1]) {
+		// Asphalt
+		return '/images/cards/slope.jpg';
+	} else {
+		// Rough
+		return '/images/cards/dirt_road.jpg';
+	}
+}
+
 export default function RollingResistance({
 	rollingResistance,
 	setRollingResistance,
@@ -57,7 +73,7 @@ export default function RollingResistance({
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardMedia className={classes.media} image="/images/cards/slope.jpg" title="Filler image" />
+				<CardMedia className={classes.media} image={getTrackImg(rollingResistance)} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
 					Rolling Resistance
 				</Typography>

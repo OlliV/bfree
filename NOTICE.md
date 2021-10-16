@@ -18,3 +18,6 @@ Images
 - [weight.jpg](/public/images/cards/weight.jpg) CC0 [free-images.com](https://free-images.com/)
 - [wheel.jpg](/public/images/cards/wheel.jpg) CC0 [free-images.com](https://free-images.com/)
 - [slope.jpg](public/images/cards/slope.jpg) PD [https://www.piqsels.com/](https://www.piqsels.com/)
+- [dirt_road.jpg](public/images/cards/dirt_road.jpg) PD [https://www.piqsels.com/](https://www.piqsels.com/)
+- [concrete.jpg](public/images/cards/concrete.jpg) PD [https://www.piqsels.com/](https://www.piqsels.com/)
+- [wooden.jpg](public/images/cards/wooden.jpg) PD [https://www.piqsels.com/](https://www.piqsels.com/)
