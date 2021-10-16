@@ -22,7 +22,6 @@ import { useState, useEffect } from 'react';
 import MyHead from '../components/MyHead';
 import MyModal from '../components/MyModal';
 import Title from '../components/Title';
-import InfoCard from '../components/InfoCard';
 import EditActionButtons from '../components/EditActionButtons';
 import downloadBlob from '../lib/download_blob';
 import { createActivityLog, deleteActivityLog, getActivityLogs, saveActivityLog } from '../lib/activity_log';
