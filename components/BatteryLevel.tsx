@@ -16,7 +16,7 @@ const style: SxPropsTheme = {
 
 export default function BatteryLevel({ batteryLevel }: { batteryLevel: number }) {
 	return (
-		<Tooltip title={`${batteryLevel} %`}>
+		<Tooltip title={`${batteryLevel} %`} describeChild={true} enterTouchDelay={10}>
 			{batteryLevel < 20 ? (
 				<Battery0Icon sx={style} />
 			) : batteryLevel < 30 ? (

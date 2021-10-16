@@ -18,6 +18,7 @@ import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import { green } from '@mui/material/colors';
+import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useEffect, useState } from 'react';
 import MyHead from '../../components/MyHead';
 import { pairDevice, readBatteryLevel } from '../../lib/ble';
@@ -39,36 +40,6 @@ type InfoMessage = {
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
-		root: {
-			display: 'flex',
-			alignItems: 'center',
-		},
-		wrapper: {
-			margin: theme.spacing(1),
-			position: 'relative',
-		},
-		buttonProgress: {
-			color: green[500],
-			position: 'absolute',
-			top: '50%',
-			left: '50%',
-			marginTop: -12,
-			marginLeft: -12,
-		},
-		setupCard: {
-			height: '15em',
-		},
-		inlineIcon: {
-			fontSize: '18px !important',
-		},
-		sensorStatus: {},
-		batteryLevel: {
-			position: 'relative',
-			float: 'right',
-			display: ' inline-block',
-			top: '-5.5em',
-			marginBottom: '1em',
-		},
 		sensorValue: {
 			position: 'relative',
 			marginBottom: '1em',
@@ -76,6 +47,18 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 	})
 );
+
+const buttonProgressStyle: SxPropsTheme = {
+	color: green[500],
+	position: 'absolute',
+	top: '50%',
+	left: '50%',
+	marginTop: -12,
+	marginLeft: -12,
+};
+const iconStyle: SxPropsTheme = {
+	fontSize: '18px !important',
+};
 
 function ActionButton({
 	wait,
@@ -88,15 +71,13 @@ function ActionButton({
 	disabled?: boolean;
 	children: any;
 }) {
-	const classes = useStyles();
-
 	return (
-		<div>
+		<Box>
 			<Button disabled={wait || disabled} variant="contained" onClick={onClick}>
 				{children}
-				{wait && <CircularProgress size={24} className={classes.buttonProgress} />}
+				{wait && <CircularProgress size={24} sx={buttonProgressStyle} />}
 			</Button>
-		</div>
+		</Box>
 	);
 }
 
@@ -234,9 +215,14 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 	const classes = useStyles();
 
 	return (
-		<Grid item xs={4}>
+		<Grid item xs="auto">
 			<Card variant="outlined">
-				<CardContent className={classes.setupCard}>
+				<CardContent sx={{ height: '15em' }}>
+					<Box sx={{ position: 'relative' }}>
+						<Box sx={{ position: 'absolute', width: '1em', right: 0.5, zIndex: 10 }}>
+							{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
+						</Box>
+					</Box>
 					<Typography gutterBottom variant="h5" component="h2">
 						{props.children}
 					</Typography>
@@ -245,10 +231,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						sensorValue={sensorValue}
 						className={classes.sensorValue}
 					/>
-					<div className={classes.batteryLevel}>
-						{batteryLevel >= 0 ? <BatteryLevel batteryLevel={batteryLevel} /> : ''}
-					</div>
-					<div className={classes.sensorStatus}>
+					<Box>
 						<SensorStatus wait={isPairing} severity={info.severity}>
 							{info.message.split('\n').map((line, i) => (
 								<span key={i}>
@@ -257,7 +240,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 								</span>
 							))}
 						</SensorStatus>
-					</div>
+					</Box>
 					{props.sensorType === 'smart_trainer' ? (
 						<TrainerCalibrationModal
 							open={showSmartTrainerCalibrationModal}
@@ -303,22 +286,22 @@ export default function SetupSensors() {
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<Sensor sensorType="smart_trainer">
-						<IconBike className={classes.inlineIcon} /> Smart Trainer
+						<IconBike sx={iconStyle} /> Smart Trainer
 					</Sensor>
 					<Sensor sensorType="cycling_power">
-						<IconPower className={classes.inlineIcon} /> Power
+						<IconPower sx={iconStyle} /> Power
 					</Sensor>
 					<Sensor sensorType="cycling_speed_and_cadence">
-						<IconCadence className={classes.inlineIcon} /> Speed &amp; Cadence
-					</Sensor>
-					<Sensor sensorType="cycling_cadence">
-						<IconCadence className={classes.inlineIcon} /> Cadence
+						<IconCadence sx={iconStyle} /> Speed &amp; Cadence
 					</Sensor>
 					<Sensor sensorType="cycling_speed">
-						<IconSpeed className={classes.inlineIcon} /> Speed
+						<IconSpeed sx={iconStyle} /> Speed
+					</Sensor>
+					<Sensor sensorType="cycling_cadence">
+						<IconCadence sx={iconStyle} /> Cadence
 					</Sensor>
 					<Sensor sensorType="heart_rate">
-						<IconHeart className={classes.inlineIcon} /> HRM
+						<IconHeart sx={iconStyle} /> HRM
 					</Sensor>
 				</Grid>
 			</Box>
