@@ -37,7 +37,7 @@ export default function Ride() {
 			<Card variant="outlined">
 				<CardContent sx={{ height: '10em' }}>
 					<Typography gutterBottom variant="h5" component="h2">
-						<IconTimelapse sx={{ fontSize: '18px !important'}} /> Time &amp; Distance
+						<IconTimelapse sx={{ fontSize: '18px !important' }} /> Time &amp; Distance
 					</Typography>
 					<Container>
 						<b>Ride time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedTime)}</Box>

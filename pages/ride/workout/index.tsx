@@ -120,7 +120,7 @@ function WorkoutCard({ workout, onChange }) {
 	};
 
 	return (
-        <Grid item xs={10}>
+		<Grid item xs={10}>
 			<Card variant="outlined" className={classes.cardRoot}>
 				<CardHeader
 					avatar={
@@ -160,10 +160,11 @@ function WorkoutCard({ workout, onChange }) {
 				</CardContent>
 				<CardActions disableSpacing>
 					<IconButton
-                        aria-label="add to favorites"
-                        color={workout.fav ? 'secondary' : undefined}
-                        onClick={handleFav}
-                        size="large">
+						aria-label="add to favorites"
+						color={workout.fav ? 'secondary' : undefined}
+						onClick={handleFav}
+						size="large"
+					>
 						<IconFavorite />
 					</IconButton>
 					<IconButton aria-label="download" onClick={handleDownload} size="large">
@@ -184,7 +185,7 @@ function WorkoutCard({ workout, onChange }) {
 				</WarningDialog>
 			</Card>
 		</Grid>
-    );
+	);
 }
 
 export default function Workout() {

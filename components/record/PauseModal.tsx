@@ -2,7 +2,7 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { SxProps } from '@mui/system';
-import { Theme } from '@mui/material'
+import { Theme } from '@mui/material';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 
 const style: SxPropsTheme = {
@@ -38,4 +38,3 @@ export default function PauseModal({ show, onClose, children }: { show: boolean;
 		</Modal>
 	);
 }
-

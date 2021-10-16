@@ -53,7 +53,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 
 const iconStyle: SxPropsTheme = {
 	fontSize: '18px !important',
-}
+};
 
 function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
 	/* eslint-disable react/jsx-key */

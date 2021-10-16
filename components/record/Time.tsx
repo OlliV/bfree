@@ -24,11 +24,9 @@ export default function Time() {
 						Time
 					</Typography>
 					<Container>
-						<b>Ride time:</b>{' '}
-						<Box sx={timeStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
+						<b>Ride time:</b> <Box sx={timeStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
 						<br />
-						<b>Lap time:</b>{' '}
-						<Box sx={timeStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
+						<b>Lap time:</b> <Box sx={timeStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
 					</Container>
 				</CardContent>
 			</Card>

@@ -98,7 +98,13 @@ function EditModal({
 	};
 
 	return (
-		<MyModal title="Edit Ride" description="Here you can edit the activity metadata." modalStyle={editModalStyle} open={open} onClose={onClose}>
+		<MyModal
+			title="Edit Ride"
+			description="Here you can edit the activity metadata."
+			modalStyle={editModalStyle}
+			open={open}
+			onClose={onClose}
+		>
 			{open ? (
 				<Grid item>
 					<form>
@@ -119,7 +125,11 @@ function EditModal({
 							variant="outlined"
 						/>
 					</form>
-					<EditActionButtons style={{ marginTop: 0 }} onClickSave={onClickSave} onClickDiscard={onClickDiscard} />
+					<EditActionButtons
+						style={{ marginTop: 0 }}
+						onClickSave={onClickSave}
+						onClickDiscard={onClickDiscard}
+					/>
 				</Grid>
 			) : (
 				''
@@ -162,7 +172,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 	};
 
 	return (
-        <Grid item xs={10}>
+		<Grid item xs={10}>
 			<Card variant="outlined" className={classes.cardRoot}>
 				<CardHeader
 					avatar={
@@ -204,7 +214,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 			</Card>
 			<EditModal open={showEditModal} onClose={() => setShowEditModal(false)} logger={log.logger} />
 		</Grid>
-    );
+	);
 }
 
 export default function History() {

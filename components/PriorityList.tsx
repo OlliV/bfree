@@ -79,7 +79,7 @@ export default function PriorityList({
 	};
 
 	const customList = (items: ListItem[]) => (
-		<Paper elevation={1} sx={{ width: '25ch', height: '15em', overflow: 'auto', }}>
+		<Paper elevation={1} sx={{ width: '25ch', height: '15em', overflow: 'auto' }}>
 			<List dense component="div" role="list">
 				{items.map((value) => {
 					const labelId = `${value.id}-label`;

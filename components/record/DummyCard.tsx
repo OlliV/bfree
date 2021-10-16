@@ -30,9 +30,7 @@ export default function DummyCard() {
 					<Typography id="resistance-control" gutterBottom variant="h5" component="h2">
 						<IconHourglass className={classes.inlineIcon} /> Loading...
 					</Typography>
-					<Container>
-						Starting your ride...
-					</Container>
+					<Container>Starting your ride...</Container>
 				</CardContent>
 			</Card>
 		</Grid>

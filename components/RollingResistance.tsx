@@ -72,7 +72,7 @@ export default function RollingResistance({
 	}, [setRollingResistance]);
 
 	return (
-        <Grid item xs={4}>
+		<Grid item xs={4}>
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={getTrackImg(rollingResistance)} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
@@ -86,8 +86,10 @@ export default function RollingResistance({
 							labelId="resistance-mode-select-label"
 							id="resistance-mode-select"
 							value={rollingResistance || 0}
-							onChange={ // @ts-ignore
-									   handleChange}
+							onChange={
+								// @ts-ignore
+								handleChange
+							}
 						>
 							{predefinedRollingResistances.map((r) => (
 								<MenuItem key={r[0].toLowerCase().replace(/\s/g, '-')} value={r[1]}>
@@ -101,7 +103,8 @@ export default function RollingResistance({
 							error={rollingResistance <= 0}
 							onChange={
 								// @ts-ignore
-								(e) => handleChange(e)}
+								(e) => handleChange(e)
+							}
 							id="outlined-basic"
 							label="Coefficient"
 							variant="outlined"
@@ -110,5 +113,5 @@ export default function RollingResistance({
 				</CardContent>
 			</Card>
 		</Grid>
-    );
+	);
 }

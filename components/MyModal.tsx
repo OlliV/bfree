@@ -24,11 +24,11 @@ const useModalStyles = makeStyles((theme: Theme) => {
 			boxShadow: theme.shadows[5],
 			padding: theme.spacing(2, 4, 3),
 		},
-	})
+	});
 });
 
 export default function MyModal(
-	props: { title: string; description: string; modalStyle?: any, children: any } & Omit<ModalProps, 'children'>
+	props: { title: string; description: string; modalStyle?: any; children: any } & Omit<ModalProps, 'children'>
 ) {
 	const classes = useModalStyles();
 	const { title, description, open, onClose, modalStyle, children, ...rest } = props;

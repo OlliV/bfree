@@ -95,11 +95,7 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 
 	return (
 		<Box>
-			{calRequired ? (
-				<SensorWarn text={calRequired} />
-			) : (
-				''
-			)}
+			{calRequired ? <SensorWarn text={calRequired} /> : ''}
 			<Typography className={className}>
 				{power}&nbsp;W
 				<br />
