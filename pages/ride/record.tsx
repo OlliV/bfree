@@ -1,15 +1,12 @@
-import Backdrop from '@mui/material/Backdrop';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import DefaultErrorPage from 'next/error';
-import Fade from '@mui/material/Fade';
 import Grid from '@mui/material/Grid';
 import IconPause from '@mui/icons-material/Pause';
 import IconSplit from '@mui/icons-material/Timer';
 import IconStop from '@mui/icons-material/Stop';
-import Modal from '@mui/material/Modal';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
@@ -25,6 +22,7 @@ import DummyCard from '../../components/record/DummyCard';
 import Ride from '../../components/record/Ride';
 import Stopwatch from '../../components/record/Stopwatch';
 import Title from '../../components/Title';
+import PauseModal from '../../components/record/PauseModal';
 import { Lap, LapTriggerMethod } from '../../lib/activity_log';
 import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
@@ -53,17 +51,6 @@ const useStyles = makeStyles((theme: Theme) =>
 			left: 0,
 			bottom: 0,
 			width: '100vw',
-		},
-		pauseModal: {
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'center',
-		},
-		pausePaper: {
-			backgroundColor: theme.palette.background.paper,
-			border: '2px solid #000',
-			boxShadow: theme.shadows[5],
-			padding: theme.spacing(2, 4, 3),
 		},
 		pauseStopwatch: {
 			textAlign: 'center',
@@ -188,32 +175,6 @@ function WorkoutDashboard({
 				<DataGraph />
 			</Grid>
 		</Box>
-	);
-}
-
-function PauseModal({ show, onClose, children }: { show: boolean; onClose: () => void; children: any }) {
-	const classes = useStyles();
-
-	return (
-		<Modal
-			aria-labelledby="pause-modal-title"
-			aria-describedby="pause-modal-description"
-			className={classes.pauseModal}
-			open={show}
-			onClose={onClose}
-			closeAfterTransition
-			BackdropComponent={Backdrop}
-			BackdropProps={{
-				timeout: 500,
-			}}
-		>
-			<Fade in={show}>
-				<div className={classes.pausePaper}>
-					<h2 id="pause-modal-title">Ride Paused</h2>
-					{children}
-				</div>
-			</Fade>
-		</Modal>
 	);
 }
 
