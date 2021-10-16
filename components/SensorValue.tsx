@@ -2,20 +2,8 @@ import IconReportProblem from '@mui/icons-material/ReportProblem';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Tooltip } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import { SensorType, useGlobalState } from '../lib/global';
 import { speedUnitConv } from '../lib/units';
-
-const useStyles = makeStyles({
-	trainerStatus: {
-		position: 'relative',
-	},
-	calRequired: {
-		position: 'absolute',
-		marginLeft: '15em',
-		bottom: '0.5em',
-	},
-});
 
 export function SensorValueCC({ sensorValue, className }) {
 	const cadence = sensorValue && sensorValue.cadence !== null ? Math.round(sensorValue.cadence) : '--';
@@ -78,7 +66,6 @@ export function SensorWarn({ text }: { text: string }) {
 export function SensorValueSmartTrainer({ sensorValue, className }) {
 	const [unitSpeed] = useGlobalState('unitSpeed');
 	const speedUnit = speedUnitConv[unitSpeed];
-	const classes = useStyles();
 
 	let power = '--';
 	let speed = '--';
@@ -107,7 +94,7 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 	}
 
 	return (
-		<div className={classes.trainerStatus}>
+		<Box>
 			{calRequired ? (
 				<SensorWarn text={calRequired} />
 			) : (
@@ -118,7 +105,7 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 				<br />
 				{speed}&nbsp;{speedUnit.name}
 			</Typography>
-		</div>
+		</Box>
 	);
 }
 
