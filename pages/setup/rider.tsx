@@ -4,21 +4,15 @@ import Grid from '@mui/material/Grid';
 import MyHead from '../../components/MyHead';
 import TextField from '@mui/material/TextField';
 import Title from '../../components/Title';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import SxPropsTheme from '../../lib/SxPropsTheme';
 import { isValidUnsigned } from '../../lib/validation';
 import { useState } from 'react';
 import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
-export const useHRMStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		textField: {
-			width: '11ch',
-		},
-	})
-);
+const textFieldStyle: SxPropsTheme = {
+	width: '11ch',
+};
 
 function Weight() {
 	const classes = useStyles();
@@ -90,7 +84,6 @@ function FTPValue() {
 
 function HeartRate() {
 	const classes = useStyles();
-	const classesHrm = useHRMStyles();
 	const [rider, setRider] = useGlobalState('rider');
 	const [tmpRest, setTmpRest] = useState(rider.heartRate.rest);
 	const [tmpMax, setTmpMax] = useState(rider.heartRate.max);
@@ -137,7 +130,7 @@ function HeartRate() {
 						id="outlined-basic"
 						label="Rest BPM"
 						variant="outlined"
-						className={classesHrm.textField}
+						sx={textFieldStyle}
 					/>
 					<TextField
 						value={tmpMax}
@@ -146,7 +139,7 @@ function HeartRate() {
 						id="outlined-basic"
 						label="Max BPM"
 						variant="outlined"
-						className={classesHrm.textField}
+						sx={textFieldStyle}
 					/>
 				</form>
 			</Container>
