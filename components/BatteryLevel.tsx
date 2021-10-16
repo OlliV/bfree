@@ -6,41 +6,33 @@ import Battery60Icon from '@mui/icons-material/Battery60';
 import Battery80Icon from '@mui/icons-material/Battery80';
 import Battery90Icon from '@mui/icons-material/Battery90';
 import Battery100Icon from '@mui/icons-material/BatteryFull';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { Tooltip } from '@mui/material';
+import SxPropsTheme from '../lib/SxPropsTheme';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		batteryLevel: {
-			'vertical-align': 'center',
-			'font-size': '25px !important',
-		},
-	})
-);
+const style: SxPropsTheme = {
+	verticalAlign: 'center',
+	fontSize: '25px !important',
+};
 
 export default function BatteryLevel({ batteryLevel }: { batteryLevel: number }) {
-	const classes = useStyles();
-
 	return (
 		<Tooltip title={`${batteryLevel} %`}>
 			{batteryLevel < 20 ? (
-				<Battery0Icon className={classes.batteryLevel} />
+				<Battery0Icon sx={style} />
 			) : batteryLevel < 30 ? (
-				<Battery20Icon className={classes.batteryLevel} />
+				<Battery20Icon sx={style} />
 			) : batteryLevel < 50 ? (
-				<Battery30Icon className={classes.batteryLevel} />
+				<Battery30Icon sx={style} />
 			) : batteryLevel < 60 ? (
-				<Battery50Icon className={classes.batteryLevel} />
+				<Battery50Icon sx={style} />
 			) : batteryLevel < 80 ? (
-				<Battery60Icon className={classes.batteryLevel} />
+				<Battery60Icon sx={style} />
 			) : batteryLevel < 90 ? (
-				<Battery80Icon className={classes.batteryLevel} />
+				<Battery80Icon sx={style} />
 			) : batteryLevel < 100 ? (
-				<Battery90Icon className={classes.batteryLevel} />
+				<Battery90Icon sx={style} />
 			) : (
-				<Battery100Icon />
+				<Battery100Icon sx={style} />
 			)}
 		</Tooltip>
 	);

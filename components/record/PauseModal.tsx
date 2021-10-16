@@ -3,8 +3,9 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { SxProps } from '@mui/system';
 import { Theme } from '@mui/material'
+import SxPropsTheme from '../../lib/SxPropsTheme';
 
-const style: SxProps<Theme> = {
+const style: SxPropsTheme = {
 	position: 'absolute',
 	top: '50%',
 	left: '50%',
