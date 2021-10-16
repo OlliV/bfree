@@ -12,7 +12,6 @@ import IconCadence from '@mui/icons-material/FlipCameraAndroid';
 import IconHeart from '@mui/icons-material/Favorite';
 import IconPower from '@mui/icons-material/OfflineBolt';
 import IconSpeed from '@mui/icons-material/Speed';
-import Paper from '@mui/material/CardContent';
 import Title from '../../components/Title';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
@@ -103,9 +102,9 @@ function ActionButton({
 
 function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Severity; children: any }) {
 	return (
-		<Paper>
+		<CardContent>
 			<Alert severity={severity}>{children}</Alert>
-		</Paper>
+		</CardContent>
 	);
 }
 
