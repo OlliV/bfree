@@ -1,16 +1,12 @@
 import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	// TODO This doesn't always work
 	createStyles({
-		title: {
-			//marginLeft: '-2.5ex',
-		},
 		arrow: {
 			'&:hover': {
 				color: 'grey',
@@ -34,6 +30,7 @@ export default function Title({
 }) {
 	const classes = useStyles();
 	const router = useRouter();
+
 	const handleOnClick = (e) => {
 		if (disableBack) {
 			e.preventDefault();
@@ -45,7 +42,7 @@ export default function Title({
 	};
 
 	return (
-		<Typography gutterBottom variant="h2" component="h2" className={classes.title}>
+		<Typography gutterBottom variant="h2" component="h2">
 			<span className={disableBack ? classes.arrowDisabled : classes.arrow} onClick={handleOnClick}>
 				&larr;
 			</span>
