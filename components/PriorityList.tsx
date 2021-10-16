@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -10,27 +7,17 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			margin: 'auto',
-		},
-		paper: {
-			width: '25ch',
-			height: 230,
-			overflow: 'auto',
-		},
-		button: {
-			margin: theme.spacing(0.5, 0),
-		},
-	})
-);
+import SxPropsTheme from '../lib/SxPropsTheme';
 
 export interface ListItem {
 	id: string;
 	name: string;
 }
+
+const buttonStyle: SxPropsTheme = {
+	margin: 0,
+	marginTop: 0.5,
+};
 
 function not(a: ListItem[], b: ListItem[]) {
 	return a.filter((value) => b.indexOf(value) === -1);
@@ -51,7 +38,6 @@ export default function PriorityList({
 	rightList: ListItem[];
 	handleRightChange: (v: ListItem[]) => void;
 }) {
-	const classes = useStyles();
 	const [checked, setChecked] = useState<ListItem[]>([]);
 
 	const leftChecked = intersection(checked, leftList);
@@ -93,7 +79,7 @@ export default function PriorityList({
 	};
 
 	const customList = (items: ListItem[]) => (
-		<Paper className={classes.paper}>
+		<Paper elevation={1} sx={{ width: '25ch', height: '15em', overflow: 'auto', }}>
 			<List dense component="div" role="list">
 				{items.map((value) => {
 					const labelId = `${value.id}-label`;
@@ -118,14 +104,14 @@ export default function PriorityList({
 	);
 
 	return (
-		<Grid container spacing={2} alignItems="center" className={classes.root}>
+		<Grid container spacing={2} alignItems="center" sx={{ margin: 'auto' }}>
 			<Grid item>{customList(leftList)}</Grid>
 			<Grid item>
 				<Grid container direction="column" alignItems="center">
 					<Button
 						variant="outlined"
 						size="small"
-						className={classes.button}
+						sx={buttonStyle}
 						onClick={handleAllRight}
 						disabled={leftList.length === 0}
 						aria-label="move all right"
@@ -135,7 +121,7 @@ export default function PriorityList({
 					<Button
 						variant="outlined"
 						size="small"
-						className={classes.button}
+						sx={buttonStyle}
 						onClick={handleCheckedRight}
 						disabled={leftChecked.length === 0}
 						aria-label="move selected right"
@@ -145,7 +131,7 @@ export default function PriorityList({
 					<Button
 						variant="outlined"
 						size="small"
-						className={classes.button}
+						sx={buttonStyle}
 						onClick={handleCheckedLeft}
 						disabled={rightChecked.length === 0}
 						aria-label="move selected left"
@@ -155,7 +141,7 @@ export default function PriorityList({
 					<Button
 						variant="outlined"
 						size="small"
-						className={classes.button}
+						sx={buttonStyle}
 						onClick={handleAllLeft}
 						disabled={rightList.length === 0}
 						aria-label="move all left"
