@@ -16,6 +16,14 @@
   align-items: center;
 }
 
+.pic {
+  display: block;
+  border: 0;
+  object-fit: cover;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .footer {
   width: 100%;
   height: 100px;

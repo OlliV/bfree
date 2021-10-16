@@ -5,12 +5,10 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import { createStyles, makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -32,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ResistanceMode({ mode, setMode }: { mode: string; setMode: (m: string) => void }) {
 	const classes = useStyles();
 
-	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+	const handleChange = (event: SelectChangeEvent<string>, _child?: object) => {
 		setMode(event.target.value as string);
 	};
 
@@ -51,6 +49,7 @@ export default function ResistanceMode({ mode, setMode }: { mode: string; setMod
 					<FormControl className={classes.formControl}>
 						<InputLabel id="demo-simple-select-label">Mode</InputLabel>
 						<Select
+							variant="standard"
 							labelId="resistance-mode-select-label"
 							id="resistance-mode-select"
 							value={mode}

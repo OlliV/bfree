@@ -69,10 +69,10 @@ MyDocument.getInitialProps = async (ctx) => {
 			...React.Children.toArray(initialProps.styles),
 			sheets.getStyleElement(),
 			<style
-			key="emotion-style-tag"
-			data-emotion-css={styles.ids.join(' ')}
-			// eslint-disable-next-line react/no-danger
-			dangerouslySetInnerHTML={{ __html: styles.css }}
+				key="emotion-style-tag"
+				data-emotion-css={styles.ids.join(' ')}
+				// eslint-disable-next-line react/no-danger
+				dangerouslySetInnerHTML={{ __html: styles.css }}
 			/>,
 		],
 	};

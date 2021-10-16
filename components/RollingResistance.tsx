@@ -5,7 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
@@ -63,8 +63,7 @@ export default function RollingResistance({
 }) {
 	const classes = useStyles();
 
-	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		// @ts-ignore
+	const handleChange = (event: SelectChangeEvent<number>, _child?: object) => {
 		setRollingResistance(event.target.value || 0);
 	};
 
@@ -83,10 +82,12 @@ export default function RollingResistance({
 					<FormControl className={classes.formControl}>
 						<InputLabel id="demo-simple-select-label">Mode</InputLabel>
 						<Select
+							variant="standard"
 							labelId="resistance-mode-select-label"
 							id="resistance-mode-select"
 							value={rollingResistance || 0}
-							onChange={handleChange}
+							onChange={ // @ts-ignore
+									   handleChange}
 						>
 							{predefinedRollingResistances.map((r) => (
 								<MenuItem key={r[0].toLowerCase().replace(/\s/g, '-')} value={r[1]}>
@@ -98,7 +99,9 @@ export default function RollingResistance({
 						<TextField
 							value={rollingResistance || 0}
 							error={rollingResistance <= 0}
-							onChange={handleChange}
+							onChange={
+								// @ts-ignore
+								(e) => handleChange(e)}
 							id="outlined-basic"
 							label="Coefficient"
 							variant="outlined"

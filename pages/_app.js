@@ -2,22 +2,33 @@ import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/
 import makeStyles from '@mui/styles/makeStyles';
 import '../styles/globals.css'
 import CssBaseline from '@mui/material/CssBaseline';
+import { red } from '@mui/material/colors';
 import PropTypes from 'prop-types';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { useEffect } from 'react';
 
 export const cache = createCache({
-  key: 'bfree',
+  key: 'css',
   prepend: true,
 });
 
-// See https://mui.com/guides/migration-v4/
-const theme = createTheme();
-const useStyles = makeStyles((theme) => {
-	root: {
-		// some css that access to theme
-	}
+// Create a theme instance.
+const theme = createTheme({
+	palette: {
+		background: {
+			default: '#fafafa',
+		},
+		primary: {
+			main: '#1976D2',
+		},
+		secondary: {
+			main: red.A400,
+		},
+		error: {
+			main: red.A400,
+		},
+	},
 });
 
 function App({ Component, pageProps }) {
@@ -31,9 +42,11 @@ function App({ Component, pageProps }) {
 
   return (
     <CacheProvider value={cache}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        <Component {...pageProps} />
+		<ThemeProvider theme={theme}>
+			{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+			<CssBaseline />
+			<Component {...pageProps} />
+		</ThemeProvider>
     </CacheProvider>
   );
 }
@@ -41,6 +54,7 @@ function App({ Component, pageProps }) {
 export default App
 
 App.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  pageProps: PropTypes.object.isRequired,
+	Component: PropTypes.elementType.isRequired,
+	emotionCache: PropTypes.object,
+	pageProps: PropTypes.object.isRequired,
 };

@@ -7,26 +7,12 @@ import styles from '../styles/Home.module.css';
 import MyHead from '../components/MyHead';
 import MenuCard from '../components/MenuCard';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		pic: {
-			display: 'block',
-			border: 0,
-			objectFit: 'cover',
-			marginLeft: 'auto',
-			marginRight: 'auto',
-		},
-	})
-);
-
 export default function Home() {
-	const classes = useStyles();
-
 	return (
 		<div className={styles.container}>
 			<MyHead title="Cycling App" />
 
-			<Image src="/images/bfree.jpg" alt="Bfree forever" width="1200" height={150} className={classes.pic} />
+			<Image src="/images/bfree.jpg" alt="Bfree forever" width="1200" height={150} className={styles.pic} />
 			<main className={styles.main}>
 				<h1 className={styles.title}>Welcome to Bfree!</h1>
 

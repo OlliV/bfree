@@ -6,7 +6,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
@@ -115,7 +115,7 @@ export function EnumConfigParam({
 	const classes = useSetupStyles();
 	// @ts-ignore
 	const [value, setValue] = useGlobalState(configName);
-	const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => setValue(event.target.value as string);
+	const handleChange = (event: SelectChangeEvent<string>) => setValue(event.target.value);
 
 	return (
 		<Param title={title} image={image}>
@@ -124,6 +124,7 @@ export function EnumConfigParam({
 					{label}
 				</InputLabel>
 				<Select
+					variant="standard"
 					labelId={`${idPrefix || label}-label`}
 					id={`${idPrefix || label}-label`}
 					value={value}

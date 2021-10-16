@@ -1,4 +1,4 @@
-import Alert, { Color } from '@mui/material/Alert';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -31,9 +31,11 @@ import SensorValue from '../../components/SensorValue';
 import { TrainerCalibrationModal } from '../../components/TrainerControl';
 import { useGlobalState, SensorType, BluetoothServiceType, getGlobalState } from '../../lib/global';
 
+type Severity = 'error' | 'info' | 'success' | 'warning';
+
 type InfoMessage = {
 	message: string;
-	severity: Color;
+	severity: Severity;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -99,7 +101,7 @@ function ActionButton({
 	);
 }
 
-function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Color; children: any }) {
+function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Severity; children: any }) {
 	return (
 		<Paper>
 			<Alert severity={severity}>{children}</Alert>
