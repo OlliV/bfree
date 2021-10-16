@@ -1,28 +1,17 @@
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import IconTimelapse from '@mui/icons-material/Timelapse';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import SxPropsTheme from '../../lib/SxPropsTheme';
 import { getElapsedTimeStr } from '../../lib/format';
 import { useGlobalState } from '../../lib/global';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		stopwatchCard: {
-			height: '10em',
-		},
-		value: {
-			float: 'right',
-		},
-		inlineIcon: {
-			fontSize: '18px !important',
-		},
-	})
-);
+const valueStyle: SxPropsTheme = {
+	float: 'right',
+};
 
 function valueToDistance(value: number | null): string {
 	if (typeof value === 'number') {
@@ -36,7 +25,6 @@ function valueToDistance(value: number | null): string {
 }
 
 export default function Ride() {
-	const classes = useStyles();
 	const [elapsedTime] = useGlobalState('elapsedTime');
 	const [elapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideDistance] = useGlobalState('rideDistance');
@@ -47,18 +35,18 @@ export default function Ride() {
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardContent className={classes.stopwatchCard}>
+				<CardContent sx={{ height: '10em' }}>
 					<Typography gutterBottom variant="h5" component="h2">
-						<IconTimelapse className={classes.inlineIcon} /> Time &amp; Distance
+						<IconTimelapse sx={{ fontSize: '18px !important'}} /> Time &amp; Distance
 					</Typography>
 					<Container>
-						<b>Ride time:</b> <div className={classes.value}>{getElapsedTimeStr(elapsedTime)}</div>
+						<b>Ride time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
 						<br />
-						<b>Lap time:</b> <div className={classes.value}>{getElapsedTimeStr(elapsedLapTime)}</div>
+						<b>Lap time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
 						<br />
-						<b>Ride distance:</b> <div className={classes.value}>{valueToDistance(rideDistance)}</div>
+						<b>Ride distance:</b> <Box sx={valueStyle}>{valueToDistance(rideDistance)}</Box>
 						<br />
-						<b>Lap distance:</b> <div className={classes.value}>--</div>
+						<b>Lap distance:</b> <Box sx={valueStyle}>--</Box>
 					</Container>
 				</CardContent>
 			</Card>
