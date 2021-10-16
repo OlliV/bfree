@@ -1,26 +1,17 @@
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useGlobalState } from '../../lib/global';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		stopwatchCard: {
-			height: '10em',
-		},
-		distance: {
-			float: 'right',
-		},
-	})
-);
+const distanceStyle: SxPropsTheme = {
+	float: 'right',
+};
 
 export default function Distance() {
-	const classes = useStyles();
 	const [rideDistance] = useGlobalState('rideDistance');
 
 	// TODO meters & km based on length
@@ -28,14 +19,14 @@ export default function Distance() {
 	return (
 		<Grid item xs={4}>
 			<Card variant="outlined">
-				<CardContent className={classes.stopwatchCard}>
+				<CardContent sx={{ height: '10em' }}>
 					<Typography gutterBottom variant="h5" component="h2">
 						Distance
 					</Typography>
 					<Container>
-						<b>Ride distance:</b> <div className={classes.distance}>{rideDistance}</div>
+						<b>Ride distance:</b> <Box sx={distanceStyle}>{rideDistance}</Box>
 						<br />
-						<b>Lap distance:</b> <div className={classes.distance}>--</div>
+						<b>Lap distance:</b> <Box sx={distanceStyle}>--</Box>
 					</Container>
 				</CardContent>
 			</Card>
