@@ -12,9 +12,15 @@ import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } f
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
+import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useState, useEffect, useMemo } from 'react';
 import { UnitConv, speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
+
+type DisplayValue = {
+	value: number;
+	unit: string;
+};
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -23,9 +29,6 @@ export const useStyles = makeStyles((theme: Theme) =>
 		},
 		card: {
 			height: '10em',
-		},
-		inlineIcon: {
-			fontSize: '18px !important',
 		},
 		valuesTable: {
 			border: 0,
@@ -48,38 +51,37 @@ export const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-type DisplayValue = {
-	value: number;
-	unit: string;
-};
+const iconStyle: SxPropsTheme = {
+	fontSize: '18px !important',
+}
 
 function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
 	/* eslint-disable react/jsx-key */
 	const contentByType: { [K in Measurement]: [Element | JSX.Element, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
 			<span>
-				<IconCadence className={classes.inlineIcon} /> Cadence
+				<IconCadence sx={iconStyle} /> Cadence
 			</span>,
 			(m: CscMeasurements) => ({ value: m ? m.cadence : NaN, unit: 'RPM' }),
 			0,
 		],
 		cycling_power: [
 			<span>
-				<IconPower className={classes.inlineIcon} /> Power
+				<IconPower sx={iconStyle} /> Power
 			</span>,
 			(m: any) => ({ value: m ? m.power : NaN, unit: 'W' }),
 			0,
 		],
 		cycling_speed: [
 			<span>
-				<IconSpeed className={classes.inlineIcon} /> Speed
+				<IconSpeed sx={iconStyle} /> Speed
 			</span>,
 			(m: CscMeasurements) => ({ value: m && m.speed ? speedUnit.convTo(m.speed) : NaN, unit: speedUnit.name }),
 			1,
 		],
 		heart_rate: [
 			<span>
-				<IconHeart className={classes.inlineIcon} /> Heart Rate
+				<IconHeart sx={iconStyle} /> Heart Rate
 			</span>,
 			(m: HrmMeasurements) => ({ value: m ? m.heartRate : NaN, unit: 'BPM' }),
 			1,
