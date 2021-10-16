@@ -1,5 +1,8 @@
-import Modal, { ModalProps } from '@material-ui/core/Modal';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import Modal, { ModalProps } from '@mui/material/Modal';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
 
 const defaultModalStyle = {
 	width: '80vw',

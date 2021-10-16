@@ -1,13 +1,15 @@
-import Battery0Icon from '@material-ui/icons/BatteryAlert';
-import Battery20Icon from '@material-ui/icons/Battery20';
-import Battery30Icon from '@material-ui/icons/Battery30';
-import Battery50Icon from '@material-ui/icons/Battery50';
-import Battery60Icon from '@material-ui/icons/Battery60';
-import Battery80Icon from '@material-ui/icons/Battery80';
-import Battery90Icon from '@material-ui/icons/Battery90';
-import Battery100Icon from '@material-ui/icons/BatteryFull';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Tooltip } from '@material-ui/core';
+import Battery0Icon from '@mui/icons-material/BatteryAlert';
+import Battery20Icon from '@mui/icons-material/Battery20';
+import Battery30Icon from '@mui/icons-material/Battery30';
+import Battery50Icon from '@mui/icons-material/Battery50';
+import Battery60Icon from '@mui/icons-material/Battery60';
+import Battery80Icon from '@mui/icons-material/Battery80';
+import Battery90Icon from '@mui/icons-material/Battery90';
+import Battery100Icon from '@mui/icons-material/BatteryFull';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import { Tooltip } from '@mui/material';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

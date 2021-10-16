@@ -1,14 +1,16 @@
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useEffect, useState } from 'react';
 import { rollingResistanceCoeff } from '../lib/virtual_params';
 
@@ -71,7 +73,7 @@ export default function RollingResistance({
 	}, [setRollingResistance]);
 
 	return (
-		<Grid item xs={4}>
+        <Grid item xs={4}>
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={getTrackImg(rollingResistance)} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
@@ -105,5 +107,5 @@ export default function RollingResistance({
 				</CardContent>
 			</Card>
 		</Grid>
-	);
+    );
 }

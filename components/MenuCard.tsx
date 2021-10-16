@@ -1,9 +1,12 @@
-import Card from '@material-ui/core/Card';
-import Grid from '@material-ui/core/Grid';
+import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
 import Link from 'next/link';
-import Typography from '@material-ui/core/Typography';
-import { CardContent } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Typography from '@mui/material/Typography';
+import { CardContent } from '@mui/material';
+import { Theme } from '@mui/material/styles';
+
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

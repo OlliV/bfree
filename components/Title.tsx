@@ -1,6 +1,9 @@
 import { useRouter } from 'next/router';
-import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Typography from '@mui/material/Typography';
+import { Theme } from '@mui/material/styles';
+
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	// TODO This doesn't always work

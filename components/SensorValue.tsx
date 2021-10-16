@@ -1,7 +1,7 @@
-import IconReportProblem from '@material-ui/icons/ReportProblem';
-import Typography from '@material-ui/core/Typography';
-import { Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import IconReportProblem from '@mui/icons-material/ReportProblem';
+import Typography from '@mui/material/Typography';
+import { Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { SensorType, useGlobalState } from '../lib/global';
 import { speedUnitConv } from '../lib/units';
 

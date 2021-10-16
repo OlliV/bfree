@@ -1,9 +1,11 @@
-import Container from '@material-ui/core/Container';
-import Fab from '@material-ui/core/Fab';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import IconCancel from '@material-ui/icons/Cancel';
-import IconSave from '@material-ui/icons/Save';
-import IconTimeLine from '@material-ui/icons/Timeline';
+import Container from '@mui/material/Container';
+import Fab from '@mui/material/Fab';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import IconCancel from '@mui/icons-material/Cancel';
+import IconSave from '@mui/icons-material/Save';
+import IconTimeLine from '@mui/icons-material/Timeline';
 
 export const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

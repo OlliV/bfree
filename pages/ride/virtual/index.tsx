@@ -1,6 +1,6 @@
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
 import MyHead from '../../../components/MyHead';
 import Title from '../../../components/Title';
 

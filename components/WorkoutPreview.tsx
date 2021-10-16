@@ -1,5 +1,7 @@
-import TextField from '@material-ui/core/TextField';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import TextField from '@mui/material/TextField';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
 import { useState, useEffect } from 'react';
 import { speedUnitConv, distanceUnitConv } from '../lib/units';
 import createWorkoutRunner, { RunnerResponse } from '../lib/workout_runner';

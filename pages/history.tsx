@@ -1,20 +1,22 @@
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import IconDownload from '@material-ui/icons/GetApp';
-import IconMoreVert from '@material-ui/icons/MoreVert';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import IconDownload from '@mui/icons-material/GetApp';
+import IconMoreVert from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import { red } from '@mui/material/colors';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import MyHead from '../components/MyHead';
@@ -160,7 +162,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 	};
 
 	return (
-		<Grid item xs={10}>
+        <Grid item xs={10}>
 			<Card variant="outlined" className={classes.cardRoot}>
 				<CardHeader
 					avatar={
@@ -170,7 +172,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 					}
 					action={
 						<div>
-							<IconButton aria-label="settings" onClick={handleMenuClick}>
+							<IconButton aria-label="settings" onClick={handleMenuClick} size="large">
 								<IconMoreVert />
 							</IconButton>
 							<Menu
@@ -195,14 +197,14 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing>
-					<IconButton aria-label="download" onClick={handleDownload}>
+					<IconButton aria-label="download" onClick={handleDownload} size="large">
 						<IconDownload />
 					</IconButton>
 				</CardActions>
 			</Card>
 			<EditModal open={showEditModal} onClose={() => setShowEditModal(false)} logger={log.logger} />
 		</Grid>
-	);
+    );
 }
 
 export default function History() {

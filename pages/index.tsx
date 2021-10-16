@@ -1,6 +1,8 @@
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import Image from 'next/image';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import styles from '../styles/Home.module.css';
 import MyHead from '../components/MyHead';
 import MenuCard from '../components/MenuCard';

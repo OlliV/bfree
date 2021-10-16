@@ -1,23 +1,25 @@
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Container from '@material-ui/core/Container';
-import Fab from '@material-ui/core/Fab';
-import Grid from '@material-ui/core/Grid';
-import IconAdd from '@material-ui/icons/Add';
-import IconBike from '@material-ui/icons/DirectionsBike';
-import IconButton from '@material-ui/core/IconButton';
-import IconFavorite from '@material-ui/icons/Favorite';
-import IconMoreVert from '@material-ui/icons/MoreVert';
-import IconDownload from '@material-ui/icons/GetApp';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Typography from '@material-ui/core/Typography';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Container from '@mui/material/Container';
+import Fab from '@mui/material/Fab';
+import Grid from '@mui/material/Grid';
+import IconAdd from '@mui/icons-material/Add';
+import IconBike from '@mui/icons-material/DirectionsBike';
+import IconButton from '@mui/material/IconButton';
+import IconFavorite from '@mui/icons-material/Favorite';
+import IconMoreVert from '@mui/icons-material/MoreVert';
+import IconDownload from '@mui/icons-material/GetApp';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import { red } from '@mui/material/colors';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useGlobalState } from '../../../lib/global';
@@ -118,7 +120,7 @@ function WorkoutCard({ workout, onChange }) {
 	};
 
 	return (
-		<Grid item xs={10}>
+        <Grid item xs={10}>
 			<Card variant="outlined" className={classes.cardRoot}>
 				<CardHeader
 					avatar={
@@ -129,7 +131,7 @@ function WorkoutCard({ workout, onChange }) {
 					action={
 						workout.ts !== 0 ? (
 							<div>
-								<IconButton aria-label="settings" onClick={handleMenuClick}>
+								<IconButton aria-label="settings" onClick={handleMenuClick} size="large">
 									<IconMoreVert />
 								</IconButton>
 								<Menu
@@ -158,16 +160,16 @@ function WorkoutCard({ workout, onChange }) {
 				</CardContent>
 				<CardActions disableSpacing>
 					<IconButton
-						aria-label="add to favorites"
-						color={workout.fav ? 'secondary' : undefined}
-						onClick={handleFav}
-					>
+                        aria-label="add to favorites"
+                        color={workout.fav ? 'secondary' : undefined}
+                        onClick={handleFav}
+                        size="large">
 						<IconFavorite />
 					</IconButton>
-					<IconButton aria-label="download" onClick={handleDownload}>
+					<IconButton aria-label="download" onClick={handleDownload} size="large">
 						<IconDownload />
 					</IconButton>
-					<IconButton aria-label="Ride" onClick={handleRide}>
+					<IconButton aria-label="Ride" onClick={handleRide} size="large">
 						<IconBike />
 					</IconButton>
 				</CardActions>
@@ -182,7 +184,7 @@ function WorkoutCard({ workout, onChange }) {
 				</WarningDialog>
 			</Card>
 		</Grid>
-	);
+    );
 }
 
 export default function Workout() {

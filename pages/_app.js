@@ -1,17 +1,19 @@
-import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import '../styles/globals.css'
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline';
 import PropTypes from 'prop-types';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { useEffect } from 'react';
 
 export const cache = createCache({
-	key: 'bfree',
+  key: 'bfree',
+  prepend: true,
 });
 
 // See https://mui.com/guides/migration-v4/
-const theme = createMuiTheme();
+const theme = createTheme();
 const useStyles = makeStyles((theme) => {
 	root: {
 		// some css that access to theme

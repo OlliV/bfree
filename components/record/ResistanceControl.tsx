@@ -1,12 +1,15 @@
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import IconResistance from '@material-ui/icons/FitnessCenter';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import IconResistance from '@mui/icons-material/FitnessCenter';
+import Slider from '@mui/material/Slider';
+import Typography from '@mui/material/Typography';
 import { useEffect, useState, useMemo } from 'react';
-import { withStyles, createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import withStyles from '@mui/styles/withStyles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { useGlobalState, ControlParams } from '../../lib/global';
 import {
 	stdBikeFrontalArea,

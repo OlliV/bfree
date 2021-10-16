@@ -1,7 +1,9 @@
-import Modal from '@material-ui/core/Modal';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import Modal from '@mui/material/Modal';
+import Slider from '@mui/material/Slider';
+import Typography from '@mui/material/Typography';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
 import { useState, useEffect } from 'react';
 import { useGlobalState } from '../lib/global';
 import SensorValue from './SensorValue';
