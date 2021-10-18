@@ -1,7 +1,4 @@
 import TextField from '@mui/material/TextField';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
 import { useState, useEffect } from 'react';
 import { speedUnitConv, distanceUnitConv } from '../lib/units';
 import createWorkoutRunner, { RunnerResponse } from '../lib/workout_runner';
@@ -23,25 +20,6 @@ function getModalStyle() {
 		transform: `translate(-${top}%, -${left}%)`,
 	};
 }
-
-const useModalStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		paper: {
-			position: 'absolute',
-			width: '80vw',
-			height: '68vh',
-			backgroundColor: theme.palette.background.paper,
-			border: '2px solid #000',
-			boxShadow: theme.shadows[5],
-			padding: theme.spacing(2, 4, 3),
-		},
-		trainerControl: {
-			marginTop: '1em',
-			margin: 'auto',
-			width: '80%',
-		},
-	})
-);
 
 function PreviewParams({
 	onChange,
