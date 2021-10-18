@@ -41,7 +41,7 @@ export function Param({ title, image, children }) {
 	const classes = useSetupStyles();
 
 	return (
-		<Grid item xs={4}>
+		<Grid item xs="auto">
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">

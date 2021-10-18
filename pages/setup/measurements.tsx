@@ -24,14 +24,14 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 	const handleRightChange = (v) => setRight(v);
 
 	return (
-		<Grid item xs={4}>
+		<Grid item xs="auto">
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
 					{title}
 				</Typography>
-				<CardContent>
-					<Typography gutterBottom>
+				<CardContent sx={{ height: '12ex' }}>
+					<Typography gutterBottom sx={{ width: '10em' }}>
 						<b>Primary source</b>
 						<br />
 						{right.length > 0 ? right[0].name : 'None'}
@@ -40,7 +40,7 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 				<CardActions>
 					<SetupDialog btnText="Configure" title={title}>
 						<DialogContentText>
-							The sensors on the right side will be used for measurements.
+							The sensors on the right side will be used for measurements, prioritized in top-down order.
 						</DialogContentText>
 						<form noValidate autoComplete="off">
 							<PriorityList
