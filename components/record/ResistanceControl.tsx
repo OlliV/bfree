@@ -155,11 +155,10 @@ export default function ResistanceControl({
 					await smartTrainerControl.sendWindResistance(windResistanceCoeff, windSpeed, draftingFactor);
 					await smartTrainerControl.sendSlope(value, rollingResistance || rollingResistanceCoeff.asphalt);
 					setControlParams((prev: ControlParams) => ({ ...prev, slope: value }));
-				}
+				};
 			default:
 				throw new Error('Unknown resistance mode');
 		}
-
 	}, [resistance, rollingResistance, smartTrainerControl, windResistanceCoeff, setControlParams]);
 
 	// Set the initial resistance and mode + register a cleanup.
