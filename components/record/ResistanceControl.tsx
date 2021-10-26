@@ -19,6 +19,7 @@ import {
 } from '../../lib/virtual_params';
 
 export type Resistance = 'basic' | 'power' | 'slope';
+type SendResistanceFunc = (value: number) => Promise<void>;
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -138,25 +139,28 @@ export default function ResistanceControl({
 		() => calcWindResistanceCoeff(stdBikeFrontalArea[bike.type], stdBikeDragCoefficient[bike.type], altitude),
 		[bike]
 	);
-
-	const sendResistance = async (value: number) => {
-		console.log(`Setting resistance: ${value} ${resistanceUnit}`);
-		if (smartTrainerControl) {
-			switch (resistance) {
-				case 'basic':
-					await smartTrainerControl.sendBasicResistance(value);
-					break;
-				case 'power':
-					await smartTrainerControl.sendTargetPower(value);
-					break;
-				case 'slope':
+	const sendResistance = useMemo((): SendResistanceFunc => {
+		if (!smartTrainerControl) {
+			return async (_value: number) => {
+				console.log('sendResistance failed: No smart trainer connected');
+			};
+		}
+		switch (resistance) {
+			case 'basic':
+				return async (value: number) => await smartTrainerControl.sendBasicResistance(value);
+			case 'power':
+				return async (value: number) => await smartTrainerControl.sendTargetPower(value);
+			case 'slope':
+				return async (value: number) => {
 					await smartTrainerControl.sendWindResistance(windResistanceCoeff, windSpeed, draftingFactor);
 					await smartTrainerControl.sendSlope(value, rollingResistance || rollingResistanceCoeff.asphalt);
 					setControlParams((prev: ControlParams) => ({ ...prev, slope: value }));
-					break;
-			}
+				}
+			default:
+				throw new Error('Unknown resistance mode');
 		}
-	};
+
+	}, [resistance, rollingResistance, smartTrainerControl, windResistanceCoeff, setControlParams]);
 
 	// Set the initial resistance and mode + register a cleanup.
 	// Note: defaultResistance is not in the deps because we don't care
