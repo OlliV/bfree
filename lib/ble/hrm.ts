@@ -1,4 +1,4 @@
-import { HrmMeasurements } from './measurements';
+import { HrmMeasurements } from '../measurements';
 
 export async function startHRMNotifications(server: BluetoothRemoteGATTServer, cb: (res: HrmMeasurements) => void) {
 	const service = await server.getPrimaryService('heart_rate');

@@ -1,5 +1,5 @@
-import { TrainerMeasurements } from './measurements';
-import defer from './defer';
+import { TrainerMeasurements } from '../measurements';
+import defer from '../defer';
 
 // Supported page requests
 type PageNumber = 1 | 2 | 16 | 17 | 21 | 25 | 32 | 48 | 49 | 50 | 51 | 54 | 55 | 71 | 80 | 81;

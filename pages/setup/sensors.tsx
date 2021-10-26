@@ -22,14 +22,15 @@ import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useEffect, useState } from 'react';
 import MyHead from '../../components/MyHead';
 import { pairDevice, readBatteryLevel } from '../../lib/ble';
-import { startCyclingPowerMeasurementNotifications } from '../../lib/ble_cpp';
-import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble_cscp';
-import { startHRMNotifications } from '../../lib/ble_hrm';
-import { createSmartTrainerController } from '../../lib/ble_trainer';
+import { startCyclingPowerMeasurementNotifications } from '../../lib/ble/cpp';
+import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble/cscp';
+import { startHRMNotifications } from '../../lib/ble/hrm';
+import { createSmartTrainerController } from '../../lib/ble/trainer';
 import BatteryLevel from '../../components/BatteryLevel';
 import SensorValue from '../../components/SensorValue';
 import { TrainerCalibrationModal } from '../../components/TrainerControl';
-import { useGlobalState, SensorType, BluetoothServiceType, getGlobalState } from '../../lib/global';
+import { useGlobalState, SensorType, getGlobalState } from '../../lib/global';
+import { BluetoothServiceType } from '../../lib/ble';
 
 type Severity = 'error' | 'info' | 'success' | 'warning';
 

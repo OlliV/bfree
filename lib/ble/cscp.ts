@@ -1,5 +1,5 @@
-import { CscMeasurements } from './measurements';
-import { getGlobalState } from './global';
+import { CscMeasurements } from '../measurements';
+import { getGlobalState } from '../global';
 
 export async function startCyclingSpeedAndCadenceMeasurementNotifications(
 	server: BluetoothRemoteGATTServer,
