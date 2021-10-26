@@ -193,15 +193,18 @@ export async function createSmartTrainerController(
 		await txCharacteristic.writeValue(buf);
 	};
 
+	// Send slope.
+	// @param gradeP -200 % to 200%
+	// @param rollingResistanceCoeff 0.0 to 0.0127
 	const sendSlope = async (gradeP: number, rollingResistanceCoeff: number) => {
 		const buf = new ArrayBuffer(13);
 		const msg = new DataView(buf);
 
-		gradeP = Math.round((gradeP + 200) * 100);
+		gradeP = Math.round((Math.max(-200, Math.min(gradeP, 200)) + 200) * 100);
 		const gradeLsb = gradeP & 0x00ff;
 		const gradeMsb = (gradeP & 0xff00) >> 8;
 
-		rollingResistanceCoeff = Math.round(rollingResistanceCoeff * 20000); // coeff / (5 * 10^(-5))
+		rollingResistanceCoeff = Math.round(Math.max(0, Math.min(rollingResistanceCoeff, 0.0127)) * 20000); // coeff / (5 * 10^(-5))
 
 		// Header
 		setSendHeader(msg, 0x09);
