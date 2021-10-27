@@ -282,7 +282,7 @@ export default function SetupSensors() {
 		<Container maxWidth="md">
 			<MyHead title="Senors" />
 			<Box>
-				<Title>Sensors</Title>
+				<Title href="/setup">Sensors</Title>
 				<p>Connect your smart trainer, HRM, and other sensors using BLE.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
