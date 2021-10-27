@@ -134,9 +134,9 @@ export function TrainerCalibrationModal({ open, onClose }) {
 
 				if (data.targetSpeed) {
 					if (data.targetSpeed == -1) {
-						 setTargetSpeed('slowly');
+						setTargetSpeed('slowly');
 					} else {
-						const targetSpeed = speedUnit.convTo(data.targetSpeed)
+						const targetSpeed = speedUnit.convTo(data.targetSpeed);
 						setTargetSpeed(`around ${targetSpeed.toFixed(0)} ${speedUnit.name}`);
 					}
 				}
@@ -193,7 +193,9 @@ export function TrainerCalibrationModal({ open, onClose }) {
 	const body = (
 		<div style={modalStyle} className={classes.paper}>
 			<h2 id="calibration-modal-title">Calibrate {(btDevice && btDevice.device.name) || 'trainer'}</h2>
-			<p id="calibration-modal-description">{targetSpeed !== '' ? `Start the calibration by pedaling ${targetSpeed}.` : ''}</p>
+			<p id="calibration-modal-description">
+				{targetSpeed !== '' ? `Start the calibration by pedaling ${targetSpeed}.` : ''}
+			</p>
 			<p>
 				<b>Calibration status:</b> {calResult}
 			</p>

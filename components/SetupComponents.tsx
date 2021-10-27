@@ -44,10 +44,20 @@ function Info({ info }: { info: string }) {
 		<Tooltip title={info}>
 			<IconHelpOutline color="primary" fontSize="small" />
 		</Tooltip>
-	)
+	);
 }
 
-export function Param({ title, image, info, children }: { title: string, image: string, info?: string, children: any }) {
+export function Param({
+	title,
+	image,
+	info,
+	children,
+}: {
+	title: string;
+	image: string;
+	info?: string;
+	children: any;
+}) {
 	const classes = useSetupStyles();
 
 	return (
@@ -56,7 +66,7 @@ export function Param({ title, image, info, children }: { title: string, image: 
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2" sx={{ marginLeft: '1ex' }}>
 					{title}
-					{info ? <Info info={info}/> : ''}
+					{info ? <Info info={info} /> : ''}
 				</Typography>
 				<CardContent className={classes.setupCard}>{children}</CardContent>
 			</Card>

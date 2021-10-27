@@ -11,7 +11,8 @@ import { isValidUnsigned } from '../../lib/validation';
 import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
-const bikeTypeInfo = 'Bike type is used to estimate the drag coefficient which is needed to calculate a realistic wind resistance.';
+const bikeTypeInfo =
+	'Bike type is used to estimate the drag coefficient which is needed to calculate a realistic wind resistance.';
 const wheelCircumInfo = 'Wheel diameter is used for distance calculation.';
 const bikeWeightInfo = 'Bike weight is used to calculate the gravitational resistance when the slope control is used.';
 
