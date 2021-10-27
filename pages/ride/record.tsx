@@ -63,15 +63,15 @@ function lap2Series(lap: Lap, speedUnit): Series {
 
 	const hrData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
 		x: p.time - startTime,
-		y: typeof p.hr === 'number' ? p.hr : 0,
+		y: !isNaN(p.hr) ? p.hr : 0,
 	}));
 	const powerData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
 		x: p.time - startTime,
-		y: typeof p.power === 'number' ? p.power : 0,
+		y: !isNaN(p.power) ? p.power : 0,
 	}));
 	const speedData: SeriesDataPoint[] = lap.trackPoints.map((p) => ({
 		x: p.time - startTime,
-		y: typeof p.speed === 'number' ? speedUnit.convTo(p.speed) : 0,
+		y: !isNaN(p.speed) ? speedUnit.convTo(p.speed) : 0,
 	}));
 
 	return [

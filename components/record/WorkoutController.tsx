@@ -190,10 +190,10 @@ export default function WorkoutController({
 		workoutRunner.sendMessage({
 			time: elapsedTime,
 			distance,
-			speed: speed.speed,
-			cadence: cadence.cadence,
-			heartRate: heartRate.heartRate,
-			power: power.power,
+			speed: speed?.speed,
+			cadence: cadence?.cadence,
+			heartRate: heartRate?.heartRate,
+			power: power?.power,
 		});
 	}, [workoutRunner, elapsedTime]);
 
@@ -206,10 +206,7 @@ export default function WorkoutController({
 						<IconResistance className={classes.inlineIcon} /> Workout
 					</Typography>
 					<Container>
-						<b>Message:</b> <p>{message}</p>
-						<b>Current:</b> <div className={classes.value}>W/slope/basicResistance and a progress bar</div>
-						<br />
-						<b>Next:</b> <div className={classes.value}>start time & resistance</div>
+						<p>{message}</p>
 					</Container>
 				</CardContent>
 			</Card>

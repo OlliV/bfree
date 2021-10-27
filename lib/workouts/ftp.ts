@@ -24,7 +24,7 @@ self.addEventListener('message', function(e) {
   const { data: msg } = e;
 
   for (const [t, resp] of steps) {
-	if (t <= msg.time) {
+	if (msg.time <= t) {
 	  self.postMessage({
 	    ...resp,
   	    time: msg.time,
