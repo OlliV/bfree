@@ -6,6 +6,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import createStyles from '@mui/styles/createStyles';
 import { useState, useEffect } from 'react';
 import { useGlobalState } from '../lib/global';
+import { speedUnitConv } from '../lib/units';
 import SensorValue from './SensorValue';
 
 const useStyles = makeStyles({
@@ -111,11 +112,13 @@ export function TrainerTestModal({ open, onClose }) {
 export function TrainerCalibrationModal({ open, onClose }) {
 	const classes = useModalStyles();
 	const modalStyle = getModalStyle();
+	const [unitSpeed] = useGlobalState('unitSpeed');
+	const speedUnit = speedUnitConv[unitSpeed];
 	const [btDevice] = useGlobalState(`btDevice_smart_trainer`);
 	const [smartTrainerStatus] = useGlobalState('smart_trainer');
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
-	const [targetSpeed, setTargetSpeed] = useState('slowly');
-	const [calResult, setCalResult] = useState('PENDING');
+	const [targetSpeed, setTargetSpeed] = useState('');
+	const [calResult, setCalResult] = useState<'PENDING' | 'PASSED' | 'FAILED'>('PENDING');
 
 	const handleClose = () => {
 		onClose();
@@ -123,37 +126,45 @@ export function TrainerCalibrationModal({ open, onClose }) {
 
 	useEffect(
 		() => {
-			let tim;
+			let tim: ReturnType<typeof setTimeout>;
 			const statusListener = (data) => {
-				console.log(data);
+				console.log('cal', data);
+
+				// TODO Show warning for tempCond 1 = too low; 3 = too high
+
 				if (data.targetSpeed) {
-					// TODO How to mi/h
-					setTargetSpeed(`around ${data.targetSpeed.toFixed(0)} km/h`);
+					if (data.targetSpeed == -1) {
+						 setTargetSpeed('slowly');
+					} else {
+						const targetSpeed = speedUnit.convTo(data.targetSpeed)
+						setTargetSpeed(`around ${targetSpeed.toFixed(0)} ${speedUnit.name}`);
+					}
 				}
-				// TODO We should read spinDownCalRes here!!
-				// data.spinDownCalRes true/false === passed/failed if req was received
-				// spinDownCalStat == pending
-				// use  speedCond, // 0 = NA; 1 = too low; 2 = ok
-				if (data.spindownTimeRes > 0) {
-					setCalResult('PASSED');
+
+				if (data.spinDownCalRes !== undefined) {
+					setTargetSpeed('');
 					clearTimeout(tim);
+					setCalResult(data.spinDownCalRes ? 'PASSED' : 'FAILED');
 				}
-				// TODO When fail?
 			};
 
 			if (open && smartTrainerControl) {
 				console.log(`Sending a calibration request to the trainer`);
 				setCalResult('PENDING');
 				const cal = async () => {
+					//await smartTrainerControl.sendCalibrationReset();
 					await smartTrainerControl.sendCalibrationReq();
-					await smartTrainerControl.sendSpinDownCalibrationReq();
 
+					// Calibration response page
 					smartTrainerControl.addPageListener(1, statusListener);
+					// Calibration in progress page
 					smartTrainerControl.addPageListener(2, statusListener);
 
-					// YOLO timeout
+					// Timeout if we never receive anything conclusive.
 					tim = setTimeout(() => {
 						setCalResult('FAILED');
+						console.log('Cancelling the calibration due to timeout');
+						smartTrainerControl.sendCalibrationCancel().catch(console.error);
 					}, 30000); // TODO const for this
 				};
 				cal().catch(console.error);
@@ -163,6 +174,10 @@ export function TrainerCalibrationModal({ open, onClose }) {
 				if (smartTrainerControl) {
 					if (tim) {
 						clearTimeout(tim);
+						if (calResult === 'PENDING') {
+							console.log('Cancelling the calibration');
+							smartTrainerControl.sendCalibrationCancel().catch(console.error);
+						}
 						smartTrainerControl.removePageListener(1, statusListener);
 						smartTrainerControl.removePageListener(2, statusListener);
 					}
@@ -178,7 +193,7 @@ export function TrainerCalibrationModal({ open, onClose }) {
 	const body = (
 		<div style={modalStyle} className={classes.paper}>
 			<h2 id="calibration-modal-title">Calibrate {(btDevice && btDevice.device.name) || 'trainer'}</h2>
-			<p id="calibration-modal-description">Start the calibration by pedaling {targetSpeed}.</p>
+			<p id="calibration-modal-description">{targetSpeed !== '' ? `Start the calibration by pedaling ${targetSpeed}.` : ''}</p>
 			<p>
 				<b>Calibration status:</b> {calResult}
 			</p>

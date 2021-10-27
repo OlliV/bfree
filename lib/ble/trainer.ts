@@ -263,7 +263,8 @@ export async function createSmartTrainerController(
 		await txCharacteristic.writeValue(buf);
 	};
 
-	const sendCalibrationReq = async () => {
+	// TODO This is probably never really needed
+	const sendCalibrationReset = async () => {
 		const buf = new ArrayBuffer(13);
 		const msg = new DataView(buf);
 
@@ -286,7 +287,7 @@ export async function createSmartTrainerController(
 		await txCharacteristic.writeValue(buf);
 	};
 
-	const sendSpinDownCalibrationReq = async () => {
+	const sendCalibrationReq = async () => {
 		const buf = new ArrayBuffer(13);
 		const msg = new DataView(buf);
 
@@ -295,11 +296,34 @@ export async function createSmartTrainerController(
 
 		const CAL_MODE_SPIN_DOWN = 0x80;
 		const CAL_MODE_ZERO_OFFSET = 0x40;
-		const calMode = CAL_MODE_SPIN_DOWN;
+		const calMode = CAL_MODE_ZERO_OFFSET | CAL_MODE_SPIN_DOWN;
 
 		// Payload
 		msg.setUint8(4, 0x01); // page
 		msg.setUint8(5, calMode);
+		msg.setUint8(6, 0xff);
+		msg.setUint8(7, 0xff);
+		msg.setUint8(8, 0xff);
+		msg.setUint8(9, 0xff);
+		msg.setUint8(10, 0xff);
+		msg.setUint8(11, 0xff);
+
+		// Checksum
+		msg.setUint8(12, calcChecksum(msg));
+
+		await txCharacteristic.writeValue(buf);
+	};
+
+	const sendCalibrationCancel = async () => {
+		const buf = new ArrayBuffer(13);
+		const msg = new DataView(buf);
+
+		// Header
+		setSendHeader(msg, 0x09);
+
+		// Payload
+		msg.setUint8(4, 0x01); // page
+		msg.setUint8(5, 0x00);
 		msg.setUint8(6, 0xff);
 		msg.setUint8(7, 0xff);
 		msg.setUint8(8, 0xff);
@@ -420,7 +444,7 @@ export async function createSmartTrainerController(
 
 			// Target speed [km/h]
 			let targetSpeed = value.getUint8(offset + 4) | (value.getUint8(offset + 5) << 8);
-			targetSpeed = targetSpeed === 0xffff ? -1 : targetSpeed * 0.001 * 3.6;
+			targetSpeed = targetSpeed === 0xffff ? -1 : targetSpeed * 0.001;
 
 			// Target spin-down time
 			let targetSpinDownTime = value.getUint8(offset + 6) | (value.getUint8(offset + 7) << 8);
@@ -432,7 +456,7 @@ export async function createSmartTrainerController(
 				speedCond, // 0 = NA; 1 = too low; 2 = ok
 				tempCond, // 0 = NA; 1 = too low; 2 = ok; 3 = too high
 				currentTemp,
-				targetSpeed,
+				targetSpeed, // m/s
 				targetSpinDownTime,
 			};
 		} else if (pageNumber === 16) {
@@ -702,8 +726,9 @@ export async function createSmartTrainerController(
 		sendWindResistance,
 		sendSlope,
 		sendUserConfiguration,
+		sendCalibrationReset,
 		sendCalibrationReq,
-		sendSpinDownCalibrationReq,
+		sendCalibrationCancel,
 		sendPageReq,
 		// Events
 		addPageListener,
