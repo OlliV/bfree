@@ -10,6 +10,9 @@ import { useState } from 'react';
 import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
+const weightInfo = 'User weight is used to calculate the gravitational resistance when the slope control is used.';
+const ftpInfo = 'FTP is used by predefined workouts to generate the optimal exercise for every rider.';
+
 const textFieldStyle: SxPropsTheme = {
 	width: '11ch',
 };
@@ -33,7 +36,7 @@ function Weight() {
 	};
 
 	return (
-		<Param title="Weight" image="/images/cards/scale.jpg">
+		<Param title="Weight" info={weightInfo} image="/images/cards/scale.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
 				<TextField
 					value={tmp}
@@ -67,7 +70,7 @@ function FTPValue() {
 	};
 
 	return (
-		<Param title="FTP" image="/images/cards/ftp.jpg">
+		<Param title="FTP" info={ftpInfo} image="/images/cards/ftp.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
 				<TextField
 					value={tmp}

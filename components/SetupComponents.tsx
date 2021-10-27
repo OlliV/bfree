@@ -8,10 +8,12 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
+import IconHelpOutline from '@mui/icons-material/HelpOutline';
 import { useState } from 'react';
 import { useGlobalState } from '../lib/global';
 import { isValidUnsigned } from '../lib/validation';
@@ -37,15 +39,24 @@ export const useSetupStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export function Param({ title, image, children }) {
+function Info({ info }: { info: string }) {
+	return (
+		<Tooltip title={info}>
+			<IconHelpOutline color="primary" fontSize="small" />
+		</Tooltip>
+	)
+}
+
+export function Param({ title, image, info, children }: { title: string, image: string, info?: string, children: any }) {
 	const classes = useSetupStyles();
 
 	return (
 		<Grid item xs="auto">
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
-				<Typography gutterBottom variant="h5" component="h2">
+				<Typography gutterBottom variant="h5" component="h2" sx={{ marginLeft: '1ex' }}>
 					{title}
+					{info ? <Info info={info}/> : ''}
 				</Typography>
 				<CardContent className={classes.setupCard}>{children}</CardContent>
 			</Card>

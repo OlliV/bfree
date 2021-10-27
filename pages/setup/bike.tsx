@@ -11,6 +11,10 @@ import { isValidUnsigned } from '../../lib/validation';
 import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
+const bikeTypeInfo = 'Bike type is used to estimate the drag coefficient which is needed to calculate a realistic wind resistance.';
+const wheelCircumInfo = 'Wheel diameter is used for distance calculation.';
+const bikeWeightInfo = 'Bike weight is used to calculate the gravitational resistance when the slope control is used.';
+
 function WheelCircumference() {
 	const classes = useStyles();
 	const [bike, setBike] = useGlobalState('bike');
@@ -30,7 +34,7 @@ function WheelCircumference() {
 	};
 
 	return (
-		<Param title="Wheel Circumference" image="/images/cards/wheel.jpg">
+		<Param title="Wheel Circumference" info={wheelCircumInfo} image="/images/cards/wheel.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
 				<TextField
 					value={tmp}
@@ -64,7 +68,7 @@ function BikeWeight() {
 	};
 
 	return (
-		<Param title="Bike Weight" image="/images/cards/weight.jpg">
+		<Param title="Bike Weight" info={bikeWeightInfo} image="/images/cards/weight.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
 				<TextField
 					value={tmp}
@@ -91,7 +95,7 @@ function BikeType() {
 	};
 
 	return (
-		<Param title="Bike Type" image="/images/cards/patent.jpg">
+		<Param title="Bike Type" info={bikeTypeInfo} image="/images/cards/patent.jpg">
 			<form className={classes.form} noValidate autoComplete="off">
 				<Select variant="standard" value={bike.type} onChange={handleChange} defaultValue="road">
 					<MenuItem value="atb">ATB/MTB</MenuItem>
