@@ -57,7 +57,6 @@ export default function WorkoutController({
 	const [_controlParams, setControlParams] = useGlobalState('control_params');
 	const [bike] = useGlobalState('bike');
 	const [workoutRunner, setWorkoutRunner] = useState<ReturnType<typeof createWorkoutRunner>>();
-	const [enabled, setEnabled] = useState(false);
 	const altitude = 0;
 	const windSpeed = 0; // head/tail component.
 	const draftingFactor = 1.0; // 0.0 would be no air resistance simulation, where as 1.0 means no drafting effect.

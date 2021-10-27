@@ -21,7 +21,7 @@ import { green } from '@mui/material/colors';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useEffect, useState } from 'react';
 import MyHead from '../../components/MyHead';
-import { pairDevice, readBatteryLevel } from '../../lib/ble';
+import { BluetoothServiceType, pairDevice, readBatteryLevel } from '../../lib/ble';
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble/cpp';
 import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble/cscp';
 import { startHRMNotifications } from '../../lib/ble/hrm';
@@ -30,7 +30,6 @@ import BatteryLevel from '../../components/BatteryLevel';
 import SensorValue from '../../components/SensorValue';
 import { TrainerCalibrationModal } from '../../components/TrainerControl';
 import { useGlobalState, SensorType, getGlobalState } from '../../lib/global';
-import { BluetoothServiceType } from '../../lib/ble';
 
 type Severity = 'error' | 'info' | 'success' | 'warning';
 
@@ -276,8 +275,6 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 }
 
 export default function SetupSensors() {
-	const classes = useStyles();
-
 	return (
 		<Container maxWidth="md">
 			<MyHead title="Senors" />
