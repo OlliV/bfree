@@ -102,16 +102,15 @@ export function UnsignedConfigParam({
 
 	return (
 		<Param title={title} image={image}>
-			<form className={classes.form} noValidate autoComplete="off">
-				<TextField
-					value={tmp}
-					error={!isValidUnsigned(Number(tmp))}
-					onChange={handleChange}
-					id="outlined-basic"
-					label={label}
-					variant="outlined"
-				/>
-			</form>
+			<TextField
+				autoComplete="off"
+				value={tmp}
+				error={!isValidUnsigned(Number(tmp))}
+				onChange={handleChange}
+				id="outlined-basic"
+				label={label}
+				variant="outlined"
+			/>
 		</Param>
 	);
 }

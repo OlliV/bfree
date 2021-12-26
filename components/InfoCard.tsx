@@ -29,7 +29,6 @@ export default function ExportCard({ defaultName, onChangeName, defaultNotes, on
 					<Typography gutterBottom variant="h5" component="h2">
 						Activity Info
 					</Typography>
-					<form>
 						<TextField
 							id="act-name"
 							label="Activity Name"
@@ -46,7 +45,6 @@ export default function ExportCard({ defaultName, onChangeName, defaultNotes, on
 							onChange={onChangeNotes}
 							variant="outlined"
 						/>
-					</form>
 				</CardContent>
 			</Card>
 		</Grid>

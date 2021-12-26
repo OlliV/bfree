@@ -42,14 +42,12 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 						<DialogContentText>
 							The sensors on the right side will be used for measurements, prioritized in top-down order.
 						</DialogContentText>
-						<form noValidate autoComplete="off">
-							<PriorityList
-								leftList={left}
-								rightList={right}
-								handleLeftChange={handleLeftChange}
-								handleRightChange={handleRightChange}
-							/>
-						</form>
+						<PriorityList
+							leftList={left}
+							rightList={right}
+							handleLeftChange={handleLeftChange}
+							handleRightChange={handleRightChange}
+						/>
 					</SetupDialog>
 				</CardActions>
 			</Card>

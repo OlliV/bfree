@@ -106,7 +106,7 @@ function EditModal({
 		>
 			{open ? (
 				<Grid item>
-					<form>
+					<form onSubmit={onClickSave}>
 						<TextField
 							id="act-name"
 							label="Activity Name"
@@ -123,12 +123,12 @@ function EditModal({
 							onChange={handleNotesChange}
 							variant="outlined"
 						/>
+						<EditActionButtons
+							style={{ marginTop: 0 }}
+							onClickSave={onClickSave}
+							onClickDiscard={onClickDiscard}
+						/>
 					</form>
-					<EditActionButtons
-						style={{ marginTop: 0 }}
-						onClickSave={onClickSave}
-						onClickDiscard={onClickDiscard}
-					/>
 				</Grid>
 			) : (
 				''

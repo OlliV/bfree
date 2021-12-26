@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -36,16 +37,16 @@ function WheelCircumference() {
 
 	return (
 		<Param title="Wheel Circumference" info={wheelCircumInfo} image="/images/cards/wheel.jpg">
-			<form className={classes.form} noValidate autoComplete="off">
-				<TextField
-					value={tmp}
-					error={!isValidUnsigned(Number(tmp))}
-					onChange={handleChange}
-					id="outlined-basic"
-					label="mm"
-					variant="outlined"
-				/>
-			</form>
+			<TextField
+				autoComplete="off"
+				className={classes.form}
+				value={tmp}
+				error={!isValidUnsigned(Number(tmp))}
+				onChange={handleChange}
+				id="outlined-basic"
+				label="mm"
+				variant="outlined"
+			/>
 		</Param>
 	);
 }
@@ -70,16 +71,16 @@ function BikeWeight() {
 
 	return (
 		<Param title="Bike Weight" info={bikeWeightInfo} image="/images/cards/weight.jpg">
-			<form className={classes.form} noValidate autoComplete="off">
-				<TextField
-					value={tmp}
-					error={!isValidUnsigned(Number(tmp))}
-					onChange={handleChange}
-					id="outlined-basic"
-					label="kg"
-					variant="outlined"
-				/>
-			</form>
+			<TextField
+				autoComplete="off"
+				className={classes.form}
+				value={tmp}
+				error={!isValidUnsigned(Number(tmp))}
+				onChange={handleChange}
+				id="outlined-basic"
+				label="kg"
+				variant="outlined"
+			/>
 		</Param>
 	);
 }
@@ -97,14 +98,14 @@ function BikeType() {
 
 	return (
 		<Param title="Bike Type" info={bikeTypeInfo} image="/images/cards/patent.jpg">
-			<form className={classes.form} noValidate autoComplete="off">
+			<FormControl className={classes.form}>
 				<Select variant="standard" value={bike.type} onChange={handleChange} defaultValue="road">
 					<MenuItem value="atb">ATB/MTB</MenuItem>
 					<MenuItem value="commuter">Commuter</MenuItem>
 					<MenuItem value="road">Road</MenuItem>
 					<MenuItem value="racing">Racing</MenuItem>
 				</Select>
-			</form>
+			</FormControl>
 		</Param>
 	);
 }

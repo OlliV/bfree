@@ -37,16 +37,16 @@ function Weight() {
 
 	return (
 		<Param title="Weight" info={weightInfo} image="/images/cards/scale.jpg">
-			<form className={classes.form} noValidate autoComplete="off">
-				<TextField
-					value={tmp}
-					error={!isValidUnsigned(Number(tmp))}
-					onChange={handleChange}
-					id="outlined-basic"
-					label="kg"
-					variant="outlined"
-				/>
-			</form>
+			<TextField
+				autoComplete="off"
+				className={classes.form}
+				value={tmp}
+				error={!isValidUnsigned(Number(tmp))}
+				onChange={handleChange}
+				id="outlined-basic"
+				label="kg"
+				variant="outlined"
+			/>
 		</Param>
 	);
 }
@@ -71,16 +71,16 @@ function FTPValue() {
 
 	return (
 		<Param title="FTP" info={ftpInfo} image="/images/cards/ftp.jpg">
-			<form className={classes.form} noValidate autoComplete="off">
-				<TextField
-					value={tmp}
-					error={!isValidUnsigned(Number(tmp))}
-					onChange={handleChange}
-					id="outlined-basic"
-					label="Watt"
-					variant="outlined"
-				/>
-			</form>
+			<TextField
+				autoComplete="off"
+				className={classes.form}
+				value={tmp}
+				error={!isValidUnsigned(Number(tmp))}
+				onChange={handleChange}
+				id="outlined-basic"
+				label="Watt"
+				variant="outlined"
+			/>
 		</Param>
 	);
 }
@@ -124,27 +124,26 @@ function HeartRate() {
 
 	return (
 		<Param title="Heart Rate" image="/images/cards/tempo.jpg">
-			<Container>
-				<form className={classes.form} noValidate autoComplete="off">
-					<TextField
-						value={tmpRest}
-						error={!isValidUnsigned(Number(tmpRest))}
-						onChange={handleRestChange}
-						id="outlined-basic"
-						label="Rest BPM"
-						variant="outlined"
-						sx={textFieldStyle}
-					/>
-					<TextField
-						value={tmpMax}
-						error={!isValidUnsigned(Number(tmpMax))}
-						onChange={handleMaxChange}
-						id="outlined-basic"
-						label="Max BPM"
-						variant="outlined"
-						sx={textFieldStyle}
-					/>
-				</form>
+			<Container className={classes.form}>
+				<TextField
+					autoComplete="off"
+					value={tmpRest}
+					error={!isValidUnsigned(Number(tmpRest))}
+					onChange={handleRestChange}
+					id="outlined-basic"
+					label="Rest BPM"
+					variant="outlined"
+					sx={textFieldStyle}
+				/>
+				<TextField
+					value={tmpMax}
+					error={!isValidUnsigned(Number(tmpMax))}
+					onChange={handleMaxChange}
+					id="outlined-basic"
+					label="Max BPM"
+					variant="outlined"
+					sx={textFieldStyle}
+				/>
 			</Container>
 		</Param>
 	);
