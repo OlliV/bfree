@@ -1,4 +1,5 @@
 import Avatar from '@mui/material/Avatar';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -16,9 +17,6 @@ import IconDownload from '@mui/icons-material/GetApp';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { red } from '@mui/material/colors';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -35,41 +33,53 @@ import {
 	toggleWorkoutFav,
 } from '../../../lib/workout_storage';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		cardRoot: {
-			minWidth: 345,
-			maxWidth: 345,
-		},
-		fab: {
-			display: 'flex',
-			marginLeft: 'auto',
-			marginRight: 'auto',
-			marginBottom: '2em',
-			marginTop: '2em',
-		},
-		media: {
-			height: 0,
-			paddingTop: '56.25%', // 16:9
-		},
-		expand: {
-			transform: 'rotate(0deg)',
-			marginLeft: 'auto',
-			transition: theme.transitions.create('transform', {
-				duration: theme.transitions.duration.shortest,
-			}),
-		},
-		expandOpen: {
-			transform: 'rotate(180deg)',
-		},
-		avatar: {
-			backgroundColor: red[500],
-		},
-	})
-);
+const PREFIX = 'index';
+const classes = {
+	cardRoot: `${PREFIX}-cardRoot`,
+	fab: `${PREFIX}-fab`,
+	media: `${PREFIX}-media`,
+	expand: `${PREFIX}-expand`,
+	expandOpen: `${PREFIX}-expandOpen`,
+	avatar: `${PREFIX}-avatar`,
+};
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+	[`& .${classes.cardRoot}`]: {
+		minWidth: 345,
+		maxWidth: 345,
+	},
+
+	[`& .${classes.fab}`]: {
+		display: 'flex',
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		marginBottom: '2em',
+		marginTop: '2em',
+	},
+
+	[`& .${classes.media}`]: {
+		height: 0,
+		paddingTop: '56.25%', // 16:9
+	},
+
+	[`& .${classes.expand}`]: {
+		transform: 'rotate(0deg)',
+		marginLeft: 'auto',
+		transition: theme.transitions.create('transform', {
+			duration: theme.transitions.duration.shortest,
+		}),
+	},
+
+	[`& .${classes.expandOpen}`]: {
+		transform: 'rotate(180deg)',
+	},
+
+	[`& .${classes.avatar}`]: {
+		backgroundColor: red[500],
+	},
+}));
 
 function WorkoutCard({ workout, onChange }) {
-	const classes = useStyles();
 	const router = useRouter();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWarning, setShowWarning] = useState(false);
@@ -189,7 +199,6 @@ function WorkoutCard({ workout, onChange }) {
 }
 
 export default function Workout() {
-	const classes = useStyles();
 	const router = useRouter();
 	const [rider] = useGlobalState('rider');
 	const [workouts, setWorkouts] = useState(() => getWorkouts());
@@ -205,7 +214,7 @@ export default function Workout() {
 	}, [rider]);
 
 	return (
-		<Container maxWidth="sm">
+		<StyledContainer maxWidth="sm">
 			<MyHead title="Workout" />
 			<Box>
 				<Title href="/ride">Workout</Title>
@@ -225,6 +234,6 @@ export default function Workout() {
 					<IconAdd />
 				</Fab>
 			</Box>
-		</Container>
+		</StyledContainer>
 	);
 }

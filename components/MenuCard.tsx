@@ -1,28 +1,26 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Typography from '@mui/material/Typography';
 import { CardContent } from '@mui/material';
-import { Theme } from '@mui/material/styles';
 
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+const PREFIX = 'MenuCard';
+const classes = {
+	menuCard: `${PREFIX}-menuCard`,
+};
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		menuCard: {
-			'&:hover': {
-				backgroundColor: 'lightgrey',
-			},
+const StyledGrid = styled(Grid)(({ theme }) => ({
+	[`& .${classes.menuCard}`]: {
+		'&:hover': {
+			backgroundColor: 'lightgrey',
 		},
-	})
-);
+	},
+}));
 
 export default function MenuCard({ title, href, children }: { title: string; href: string; children?: any }) {
-	const classes = useStyles();
-
 	return (
-		<Grid item xs={12}>
+		<StyledGrid item xs={12}>
 			<Link href={href || '/'}>
 				<a>
 					<Card variant="outlined" className={classes.menuCard}>
@@ -37,6 +35,6 @@ export default function MenuCard({ title, href, children }: { title: string; hre
 					</Card>
 				</a>
 			</Link>
-		</Grid>
+		</StyledGrid>
 	);
 }

@@ -1,23 +1,26 @@
 import { useRouter } from 'next/router';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles((theme: Theme) =>
-	// TODO This doesn't always work
-	createStyles({
-		arrow: {
-			'&:hover': {
-				color: 'grey',
-				cursor: 'pointer',
-			},
+const PREFIX = 'Title';
+const classes = {
+	arrow: `${PREFIX}-arrow`,
+	arrowDisabled: `${PREFIX}-arrowDisabled`,
+};
+
+const StyledTypography = styled(Typography)(({ theme }) => ({
+	[`& .${classes.arrow}`]: {
+		'&:hover': {
+			color: 'grey',
+			cursor: 'pointer',
 		},
-		arrowDisabled: {
-			visibility: 'hidden',
-		},
-	})
-);
+	},
+
+	[`& .${classes.arrowDisabled}`]: {
+		visibility: 'hidden',
+	},
+}));
 
 export default function Title({
 	disableBack,
@@ -28,7 +31,6 @@ export default function Title({
 	href?: string;
 	children: any;
 }) {
-	const classes = useStyles();
 	const router = useRouter();
 
 	const handleOnClick = (e) => {
@@ -42,11 +44,12 @@ export default function Title({
 	};
 
 	return (
-		<Typography gutterBottom variant="h2" component="h2">
+		// @ts-ignore
+		<StyledTypography gutterBottom variant="h2" component="h2">
 			<span className={disableBack ? classes.arrowDisabled : classes.arrow} onClick={handleOnClick}>
 				&larr;
 			</span>
 			&nbsp;{children}
-		</Typography>
+		</StyledTypography>
 	);
 }

@@ -1,9 +1,7 @@
 import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useEffect, useMemo } from 'react';
 import ExportCard from '../../components/ExportCard';
 import MyHead from '../../components/MyHead';
@@ -14,13 +12,16 @@ import downloadBlob from '../../lib/download_blob';
 import { createActivityLog, saveActivityLog } from '../../lib/activity_log';
 import { getDayPeriod } from '../../lib/locale';
 
-export const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		exportCard: {
-			height: '16.3em',
-		},
-	})
-);
+const PREFIX = 'results';
+const classes = {
+	exportCard: `${PREFIX}-exportCard`,
+};
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+	[`& .${classes.exportCard}`]: {
+		height: '16.3em',
+	},
+}));
 
 function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?: string; notes?: string } {
 	if (!logger) {
@@ -41,7 +42,6 @@ function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?
 }
 
 export default function RideResults() {
-	const classes = useStyles();
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
 	const { name: defaultName, notes: defaultNotes } = useMemo(() => maybeSetDefaults(logger), [logger]);
 
@@ -84,7 +84,7 @@ export default function RideResults() {
 
 	// TODO Show an error if logger is missing
 	return (
-		<Container maxWidth="md">
+		<StyledContainer maxWidth="md">
 			<MyHead title="Ride Results" />
 			<Box>
 				<Title href="/">Results</Title>
@@ -106,6 +106,6 @@ export default function RideResults() {
 					</ExportCard>
 				</Grid>
 			</Box>
-		</Container>
+		</StyledContainer>
 	);
 }

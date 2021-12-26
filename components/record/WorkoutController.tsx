@@ -1,12 +1,10 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import IconResistance from '@mui/icons-material/FitnessCenter';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
 import { useGlobalState, getGlobalState, ControlParams } from '../../lib/global';
@@ -27,19 +25,27 @@ import {
 } from '../../lib/measurements';
 import { getDayPeriod } from '../../lib/locale';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		inlineIcon: {
-			fontSize: '18px !important',
-		},
-		stopwatchCard: {
-			height: '10em',
-		},
-		value: {
-			float: 'right',
-		},
-	})
-);
+const PREFIX = 'WorkoutController';
+
+const classes = {
+	inlineIcon: `${PREFIX}-inlineIcon`,
+	stopwatchCard: `${PREFIX}-stopwatchCard`,
+	value: `${PREFIX}-value`,
+};
+
+const StyledGrid = styled(Grid)(({ theme }) => ({
+	[`& .${classes.inlineIcon}`]: {
+		fontSize: '18px !important',
+	},
+
+	[`& .${classes.stopwatchCard}`]: {
+		height: '10em',
+	},
+
+	[`& .${classes.value}`]: {
+		float: 'right',
+	},
+}));
 
 export default function WorkoutController({
 	setMeta,
@@ -50,7 +56,6 @@ export default function WorkoutController({
 	doSplit: (time: number, lapTrigger: LapTriggerMethod) => void;
 	endRide: (notes?: string) => void;
 }) {
-	const classes = useStyles();
 	const router = useRouter();
 	const [elapsedTime] = useGlobalState('elapsedTime');
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
@@ -198,7 +203,7 @@ export default function WorkoutController({
 
 	/* TODO Show the actual workout stats */
 	return (
-		<Grid item xs={4}>
+		<StyledGrid item xs={4}>
 			<Card variant="outlined">
 				<CardContent className={classes.stopwatchCard}>
 					<Typography gutterBottom variant="h5" component="h2">
@@ -209,6 +214,6 @@ export default function WorkoutController({
 					</Container>
 				</CardContent>
 			</Card>
-		</Grid>
+		</StyledGrid>
 	);
 }

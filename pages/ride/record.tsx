@@ -1,4 +1,5 @@
 import BottomNavigation from '@mui/material/BottomNavigation';
+import { styled } from '@mui/material/styles';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -7,9 +8,6 @@ import Grid from '@mui/material/Grid';
 import IconPause from '@mui/icons-material/Pause';
 import IconSplit from '@mui/icons-material/Timer';
 import IconStop from '@mui/icons-material/Stop';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
 import FlightRecorder from '../../components/record/FlightRecorder';
@@ -27,6 +25,41 @@ import { Lap, LapTriggerMethod } from '../../lib/activity_log';
 import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
 
+const PREFIX = 'record';
+
+const classes = {
+	colorPower: `${PREFIX}-colorPower`,
+	colorSpeed: `${PREFIX}-colorSpeed`,
+	colorHeartRate: `${PREFIX}-colorHeartRate`,
+	bottomActions: `${PREFIX}-bottomActions`,
+	pauseStopwatch: `${PREFIX}-pauseStopwatch`,
+};
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+	[`& .${classes.colorPower}`]: {
+		background: measurementColors[1],
+	},
+
+	[`& .${classes.colorSpeed}`]: {
+		background: measurementColors[2],
+	},
+
+	[`& .${classes.colorHeartRate}`]: {
+		background: measurementColors[0],
+	},
+
+	[`& .${classes.bottomActions}`]: {
+		position: 'fixed',
+		left: 0,
+		bottom: 0,
+		width: '100vw',
+	},
+
+	[`& .${classes.pauseStopwatch}`]: {
+		textAlign: 'center',
+	},
+}));
+
 type RideType = 'free' | 'workout';
 
 const measurementColors = [
@@ -34,29 +67,6 @@ const measurementColors = [
 	'#b1e67b', // power
 	'#57baeb', // speed
 ];
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		colorPower: {
-			background: measurementColors[1],
-		},
-		colorSpeed: {
-			background: measurementColors[2],
-		},
-		colorHeartRate: {
-			background: measurementColors[0],
-		},
-		bottomActions: {
-			position: 'fixed',
-			left: 0,
-			bottom: 0,
-			width: '100vw',
-		},
-		pauseStopwatch: {
-			textAlign: 'center',
-		},
-	})
-);
 
 function lap2Series(lap: Lap, speedUnit): Series {
 	const { startTime } = lap;
@@ -112,7 +122,7 @@ function DataGraph() {
 
 function FreeRideDashboard() {
 	const router = useRouter();
-	const classes = useStyles();
+
 	const [logger] = useGlobalState('currentActivityLog');
 	const { resistance } = router.query;
 	const rollingResistance = Number(router.query.rollingResistance);
@@ -152,7 +162,7 @@ function WorkoutDashboard({
 	endRide: (notes?: string) => void;
 }) {
 	const router = useRouter();
-	const classes = useStyles();
+
 	const [logger] = useGlobalState('currentActivityLog');
 	const { id } = router.query;
 
@@ -206,7 +216,6 @@ function getDashboardConfig(rideType: RideType) {
 }
 
 export default function RideRecord() {
-	const classes = useStyles();
 	const router = useRouter();
 	const rideType = getRideType(router.query.type);
 	const [ridePaused, setRidePaused] = useGlobalState('ridePaused');
@@ -282,7 +291,7 @@ export default function RideRecord() {
 		return <DefaultErrorPage statusCode={400} />;
 	} else {
 		return (
-			<Container maxWidth="md">
+			<StyledContainer maxWidth="md">
 				<MyHead title={title} />
 				<Dashboard setMeta={setMeta} doSplit={doSplit} endRide={endRide} />
 				<FlightRecorder startTime={rideStartTime} />
@@ -304,7 +313,7 @@ export default function RideRecord() {
 						<BottomNavigationAction label="End" icon={<IconStop />} onClick={handleEndRide} />
 					</BottomNavigation>
 				</Box>
-			</Container>
+			</StyledContainer>
 		);
 	}
 }

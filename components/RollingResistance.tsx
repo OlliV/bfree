@@ -1,4 +1,5 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import FormControl from '@mui/material/FormControl';
@@ -8,11 +9,32 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useEffect, useState } from 'react';
 import { rollingResistanceCoeff } from '../lib/virtual_params';
+
+const PREFIX = 'RollingResistance';
+
+const classes = {
+	setupCard: `${PREFIX}-setupCard`,
+	media: `${PREFIX}-media`,
+	formControl: `${PREFIX}-formControl`,
+};
+
+const StyledGrid = styled(Grid)(({ theme }) => ({
+	[`& .${classes.setupCard}`]: {
+		height: '15em',
+	},
+
+	[`& .${classes.media}`]: {
+		height: 120,
+	},
+
+	[`& .${classes.formControl}`]: {
+		'& > *': {
+			width: '25ch',
+		},
+	},
+}));
 
 const predefinedRollingResistances: [string, number][] = [
 	['Wooden track', rollingResistanceCoeff.wood],
@@ -20,23 +42,6 @@ const predefinedRollingResistances: [string, number][] = [
 	['Asphalt road', rollingResistanceCoeff.asphalt],
 	['Rough road', rollingResistanceCoeff.rough],
 ];
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		setupCard: {
-			height: '15em',
-		},
-		media: {
-			height: 120,
-		},
-		formControl: {
-			'& > *': {
-				margin: theme.spacing(1),
-				width: '25ch',
-			},
-		},
-	})
-);
 
 function getTrackImg(rollingResistance: number) {
 	if (rollingResistance <= predefinedRollingResistances[0][1]) {
@@ -61,8 +66,6 @@ export default function RollingResistance({
 	rollingResistance: number;
 	setRollingResistance: ReturnType<typeof useState>[1];
 }) {
-	const classes = useStyles();
-
 	const handleChange = (event: SelectChangeEvent<number>, _child?: object) => {
 		setRollingResistance(event.target.value || 0);
 	};
@@ -72,7 +75,7 @@ export default function RollingResistance({
 	}, [setRollingResistance]);
 
 	return (
-		<Grid item xs={4}>
+		<StyledGrid item xs={4}>
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={getTrackImg(rollingResistance)} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
@@ -112,6 +115,6 @@ export default function RollingResistance({
 					</FormControl>
 				</CardContent>
 			</Card>
-		</Grid>
+		</StyledGrid>
 	);
 }

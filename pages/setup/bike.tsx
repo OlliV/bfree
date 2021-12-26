@@ -9,7 +9,7 @@ import { useState } from 'react';
 import Title from '../../components/Title';
 import MyHead from '../../components/MyHead';
 import { isValidUnsigned } from '../../lib/validation';
-import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
+import { classes, StyledParam } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
 const bikeTypeInfo =
@@ -18,7 +18,6 @@ const wheelCircumInfo = 'Wheel diameter is used for distance calculation.';
 const bikeWeightInfo = 'Bike weight is used to calculate the gravitational resistance when the slope control is used.';
 
 function WheelCircumference() {
-	const classes = useStyles();
 	const [bike, setBike] = useGlobalState('bike');
 	const [tmp, setTmp] = useState(bike.wheelCircumference);
 
@@ -36,7 +35,7 @@ function WheelCircumference() {
 	};
 
 	return (
-		<Param title="Wheel Circumference" info={wheelCircumInfo} image="/images/cards/wheel.jpg">
+		<StyledParam title="Wheel Circumference" info={wheelCircumInfo} image="/images/cards/wheel.jpg">
 			<TextField
 				autoComplete="off"
 				className={classes.form}
@@ -47,12 +46,11 @@ function WheelCircumference() {
 				label="mm"
 				variant="outlined"
 			/>
-		</Param>
+		</StyledParam>
 	);
 }
 
 function BikeWeight() {
-	const classes = useStyles();
 	const [bike, setBike] = useGlobalState('bike');
 	const [tmp, setTmp] = useState(bike.weight);
 
@@ -70,7 +68,7 @@ function BikeWeight() {
 	};
 
 	return (
-		<Param title="Bike Weight" info={bikeWeightInfo} image="/images/cards/weight.jpg">
+		<StyledParam title="Bike Weight" info={bikeWeightInfo} image="/images/cards/weight.jpg">
 			<TextField
 				autoComplete="off"
 				className={classes.form}
@@ -81,12 +79,11 @@ function BikeWeight() {
 				label="kg"
 				variant="outlined"
 			/>
-		</Param>
+		</StyledParam>
 	);
 }
 
 function BikeType() {
-	const classes = useStyles();
 	const [bike, setBike] = useGlobalState('bike');
 
 	const handleChange = (event) => {
@@ -97,7 +94,7 @@ function BikeType() {
 	};
 
 	return (
-		<Param title="Bike Type" info={bikeTypeInfo} image="/images/cards/patent.jpg">
+		<StyledParam title="Bike Type" info={bikeTypeInfo} image="/images/cards/patent.jpg">
 			<FormControl className={classes.form}>
 				<Select variant="standard" value={bike.type} onChange={handleChange} defaultValue="road">
 					<MenuItem value="atb">ATB/MTB</MenuItem>
@@ -106,7 +103,7 @@ function BikeType() {
 					<MenuItem value="racing">Racing</MenuItem>
 				</Select>
 			</FormControl>
-		</Param>
+		</StyledParam>
 	);
 }
 

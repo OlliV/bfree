@@ -1,9 +1,7 @@
 import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useState, useEffect } from 'react';
 import MyHead from '../../components/MyHead';
 import StartButton from '../../components/StartButton';
@@ -11,14 +9,17 @@ import ResistanceMode from '../../components/ResistanceMode';
 import RollingResistance from '../../components/RollingResistance';
 import Title from '../../components/Title';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		startButton: {
-			position: 'fixed',
-			bottom: 10,
-		},
-	})
-);
+const PREFIX = 'free';
+const classes = {
+	startButton: `${PREFIX}-startButton`,
+};
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+	[`& .${classes.startButton}`]: {
+		position: 'fixed',
+		bottom: 10,
+	},
+}));
 
 function makeStartUrl(resistanceMode: string, rollingResistance: number) {
 	if (resistanceMode === 'slope') {
@@ -28,7 +29,6 @@ function makeStartUrl(resistanceMode: string, rollingResistance: number) {
 }
 
 export default function RideFree() {
-	const classes = useStyles();
 	const [resistanceMode, setResistanceMode] = useState('');
 	const [rollingResistance, setRollingResistance] = useState(NaN);
 
@@ -39,7 +39,7 @@ export default function RideFree() {
 	}, [resistanceMode]);
 
 	return (
-		<Container maxWidth="md">
+		<StyledContainer maxWidth="md">
 			<MyHead title="Free Ride" />
 			<Box>
 				<Title href="/ride">Free Ride</Title>
@@ -60,6 +60,6 @@ export default function RideFree() {
 			<Box width="50%" className={classes.startButton}>
 				<StartButton disabled={!resistanceMode} href={makeStartUrl(resistanceMode, rollingResistance)} />
 			</Box>
-		</Container>
+		</StyledContainer>
 	);
 }

@@ -1,11 +1,24 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { ResponsiveLine } from '@nivo/line';
 import { getElapsedTimeStr } from '../../lib/format';
+
+const PREFIX = 'Graph';
+const classes = {
+	graphContainer: `${PREFIX}-graphContainer`,
+};
+
+const StyledCard = styled(Card)(({ theme }) => ({
+	[`& .${classes.graphContainer}`]: {
+		display: 'flex',
+		height: '35vh',
+		width: '100%',
+		background: 'white',
+		transition: '0.3s',
+	},
+}));
 
 export type SeriesDataPoint = {
 	x: number;
@@ -15,18 +28,6 @@ export type Series = {
 	id: string;
 	data: SeriesDataPoint[];
 }[];
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		graphContainer: {
-			display: 'flex',
-			height: '35vh',
-			width: '100%',
-			background: 'white',
-			transition: '0.3s',
-		},
-	})
-);
 
 export default function Graph({
 	series,
@@ -53,10 +54,8 @@ export default function Graph({
 	enableLegends?: boolean;
 	isInteractive?: boolean;
 }) {
-	const classes = useStyles();
-
 	return (
-		<Card variant="outlined">
+		<StyledCard variant="outlined">
 			<CardContent>
 				<Container className={classes.graphContainer}>
 					<ResponsiveLine
@@ -142,6 +141,6 @@ export default function Graph({
 					/>
 				</Container>
 			</CardContent>
-		</Card>
+		</StyledCard>
 	);
 }

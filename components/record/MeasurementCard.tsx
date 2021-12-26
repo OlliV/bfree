@@ -1,4 +1,5 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Container from '@mui/material/Container';
@@ -9,47 +10,60 @@ import IconPower from '@mui/icons-material/OfflineBolt';
 import IconSpeed from '@mui/icons-material/Speed';
 import Typography from '@mui/material/Typography';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useState, useEffect, useMemo } from 'react';
 import { UnitConv, speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
+
+const PREFIX = 'MeasurementCard';
+
+const classes = {
+	cardHeader: `${PREFIX}-cardHeader`,
+	card: `${PREFIX}-card`,
+	valuesTable: `${PREFIX}-valuesTable`,
+	header: `${PREFIX}-header`,
+	value: `${PREFIX}-value`,
+	unit: `${PREFIX}-unit`,
+};
+
+const StyledGrid = styled(Grid)(({ theme }) => ({
+	[`& .${classes.cardHeader}`]: {
+		padding: 2,
+	},
+
+	[`& .${classes.card}`]: {
+		height: '10em',
+	},
+
+	[`& .${classes.valuesTable}`]: {
+		border: 0,
+		width: '100%',
+		borderCollapse: 'collapse',
+		borderSpacing: 0,
+		borderWidth: 0,
+	},
+
+	[`& .${classes.header}`]: {
+		textAlign: 'left',
+		fontWeight: 'bold',
+	},
+
+	[`& .${classes.value}`]: {
+		width: '10em',
+		textAlign: 'right',
+	},
+
+	[`& .${classes.unit}`]: {
+		textAlign: 'left',
+	},
+}));
 
 type DisplayValue = {
 	value: number;
 	unit: string;
 };
 
-export const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		cardHeader: {
-			padding: 2,
-		},
-		card: {
-			height: '10em',
-		},
-		valuesTable: {
-			border: 0,
-			width: '100%',
-			borderCollapse: 'collapse',
-			borderSpacing: 0,
-			borderWidth: 0,
-		},
-		header: {
-			textAlign: 'left',
-			fontWeight: 'bold',
-		},
-		value: {
-			width: '10em',
-			textAlign: 'right',
-		},
-		unit: {
-			textAlign: 'left',
-		},
-	})
-);
+export {};
 
 const iconStyle: SxPropsTheme = {
 	fontSize: '18px !important',
@@ -93,7 +107,6 @@ function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
 }
 
 export default function MeasurementCard({ type, ribbonColor }: { type: Measurement; ribbonColor?: string }) {
-	const classes = useStyles();
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
 	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [classes, type, speedUnit]);
 	const m = useMeasurementByType(type);
@@ -125,7 +138,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 	}, [fn, m, setAgg]);
 
 	return (
-		<Grid item xs={4}>
+		<StyledGrid item xs={4}>
 			<Card variant="outlined">
 				<CardHeader className={`${classes.cardHeader} ${ribbonColor || ''}`} />
 				<CardContent className={classes.card}>
@@ -157,6 +170,6 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 					</Container>
 				</CardContent>
 			</Card>
-		</Grid>
+		</StyledGrid>
 	);
 }

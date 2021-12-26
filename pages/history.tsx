@@ -1,4 +1,5 @@
 import Avatar from '@mui/material/Avatar';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,9 +14,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { red } from '@mui/material/colors';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -26,41 +24,56 @@ import EditActionButtons from '../components/EditActionButtons';
 import downloadBlob from '../lib/download_blob';
 import { createActivityLog, deleteActivityLog, getActivityLogs, saveActivityLog } from '../lib/activity_log';
 
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		cardRoot: {
-			minWidth: 345,
-			maxWidth: 345,
-		},
-		fab: {
-			display: 'flex',
-			marginLeft: 'auto',
-			marginRight: 'auto',
-			marginBottom: '2em',
-			marginTop: '2em',
-		},
-		media: {
-			height: 0,
-			paddingTop: '56.25%', // 16:9
-		},
-		expand: {
-			transform: 'rotate(0deg)',
-			marginLeft: 'auto',
-			transition: theme.transitions.create('transform', {
-				duration: theme.transitions.duration.shortest,
-			}),
-		},
-		expandOpen: {
-			transform: 'rotate(180deg)',
-		},
-		avatar: {
-			backgroundColor: red[500],
-		},
-		nameField: {
-			paddingBottom: '2.5em',
-		},
-	})
-);
+const PREFIX = 'history';
+const classes = {
+	cardRoot: `${PREFIX}-cardRoot`,
+	fab: `${PREFIX}-fab`,
+	media: `${PREFIX}-media`,
+	expand: `${PREFIX}-expand`,
+	expandOpen: `${PREFIX}-expandOpen`,
+	avatar: `${PREFIX}-avatar`,
+	nameField: `${PREFIX}-nameField`,
+};
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+	[`& .${classes.cardRoot}`]: {
+		minWidth: 345,
+		maxWidth: 345,
+	},
+
+	[`& .${classes.fab}`]: {
+		display: 'flex',
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		marginBottom: '2em',
+		marginTop: '2em',
+	},
+
+	[`& .${classes.media}`]: {
+		height: 0,
+		paddingTop: '56.25%', // 16:9
+	},
+
+	[`& .${classes.expand}`]: {
+		transform: 'rotate(0deg)',
+		marginLeft: 'auto',
+		transition: theme.transitions.create('transform', {
+			duration: theme.transitions.duration.shortest,
+		}),
+	},
+
+	[`& .${classes.expandOpen}`]: {
+		transform: 'rotate(180deg)',
+	},
+
+	[`& .${classes.avatar}`]: {
+		backgroundColor: red[500],
+	},
+
+	[`& .${classes.nameField}`]: {
+		paddingBottom: '2.5em',
+	},
+}));
 
 const editModalStyle = {
 	width: '20em',
@@ -76,7 +89,6 @@ function EditModal({
 	onClose: () => void;
 	logger: ReturnType<typeof createActivityLog>;
 }) {
-	const classes = useStyles();
 	const [newName, setNewName] = useState(() => logger.getName());
 	const [newNotes, setNewNotes] = useState(() => logger.getNotes());
 
@@ -138,7 +150,6 @@ function EditModal({
 }
 
 function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1]; onChange: () => void }) {
-	const classes = useStyles();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showEditModal, setShowEditModal] = useState(false);
 	const name = log.logger.getName();
@@ -217,7 +228,6 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 }
 
 export default function History() {
-	const classes = useStyles();
 	const router = useRouter();
 	const [logs, setLogs] = useState(() => getActivityLogs());
 	const handleChange = () => setLogs(getActivityLogs());
@@ -227,7 +237,7 @@ export default function History() {
 	}, []);
 
 	return (
-		<Container maxWidth="sm">
+		<StyledContainer maxWidth="sm">
 			<MyHead title="Previous Rides" />
 			<Box>
 				<Title href="/">Previous Rides</Title>
@@ -239,6 +249,6 @@ export default function History() {
 					))}
 				</Grid>
 			</Box>
-		</Container>
+		</StyledContainer>
 	);
 }

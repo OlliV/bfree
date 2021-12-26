@@ -1,4 +1,5 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import FormControl from '@mui/material/FormControl';
@@ -11,33 +12,41 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import IconHelpOutline from '@mui/icons-material/HelpOutline';
 import { useState } from 'react';
 import { useGlobalState } from '../lib/global';
 import { isValidUnsigned } from '../lib/validation';
 
-export const useSetupStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			display: 'flex',
-			alignItems: 'center',
+const PREFIX = 'SetupComponents';
+export const classes = {
+	root: `${PREFIX}-root`,
+	setupCard: `${PREFIX}-setupCard`,
+	media: `${PREFIX}-media`,
+	form: `${PREFIX}-form`,
+};
+const makeStyles = ({ theme }: { theme: Theme }) => ({
+	[`& .${classes.root}`]: {
+		display: 'flex',
+		alignItems: 'center',
+	},
+
+	[`& .${classes.setupCard}`]: {
+		height: '10em',
+	},
+
+	[`& .${classes.media}`]: {
+		height: 120,
+	},
+
+	[`& .${classes.form}`]: {
+		'& > *': {
+			width: '25ch',
 		},
-		setupCard: {
-			height: '10em',
-		},
-		media: {
-			height: 120,
-		},
-		form: {
-			'& > *': {
-				margin: theme.spacing(1),
-				width: '25ch',
-			},
-		},
-	})
-);
+	},
+});
+
+export const StyledCard = styled(Card)(makeStyles);
+export const StyledParam = styled(Param)(makeStyles);
 
 function Info({ info }: { info: string }) {
 	return (
@@ -47,29 +56,17 @@ function Info({ info }: { info: string }) {
 	);
 }
 
-export function Param({
-	title,
-	image,
-	info,
-	children,
-}: {
-	title: string;
-	image: string;
-	info?: string;
-	children: any;
-}) {
-	const classes = useSetupStyles();
-
+function Param({ title, image, info, children }: { title: string; image: string; info?: string; children: any }) {
 	return (
 		<Grid item xs="auto">
-			<Card variant="outlined">
+			<StyledCard variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2" sx={{ marginLeft: '1ex' }}>
 					{title}
 					{info ? <Info info={info} /> : ''}
 				</Typography>
 				<CardContent className={classes.setupCard}>{children}</CardContent>
-			</Card>
+			</StyledCard>
 		</Grid>
 	);
 }
@@ -85,7 +82,6 @@ export function UnsignedConfigParam({
 	label: string;
 	configName: string;
 }) {
-	const classes = useSetupStyles();
 	// @ts-ignore
 	const [value, setValue] = useGlobalState(configName);
 	const [tmp, setTmp] = useState(value);
@@ -101,7 +97,7 @@ export function UnsignedConfigParam({
 	};
 
 	return (
-		<Param title={title} image={image}>
+		<StyledParam title={title} image={image}>
 			<TextField
 				autoComplete="off"
 				value={tmp}
@@ -111,7 +107,7 @@ export function UnsignedConfigParam({
 				label={label}
 				variant="outlined"
 			/>
-		</Param>
+		</StyledParam>
 	);
 }
 
@@ -132,13 +128,12 @@ export function EnumConfigParam({
 	items: [string, string][];
 	configName: string;
 }) {
-	const classes = useSetupStyles();
 	// @ts-ignore
 	const [value, setValue] = useGlobalState(configName);
 	const handleChange = (event: SelectChangeEvent<string>) => setValue(event.target.value);
 
 	return (
-		<Param title={title} image={image}>
+		<StyledParam title={title} image={image}>
 			<FormControl className={classes.form}>
 				<InputLabel shrink id="demo-simple-select-placeholder-label-label">
 					{label}
@@ -158,6 +153,6 @@ export function EnumConfigParam({
 				</Select>
 				{helpLabel ? <FormHelperText>{helpLabel}</FormHelperText> : ''}
 			</FormControl>
-		</Param>
+		</StyledParam>
 	);
 }

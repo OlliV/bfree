@@ -1,4 +1,5 @@
 import Alert from '@mui/material/Alert';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -14,9 +15,6 @@ import IconPower from '@mui/icons-material/OfflineBolt';
 import IconSpeed from '@mui/icons-material/Speed';
 import Title from '../../components/Title';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { green } from '@mui/material/colors';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useEffect, useState } from 'react';
@@ -31,22 +29,25 @@ import SensorValue from '../../components/SensorValue';
 import { TrainerCalibrationModal } from '../../components/TrainerControl';
 import { useGlobalState, SensorType, getGlobalState } from '../../lib/global';
 
+const PREFIX = 'sensors';
+const classes = {
+	sensorValue: `${PREFIX}-sensorValue`,
+};
+
+const StyledContainer = styled(Container)(({ theme }) => ({
+	[`& .${classes.sensorValue}`]: {
+		position: 'relative',
+		marginBottom: '1em',
+		width: '300px',
+	},
+}));
+
 type Severity = 'error' | 'info' | 'success' | 'warning';
 
 type InfoMessage = {
 	message: string;
 	severity: Severity;
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		sensorValue: {
-			position: 'relative',
-			marginBottom: '1em',
-			width: '300px',
-		},
-	})
-);
 
 const buttonProgressStyle: SxPropsTheme = {
 	color: green[500],
@@ -212,8 +213,6 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 		setPairingRequest(true);
 	};
 
-	const classes = useStyles();
-
 	return (
 		<Grid item xs="auto">
 			<Card variant="outlined">
@@ -276,7 +275,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 
 export default function SetupSensors() {
 	return (
-		<Container maxWidth="md">
+		<StyledContainer maxWidth="md">
 			<MyHead title="Senors" />
 			<Box>
 				<Title href="/setup">Sensors</Title>
@@ -303,6 +302,6 @@ export default function SetupSensors() {
 					</Sensor>
 				</Grid>
 			</Box>
-		</Container>
+		</StyledContainer>
 	);
 }

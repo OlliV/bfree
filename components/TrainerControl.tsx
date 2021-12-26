@@ -1,20 +1,42 @@
 import Modal from '@mui/material/Modal';
+import { styled } from '@mui/material/styles';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
 import { useState, useEffect } from 'react';
 import { useGlobalState } from '../lib/global';
 import { speedUnitConv } from '../lib/units';
 import SensorValue from './SensorValue';
 
-const useStyles = makeStyles({
-	root: {
+const PREFIX = 'TrainerControl';
+const classes = {
+	root: `${PREFIX}-root`,
+	paper: `${PREFIX}-paper`,
+	trainerControl: `${PREFIX}-trainerControl`,
+};
+
+const makeStyles = ({ theme }: { theme: Theme }) => ({
+	[`& .${classes.root}`]: {
 		marginTop: '1em',
 		width: '80%',
 	},
+	[`& .${classes.paper}`]: {
+		position: 'absolute',
+		width: 400,
+		backgroundColor: theme.palette.background.paper,
+		border: '2px solid #000',
+		boxShadow: theme.shadows[5],
+		padding: theme.spacing(2, 4, 3),
+	},
+	[`& .${classes.trainerControl}`]: {
+		marginTop: '1em',
+		margin: 'auto',
+		width: '80%',
+	},
 });
+
+const StyledModal = styled(Modal)(makeStyles);
+const StyledDiv = styled('div')(makeStyles);
 
 function getModalStyle() {
 	const top = 50;
@@ -27,30 +49,11 @@ function getModalStyle() {
 	};
 }
 
-const useModalStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		paper: {
-			position: 'absolute',
-			width: 400,
-			backgroundColor: theme.palette.background.paper,
-			border: '2px solid #000',
-			boxShadow: theme.shadows[5],
-			padding: theme.spacing(2, 4, 3),
-		},
-		trainerControl: {
-			marginTop: '1em',
-			margin: 'auto',
-			width: '80%',
-		},
-	})
-);
-
 function valueText(value: number) {
 	return `${value} %`;
 }
 
 export function TrainerControlBasicResistance({ className }) {
-	const classes = useStyles();
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
 
 	const setBasicResistance = (_ev: any, value: number) => {
@@ -60,7 +63,7 @@ export function TrainerControlBasicResistance({ className }) {
 	};
 
 	return (
-		<div className={className || classes.root}>
+		<StyledDiv className={className || classes.root}>
 			<Typography id="discrete-slider" gutterBottom>
 				Basic Resistance
 			</Typography>
@@ -76,12 +79,11 @@ export function TrainerControlBasicResistance({ className }) {
 				disabled={!(smartTrainerControl && smartTrainerControl.setBasicResistance)}
 				onChangeCommitted={setBasicResistance}
 			/>
-		</div>
+		</StyledDiv>
 	);
 }
 
 export function TrainerTestModal({ open, onClose }) {
-	const classes = useModalStyles();
 	const modalStyle = getModalStyle();
 	const [btDevice] = useGlobalState(`btDevice_smart_trainer`);
 
@@ -98,19 +100,18 @@ export function TrainerTestModal({ open, onClose }) {
 	);
 
 	return (
-		<Modal
+		<StyledModal
 			open={open}
 			onClose={handleClose}
 			aria-labelledby="trainer-test-modal-title"
 			aria-describedby="trainer-test-modal-description"
 		>
 			{body}
-		</Modal>
+		</StyledModal>
 	);
 }
 
 export function TrainerCalibrationModal({ open, onClose }) {
-	const classes = useModalStyles();
 	const modalStyle = getModalStyle();
 	const [unitSpeed] = useGlobalState('unitSpeed');
 	const speedUnit = speedUnitConv[unitSpeed];
@@ -204,13 +205,13 @@ export function TrainerCalibrationModal({ open, onClose }) {
 	);
 
 	return (
-		<Modal
+		<StyledModal
 			open={open}
 			onClose={handleClose}
 			aria-labelledby="calibration-modal-title"
 			aria-describedby="calibration-modal-description"
 		>
 			{body}
-		</Modal>
+		</StyledModal>
 	);
 }

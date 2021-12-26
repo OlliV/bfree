@@ -10,13 +10,12 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';
-import { useSetupStyles as useStyles } from '../../components/SetupComponents';
+import { classes, StyledCard } from '../../components/SetupComponents';
 import PriorityList from '../../components/PriorityList';
 import SetupDialog from '../../components/SetupDialog';
 import { cadenceSourceTypes, speedSourceTypes, powerSourceTypes, useGlobalState } from '../../lib/global';
 
 function DaqSourceCard({ title, image, configName, sourceTypes }) {
-	const classes = useStyles();
 	const [right, setRight] = useGlobalState(configName);
 	const [left, setLeft] = useState(sourceTypes.filter((a) => !right.find((b) => a.id === b.id)));
 
@@ -25,7 +24,7 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 
 	return (
 		<Grid item xs="auto">
-			<Card variant="outlined">
+			<StyledCard variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
 					{title}
@@ -50,7 +49,7 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 						/>
 					</SetupDialog>
 				</CardActions>
-			</Card>
+			</StyledCard>
 		</Grid>
 	);
 }

@@ -1,4 +1,5 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -6,10 +7,6 @@ import IconResistance from '@mui/icons-material/FitnessCenter';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState, useMemo } from 'react';
-import { Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useGlobalState, ControlParams } from '../../lib/global';
 import {
 	stdBikeFrontalArea,
@@ -18,58 +15,42 @@ import {
 	calcWindResistanceCoeff,
 } from '../../lib/virtual_params';
 
+const PREFIX = 'ResistanceControl';
+const classes = {
+	root: `${PREFIX}-root`,
+	thumb: `${PREFIX}-thumb`,
+	active: `${PREFIX}-active`,
+	valueLabel: `${PREFIX}-valueLabel`,
+	markLabel: `${PREFIX}-markLabel`,
+	track: `${PREFIX}-track`,
+	rail: `${PREFIX}-rail`,
+	resistanceControlCard: `${PREFIX}-resistanceControlCard`,
+	resistanceControlSlider: `${PREFIX}-resistanceControlSlider`,
+	inlineIcon: `${PREFIX}-inlineIcon`,
+};
+
+const StyledGrid = styled(Grid)(({ theme }) => ({
+	[`& .${classes.resistanceControlCard}`]: {
+		height: '10em',
+	},
+
+	[`& .${classes.resistanceControlSlider}`]: {
+		paddingTop: '3em',
+	},
+
+	[`& .${classes.inlineIcon}`]: {
+		fontSize: '18px !important',
+	},
+}));
+
 export type Resistance = 'basic' | 'power' | 'slope';
 type SendResistanceFunc = (value: number) => Promise<void>;
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		resistanceControlCard: {
-			height: '10em',
-		},
-		resistanceControlSlider: {
-			paddingTop: '3em',
-		},
-		inlineIcon: {
-			fontSize: '18px !important',
-		},
-	})
-);
 
 const objectMap = (obj: any, fn: (v: any, k: string, i: number) => any): any =>
 	Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]));
 const valuetext = (value: number) => `${value}`;
 
-const ResistanceSlider = withStyles({
-	root: {
-		color: 'rgb(222, 35, 91)',
-		height: 8,
-	},
-	thumb: {
-		height: 24,
-		width: 24,
-		backgroundColor: '#fff',
-		border: '2px solid currentColor',
-		'&:focus, &:hover, &$active': {
-			boxShadow: 'inherit',
-		},
-	},
-	active: {},
-	valueLabel: {
-		left: 'calc(-50% + 4px)',
-	},
-	markLabel: {
-		position: 'absolute',
-		marginTop: '4ex',
-	},
-	track: {
-		height: 8,
-		borderRadius: 4,
-	},
-	rail: {
-		height: 8,
-		borderRadius: 4,
-	},
-})(Slider);
+const ResistanceSlider = Slider;
 
 const params: {
 	[k in Resistance]: {
@@ -124,7 +105,6 @@ export default function ResistanceControl({
 	resistance: Resistance;
 	rollingResistance?: number;
 }) {
-	const classes = useStyles();
 	const { resistanceControlName, resistanceStep, maxResistance, resistanceUnit, defaultResistance } =
 		params[resistance];
 	const marks = r2marks[resistance];
@@ -191,7 +171,7 @@ export default function ResistanceControl({
 	};
 
 	return (
-		<Grid item xs={4}>
+		<StyledGrid item xs={4}>
 			<Card variant="outlined">
 				<CardContent className={classes.resistanceControlCard}>
 					<Typography id="resistance-control" gutterBottom variant="h5" component="h2">
@@ -211,10 +191,19 @@ export default function ResistanceControl({
 							max={maxResistance}
 							defaultValue={defaultResistance}
 							onChangeCommitted={handleChange}
+							classes={{
+								root: classes.root,
+								thumb: classes.thumb,
+								active: classes.active,
+								valueLabel: classes.valueLabel,
+								markLabel: classes.markLabel,
+								track: classes.track,
+								rail: classes.rail,
+							}}
 						/>
 					</Container>
 				</CardContent>
 			</Card>
-		</Grid>
+		</StyledGrid>
 	);
 }

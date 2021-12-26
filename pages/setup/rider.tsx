@@ -7,7 +7,7 @@ import Title from '../../components/Title';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { isValidUnsigned } from '../../lib/validation';
 import { useState } from 'react';
-import { useSetupStyles as useStyles, Param } from '../../components/SetupComponents';
+import { classes, StyledParam } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
 const weightInfo = 'User weight is used to calculate the gravitational resistance when the slope control is used.';
@@ -18,7 +18,6 @@ const textFieldStyle: SxPropsTheme = {
 };
 
 function Weight() {
-	const classes = useStyles();
 	const [rider, setRider] = useGlobalState('rider');
 	const [tmp, setTmp] = useState(rider.weight);
 
@@ -36,7 +35,7 @@ function Weight() {
 	};
 
 	return (
-		<Param title="Weight" info={weightInfo} image="/images/cards/scale.jpg">
+		<StyledParam title="Weight" info={weightInfo} image="/images/cards/scale.jpg">
 			<TextField
 				autoComplete="off"
 				className={classes.form}
@@ -47,12 +46,11 @@ function Weight() {
 				label="kg"
 				variant="outlined"
 			/>
-		</Param>
+		</StyledParam>
 	);
 }
 
 function FTPValue() {
-	const classes = useStyles();
 	const [rider, setRider] = useGlobalState('rider');
 	const [tmp, setTmp] = useState(rider.ftp);
 
@@ -70,7 +68,7 @@ function FTPValue() {
 	};
 
 	return (
-		<Param title="FTP" info={ftpInfo} image="/images/cards/ftp.jpg">
+		<StyledParam title="FTP" info={ftpInfo} image="/images/cards/ftp.jpg">
 			<TextField
 				autoComplete="off"
 				className={classes.form}
@@ -81,12 +79,11 @@ function FTPValue() {
 				label="Watt"
 				variant="outlined"
 			/>
-		</Param>
+		</StyledParam>
 	);
 }
 
 function HeartRate() {
-	const classes = useStyles();
 	const [rider, setRider] = useGlobalState('rider');
 	const [tmpRest, setTmpRest] = useState(rider.heartRate.rest);
 	const [tmpMax, setTmpMax] = useState(rider.heartRate.max);
@@ -123,7 +120,7 @@ function HeartRate() {
 	};
 
 	return (
-		<Param title="Heart Rate" image="/images/cards/tempo.jpg">
+		<StyledParam title="Heart Rate" image="/images/cards/tempo.jpg">
 			<Container className={classes.form}>
 				<TextField
 					autoComplete="off"
@@ -145,7 +142,7 @@ function HeartRate() {
 					sx={textFieldStyle}
 				/>
 			</Container>
-		</Param>
+		</StyledParam>
 	);
 }
 

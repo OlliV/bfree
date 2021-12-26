@@ -1,23 +1,24 @@
 import Card from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { useState, useEffect } from 'react';
 import EditActionButtons from './EditActionButtons';
 
-export const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		editor: {
-			overflow: 'scroll',
-			fontFamily: '"Fira code", "Fira Mono", monospace',
-			fontSize: 12,
-		},
-	})
-);
+const PREFIX = 'WorkoutScriptEditor';
+const classes = {
+	editor: `${PREFIX}-editor`,
+};
+
+const StyledGrid = styled(Grid)(({ theme }) => ({
+	[`& .${classes.editor}`]: {
+		overflow: 'scroll',
+		fontFamily: '"Fira code", "Fira Mono", monospace',
+		fontSize: 12,
+	},
+}));
 
 export default function WorkoutScriptEditor({
 	defaultName,
@@ -36,7 +37,6 @@ export default function WorkoutScriptEditor({
 	onClickDiscard: (e: any) => void;
 	onClickPreview: (e: any) => void;
 }) {
-	const classes = useStyles();
 	const [name, setName] = useState(defaultName);
 	const [notes, setNotes] = useState(defaultNotes);
 	const handleChange = (e) => onCodeChange(e.target.value);
@@ -49,7 +49,7 @@ export default function WorkoutScriptEditor({
 	}, [defaultNotes]);
 
 	return (
-		<Grid item xs={12}>
+		<StyledGrid item xs={12}>
 			<Card variant="outlined">
 				<CardContent sx={{ height: '45em' }}>
 					<Typography gutterBottom variant="h5" component="h2">
@@ -97,6 +97,6 @@ export default function WorkoutScriptEditor({
 					</form>
 				</CardContent>
 			</Card>
-		</Grid>
+		</StyledGrid>
 	);
 }
