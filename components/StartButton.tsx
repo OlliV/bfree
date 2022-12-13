@@ -60,18 +60,16 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 
 	return (
 		<StyledGrid item xs={12}>
-			<Link href={href}>
-				<a onClick={handleOnClick}>
-					<Card variant="outlined" className={disabled ? classes.buttonDisabled : classes.button}>
-						<CardContent>
-							<Box className={classes.center}>
-								<Typography gutterBottom variant="h5" component="h2">
-									Start
-								</Typography>
-							</Box>
-						</CardContent>
-					</Card>
-				</a>
+			<Link href={href} onClick={handleOnClick}>
+				<Card variant="outlined" className={disabled ? classes.buttonDisabled : classes.button}>
+					<CardContent>
+						<Box className={classes.center}>
+							<Typography gutterBottom variant="h5" component="h2">
+								Start
+							</Typography>
+						</Box>
+					</CardContent>
+				</Card>
 			</Link>
 			<WarningDialog
 				title={'Continue without a smart trainer?'}

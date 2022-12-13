@@ -22,18 +22,16 @@ export default function MenuCard({ title, href, children }: { title: string; hre
 	return (
 		<StyledGrid item xs={12}>
 			<Link href={href || '/'}>
-				<a>
-					<Card variant="outlined" className={classes.menuCard}>
-						<CardContent>
-							<Typography gutterBottom variant="h5" component="h2">
-								{title}&nbsp;&rarr;
-							</Typography>
-							<Typography variant="body2" color="textSecondary" component="p">
-								{children || ''}
-							</Typography>
-						</CardContent>
-					</Card>
-				</a>
+				<Card variant="outlined" className={classes.menuCard}>
+					<CardContent>
+						<Typography gutterBottom variant="h5" component="h2">
+							{title}&nbsp;&rarr;
+						</Typography>
+						<Typography variant="body2" color="textSecondary" component="p">
+							{children || ''}
+						</Typography>
+					</CardContent>
+				</Card>
 			</Link>
 		</StyledGrid>
 	);
