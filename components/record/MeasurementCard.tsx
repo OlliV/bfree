@@ -11,7 +11,7 @@ import IconSpeed from '@mui/icons-material/Speed';
 import Typography from '@mui/material/Typography';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
 import SxPropsTheme from '../../lib/SxPropsTheme';
-import { useState, useEffect, useMemo } from 'react';
+import { ReactElement, useState, useEffect, useMemo } from 'react';
 import { UnitConv, speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
 
@@ -71,7 +71,7 @@ const iconStyle: SxPropsTheme = {
 
 function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
 	/* eslint-disable react/jsx-key */
-	const contentByType: { [K in Measurement]: [Element | JSX.Element, (m: any) => DisplayValue, number] } = {
+	const contentByType: { [K in Measurement]: [ReactElement, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
 			<span>
 				<IconCadence sx={iconStyle} /> Cadence

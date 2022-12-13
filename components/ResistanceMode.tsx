@@ -8,6 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
+import { ReactNode } from 'react';
 
 const PREFIX = 'ResistanceMode';
 const classes = {
@@ -33,7 +34,7 @@ const StyledGrid = styled(Grid)(({ theme }) => ({
 }));
 
 export default function ResistanceMode({ mode, setMode }: { mode: string; setMode: (m: string) => void }) {
-	const handleChange = (event: SelectChangeEvent<string>, _child?: object) => {
+	const handleChange = (event: SelectChangeEvent<string>, _child?: ReactNode) => {
 		setMode(event.target.value as string);
 	};
 

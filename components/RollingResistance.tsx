@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { rollingResistanceCoeff } from '../lib/virtual_params';
+import { ReactNode } from 'react';
 
 const PREFIX = 'RollingResistance';
 
@@ -66,7 +67,7 @@ export default function RollingResistance({
 	rollingResistance: number;
 	setRollingResistance: ReturnType<typeof useState>[1];
 }) {
-	const handleChange = (event: SelectChangeEvent<number>, _child?: object) => {
+	const handleChange = (event: SelectChangeEvent<number>, _child?: ReactNode) => {
 		setRollingResistance(event.target.value || 0);
 	};
 
@@ -89,10 +90,7 @@ export default function RollingResistance({
 							labelId="resistance-mode-select-label"
 							id="resistance-mode-select"
 							value={rollingResistance || 0}
-							onChange={
-								// @ts-ignore
-								handleChange
-							}
+							onChange={handleChange}
 						>
 							{predefinedRollingResistances.map((r) => (
 								<MenuItem key={r[0].toLowerCase().replace(/\s/g, '-')} value={r[1]}>
