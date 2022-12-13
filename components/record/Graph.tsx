@@ -83,7 +83,6 @@ export default function Graph({
 						}}
 						axisTop={null}
 						axisBottom={{
-							orient: 'bottom',
 							tickSize: 5,
 							tickPadding: 5,
 							tickRotation: -45,
@@ -91,13 +90,11 @@ export default function Graph({
 							tickValues: 20,
 						}}
 						axisLeft={{
-							orient: 'left',
 							tickSize: 5,
 							tickPadding: 5,
 							tickRotation: 0,
 						}}
 						axisRight={{
-							orient: 'left',
 							tickSize: 5,
 							tickPadding: 5,
 							tickRotation: 0,
