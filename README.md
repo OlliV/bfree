@@ -38,22 +38,14 @@ see [here](https://developer.mozilla.org/en-US/docs/Web/API/WakeLock).
 The app is tested on Microsoft Edge and it should also work on Google Chrome and
 its Android derivatives.
 
-To build Bfree locally you'll need Node.js and `npm` or `yarn`.
+To build Bfree locally you'll need Node.js and `npm`.
 The [official website](https://nodejs.org/en/) of the Node.js project
-helps with that. Node.js itself ships with `npm` and nothing in this
-project is using any `yarn` specific features, thus in general, whenever
-you see an mention of `yarn`, it can be replaced with `npm`.
+helps with that.
 
 As normally with [Next.js](https://nextjs.org/) projects, the following
 commands apply.
 
 **Start in dev mode:**
-
-```sh
-yarn dev
-```
-
-or
 
 ```sh
 npm run dev
@@ -62,22 +54,10 @@ npm run dev
 **Run full build:**
 
 ```sh
-yarn build
-```
-
-or
-
-```sh
 npm run build
 ```
 
 **Start in production mode:**
-
-```sh
-yarn start
-```
-
-or
 
 ```sh
 npm start
@@ -93,7 +73,7 @@ by setting the `NEXT_TELEMETRY_DISABLED` environment variable to `0`.
 **For example:**
 
 ```sh
-NEXT_TELEMETRY_DISABLED=0 yarn build
+NEXT_TELEMETRY_DISABLED=0 npm run build
 ```
 
 License
