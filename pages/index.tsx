@@ -27,7 +27,7 @@ export default function Home() {
 			</main>
 
 			<footer className={styles.footer}>
-				<b>Bfree</b>&nbsp;2021
+				<b>Bfree</b>&nbsp;2022
 			</footer>
 		</div>
 	);
