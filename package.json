@@ -11,27 +11,27 @@
     "lint": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next lint"
   },
   "dependencies": {
-    "@emotion/css": "11.7.1",
-    "@emotion/react": "11.7.1",
-    "@emotion/server": "11.4.0",
-    "@emotion/styled": "11.6.0",
-    "@mui/icons-material": "5.2.5",
-    "@mui/material": "5.2.5",
-    "@nivo/line": "0.63.1",
-    "next": "12.0.7",
-    "prop-types": "15.7.2",
+    "@emotion/css": "11.10.5",
+    "@emotion/react": "11.10.5",
+    "@emotion/server": "11.10.0",
+    "@emotion/styled": "11.10.5",
+    "@mui/icons-material": "5.11.0",
+    "@mui/material": "5.11.0",
+    "@nivo/line": "0.80.0",
+    "next": "12.3.4",
+    "prop-types": "15.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-hooks-global-state": "1.0.2",
-    "sharp": "0.29.3"
+    "react-hooks-global-state": "2.1.0",
+    "sharp": "0.31.2"
   },
   "devDependencies": {
-    "@types/node": "16.11.7",
+    "@types/node": "18.11.14",
     "@types/react": "17.0.38",
-    "@types/web-bluetooth": "0.0.12",
-    "eslint": "8.5.0",
-    "eslint-config-next": "12.0.7",
-    "prettier": "2.5.1",
-    "typescript": "4.5.4"
+    "@types/web-bluetooth": "0.0.16",
+    "eslint": "8.29.0",
+    "eslint-config-next": "13.0.6",
+    "prettier": "2.8.1",
+    "typescript": "4.9.4"
   }
 }
