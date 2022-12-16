@@ -1,9 +1,12 @@
-import { SensorSourceType, getGlobalState, useGlobalState } from './global';
+import { GlobalState, SensorSourceType, getGlobalState, useGlobalState } from './global';
 
 export type Measurement = 'cycling_cadence' | 'cycling_power' | 'cycling_speed' | 'heart_rate';
 
-export type CscMeasurements = {
-	ts: number;
+type MeasurementBase = {
+	ts: number; // ms
+};
+
+export type CscMeasurements = MeasurementBase & {
 	cumulativeWheelRevolutions: number | null;
 	lastWheelEvent: number | null;
 	cumulativeCrankRevolutions: number | null;
@@ -12,8 +15,14 @@ export type CscMeasurements = {
 	cadence: number | null;
 };
 
-export type TrainerMeasurements = {
-	ts: number;
+export type CppMeasurements = MeasurementBase & {
+	cumulativeWheelRevolutions: number | null;
+	lastWheelEvent: number | null;
+	power: number | null; // Watts
+	speed: number | null; // m/s
+};
+
+export type TrainerMeasurements = MeasurementBase & {
 	elapsedTime?: number;
 	speed?: number;
 	instantPower?: number;
@@ -30,8 +39,7 @@ export type TrainerMeasurements = {
 	};
 };
 
-export type HrmMeasurements = {
-	ts: number;
+export type HrmMeasurements = MeasurementBase & {
 	heartRate: number;
 	contactDetected?: boolean;
 	energyExpended?: number;
@@ -39,8 +47,7 @@ export type HrmMeasurements = {
 };
 
 // TODO Skip sensor if the data is stale?
-function useMeasurement(sources: string, predicate: (m: any) => boolean) {
-	// @ts-ignore
+function useMeasurement(sources: keyof GlobalState, predicate: (m: CscMeasurements | CppMeasurements) => boolean) {
 	const srcArr = getGlobalState(sources);
 	const v = srcArr
 		.map((v: SensorSourceType) => v.id)
@@ -52,8 +59,7 @@ function useMeasurement(sources: string, predicate: (m: any) => boolean) {
 	return null;
 }
 
-function getMeasurement(sources: string, predicate: (m: any) => boolean) {
-	// @ts-ignore
+function getMeasurement(sources: keyof GlobalState, predicate: (m: CscMeasurements | CppMeasurements) => boolean) {
 	const srcArr = getGlobalState(sources);
 	return (
 		srcArr
@@ -72,13 +78,11 @@ export function getCyclingCadenceMeasurement(): CscMeasurements | null {
 }
 
 export function useCyclingPowerMeasurement() {
-	// TODO Power is not typed
-	return useMeasurement('powerSources', (d: any) => d && d.power !== null && d.power !== undefined);
+	return useMeasurement('powerSources', (d: CppMeasurements) => d && d.power !== null && d.power !== undefined);
 }
 
 export function getCyclingPowerMeasurement() {
-	// TODO Power is not typed
-	return getMeasurement('powerSources', (d: any) => d && d.power !== null && d.power !== undefined);
+	return getMeasurement('powerSources', (d: CppMeasurements) => d && d.power !== null && d.power !== undefined);
 }
 
 export function useCyclingSpeedMeasurement(): CscMeasurements | null {

@@ -1,3 +1,5 @@
+import { CppMeasurements } from '../measurements';
+
 export async function readCyclingPowerFeature(service) {
 	const characteristic = await service.getCharacteristic('cycling_power_feature');
 
@@ -50,7 +52,10 @@ export async function readCyclingPowerFeature(service) {
 	return feature;
 }
 
-export async function startCyclingPowerMeasurementNotifications(server: BluetoothRemoteGATTServer, cb) {
+export async function startCyclingPowerMeasurementNotifications(
+	server: BluetoothRemoteGATTServer,
+	cb: (res: CppMeasurements) => void
+) {
 	const service = await server.getPrimaryService('cycling_power');
 	const feature = await readCyclingPowerFeature(service);
 

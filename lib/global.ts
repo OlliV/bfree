@@ -1,7 +1,7 @@
 import { createGlobalState } from 'react-hooks-global-state';
 import { BtDevice } from './ble';
 import { createActivityLog } from './activity_log';
-import { CscMeasurements, HrmMeasurements } from './measurements';
+import { CppMeasurements, CscMeasurements, HrmMeasurements, TrainerMeasurements } from './measurements';
 
 export type SensorType =
 	| 'cycling_cadence'
@@ -102,11 +102,11 @@ export type GlobalState = {
 	btDevice_smart_trainer: null | BtDevice;
 	// Measurements
 	cycling_cadence: null | CscMeasurements;
-	cycling_power: any;
+	cycling_power: null | CppMeasurements;
 	cycling_speed: null | CscMeasurements;
-	cycling_speed_and_cadence: any;
+	cycling_speed_and_cadence: null | CscMeasurements;
 	heart_rate: null | HrmMeasurements;
-	smart_trainer: any;
+	smart_trainer: null | TrainerMeasurements;
 	// Control
 	control_params: ControlParams;
 	smart_trainer_control: any;
