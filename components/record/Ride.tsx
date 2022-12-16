@@ -8,23 +8,14 @@ import Typography from '@mui/material/Typography';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { getElapsedTimeStr } from '../../lib/format';
 import { useGlobalState } from '../../lib/global';
+import { smartDistanceUnitConv } from '../../lib/units';
 
 const valueStyle: SxPropsTheme = {
 	float: 'right',
 };
 
-function valueToDistance(value: number | null): string {
-	if (typeof value === 'number') {
-		if (value < 1000) {
-			return `${value.toFixed(0)} m`;
-		} else {
-			return `${(value / 1000).toFixed(2)} km`;
-		}
-	}
-	return '--';
-}
-
 export default function Ride() {
+	const distanceUnit = useGlobalState('unitDistance')[0];
 	const [elapsedTime] = useGlobalState('elapsedTime');
 	const [elapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideDistance] = useGlobalState('rideDistance');
@@ -44,7 +35,8 @@ export default function Ride() {
 						<br />
 						<b>Lap time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
 						<br />
-						<b>Ride distance:</b> <Box sx={valueStyle}>{valueToDistance(rideDistance)}</Box>
+						<b>Ride distance:</b>{' '}
+						<Box sx={valueStyle}>{smartDistanceUnitConv(distanceUnit, rideDistance)}</Box>
 						<br />
 						<b>Lap distance:</b> <Box sx={valueStyle}>--</Box>
 					</Container>

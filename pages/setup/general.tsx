@@ -8,7 +8,7 @@ import { UnitConv, distanceUnitConv, speedUnitConv } from '../../lib/units';
 
 const gen = (uc: UnitConv): [string, string][] => Object.keys(uc).map((k) => [k, uc[k].name]);
 const speedUnits: [string, string][] = gen(speedUnitConv);
-const distanceUnits: [string, string][] = gen(distanceUnitConv);
+const distanceUnits: [string, string][] = gen(distanceUnitConv).filter((v) => ['m', 'km', 'yd', 'mi'].includes(v[0]));
 
 export default function SetupGeneral() {
 	return (
