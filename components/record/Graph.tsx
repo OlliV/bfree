@@ -4,6 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import { ResponsiveLine } from '@nivo/line';
 import { getElapsedTimeStr } from '../../lib/format';
+import MeasurementColorCard from './MeasurementColorCard';
 
 const PREFIX = 'Graph';
 const classes = {
@@ -57,6 +58,13 @@ export default function Graph({
 	return (
 		<StyledCard variant="outlined">
 			<CardContent>
+				<MeasurementColorCard
+					colors={{
+						heart_rate: colors[0],
+						power: colors[1],
+						speed: colors[2],
+					}}
+				/>
 				<Container className={classes.graphContainer}>
 					<ResponsiveLine
 						isInteractive={isInteractive || false}

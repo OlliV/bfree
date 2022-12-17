@@ -47,19 +47,10 @@ export default function MeasurementColorCard({
 	colors: { heart_rate: string; power: string; speed: string };
 }) {
 	return (
-		<StyledGrid item xs={4}>
-			<Card variant="outlined">
-				<Typography gutterBottom variant="h5" component="h2">
-					Colors
-				</Typography>
-				<CardContent className={classes.resistanceControlCard}>
-					<Container>
-						<IconPower sx={{ ...iconStyle, color: colors.power }} />
-						<IconSpeed sx={{ ...iconStyle, color: colors.speed }} />
-						<IconHeart sx={{ ...iconStyle, color: colors.heart_rate }} />
-					</Container>
-				</CardContent>
-			</Card>
-		</StyledGrid>
+		<Container>
+			<IconPower sx={{ ...iconStyle, color: colors.power }} />
+			<IconSpeed sx={{ ...iconStyle, color: colors.speed }} />
+			<IconHeart sx={{ ...iconStyle, color: colors.heart_rate }} />
+		</Container>
 	);
 }
