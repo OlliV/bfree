@@ -16,14 +16,6 @@
   align-items: center;
 }
 
-.pic {
-  display: block;
-  border: 0;
-  object-fit: cover;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .footer {
   width: 100%;
   height: 100px;
@@ -55,14 +47,9 @@
 }
 
 .title {
-  margin: 0;
-  line-height: 1.15;
-  font-size: 4rem;
-}
-
-.title,
-.description {
-  text-align: center;
+	color: #efefef;
+	text-shadow: 2px 0 #111, -2px 0 #111, 0 2px #111, 0 -2px #111,
+	               1px 1px #111, -1px -1px #111, 1px -1px #111, -1px 1px #111;
 }
 
 .description {

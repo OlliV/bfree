@@ -25,10 +25,12 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 export default function Title({
 	disableBack,
 	href,
+	className,
 	children,
 }: {
 	disableBack?: boolean;
 	href?: string;
+	className: string;
 	children: any;
 }) {
 	const router = useRouter();
@@ -45,7 +47,7 @@ export default function Title({
 
 	return (
 		// @ts-ignore
-		<StyledTypography gutterBottom variant="h2" component="h2">
+		<StyledTypography gutterBottom variant="h2" component="h2" className={className}>
 			<span className={disableBack ? classes.arrowDisabled : classes.arrow} onClick={handleOnClick}>
 				&larr;
 			</span>

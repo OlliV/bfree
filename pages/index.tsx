@@ -1,17 +1,22 @@
+import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import { Box } from '@mui/system';
 import Image from 'next/image';
-import styles from '../styles/Home.module.css';
-import MyHead from '../components/MyHead';
 import MenuCard from '../components/MenuCard';
+import MyHead from '../components/MyHead';
+import Title from '../components/Title';
+import styles from '../styles/Home.module.css';
 
 export default function Home() {
 	return (
-		<div className={styles.container}>
+		<Container maxWidth="md">
 			<MyHead title="Cycling App" />
-
-			<Image src="/images/bfree.jpg" alt="Bfree forever" width="1200" height={150} className={styles.pic} />
-			<main className={styles.main}>
-				<h1 className={styles.title}>Welcome to Bfree!</h1>
+			<Box sx={{ left: 0, width: '100%', height: '15%' }} overflow="hidden" position="absolute">
+				<Image src="/images/bfree.jpg" alt="Bfree forever" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+			</Box>
+			<Box position="relative">
+				<Title disableBack className={styles.title}>Bfree</Title>
+				<p>&nbsp;</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<MenuCard title="Ride" href="/ride">
@@ -24,11 +29,11 @@ export default function Home() {
 						Configure parameters and connect to a trainer and sensors.
 					</MenuCard>
 				</Grid>
-			</main>
+			</Box>
 
 			<footer className={styles.footer}>
 				<b>Bfree</b>&nbsp;2022
 			</footer>
-		</div>
+		</Container>
 	);
 }
