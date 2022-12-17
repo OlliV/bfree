@@ -1,11 +1,11 @@
-import { useRouter } from 'next/router';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-import {Box} from '@mui/system';
-import BatteryLevel from './BatteryLevel';
+import { styled } from '@mui/material/styles';
+import { useRouter } from 'next/router';
+//import BatteryLevel from './BatteryLevel';
 
 const PREFIX = 'Title';
 const classes = {

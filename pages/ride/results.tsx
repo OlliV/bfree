@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useEffect, useMemo } from 'react';
-import { useMediaQuery } from '@mui/material';
 import ExportCard from '../../components/ExportCard';
 import InfoCard from '../../components/InfoCard';
 import MyHead from '../../components/MyHead';

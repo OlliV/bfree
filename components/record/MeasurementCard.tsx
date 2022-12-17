@@ -1,5 +1,4 @@
 import Card from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Container from '@mui/material/Container';
@@ -9,7 +8,8 @@ import IconHeart from '@mui/icons-material/Favorite';
 import IconPower from '@mui/icons-material/OfflineBolt';
 import IconSpeed from '@mui/icons-material/Speed';
 import Typography from '@mui/material/Typography';
-import { useMediaQuery } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { styled } from '@mui/material/styles';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { ReactElement, useState, useEffect, useMemo } from 'react';

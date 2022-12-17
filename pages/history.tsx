@@ -1,5 +1,4 @@
 import Avatar from '@mui/material/Avatar';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -14,9 +13,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { red } from '@mui/material/colors';
+import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import { useMediaQuery } from '@mui/material';
 import { useState, useEffect } from 'react';
 import MyHead from '../components/MyHead';
 import MyModal from '../components/MyModal';

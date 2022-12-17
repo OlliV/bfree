@@ -5,11 +5,13 @@ import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import IconResistance from '@mui/icons-material/FitnessCenter';
+import InputAdornment from '@mui/material/InputAdornment';
 import Slider from '@mui/material/Slider';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useEffect, useState, useMemo } from 'react';
-import { InputAdornment, TextField, useMediaQuery } from '@mui/material';
 import { useGlobalState, ControlParams } from '../../lib/global';
 import {
 	stdBikeFrontalArea,

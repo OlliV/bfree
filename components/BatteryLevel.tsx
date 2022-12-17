@@ -7,7 +7,7 @@ import Battery60Icon from '@mui/icons-material/Battery60';
 import Battery80Icon from '@mui/icons-material/Battery80';
 import Battery90Icon from '@mui/icons-material/Battery90';
 import Battery100Icon from '@mui/icons-material/BatteryFull';
-import { Tooltip } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
 import SxPropsTheme from '../lib/SxPropsTheme';
 
 const style: SxPropsTheme = {

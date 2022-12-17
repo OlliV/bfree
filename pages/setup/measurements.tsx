@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import DialogContentText from '@mui/material/DialogContentText';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { useMediaQuery } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useState } from 'react';
 import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';

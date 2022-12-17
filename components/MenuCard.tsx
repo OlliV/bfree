@@ -1,9 +1,9 @@
 import Card from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
+import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Typography from '@mui/material/Typography';
-import { CardContent } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const PREFIX = 'MenuCard';
 const classes = {

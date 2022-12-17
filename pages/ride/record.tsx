@@ -1,11 +1,11 @@
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import DefaultErrorPage from 'next/error';
 import Grid from '@mui/material/Grid';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
-import { useMediaQuery } from '@mui/material';
 import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
 import DummyCard from '../../components/record/DummyCard';
