@@ -1,16 +1,17 @@
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import { styled } from '@mui/material/styles';
 import { useEffect, useMemo } from 'react';
+import { useMediaQuery } from '@mui/material';
 import ExportCard from '../../components/ExportCard';
-import MyHead from '../../components/MyHead';
 import InfoCard from '../../components/InfoCard';
+import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';
-import { useGlobalState, setGlobalState } from '../../lib/global';
 import downloadBlob from '../../lib/download_blob';
 import { createActivityLog, saveActivityLog } from '../../lib/activity_log';
 import { getDayPeriod } from '../../lib/locale';
+import { useGlobalState, setGlobalState } from '../../lib/global';
 
 const PREFIX = 'results';
 const classes = {
@@ -42,6 +43,7 @@ function maybeSetDefaults(logger: ReturnType<typeof createActivityLog>): { name?
 }
 
 export default function RideResults() {
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
 	const [logger, setLogger] = useGlobalState('currentActivityLog');
 	const { name: defaultName, notes: defaultNotes } = useMemo(() => maybeSetDefaults(logger), [logger]);
 
@@ -90,7 +92,7 @@ export default function RideResults() {
 				<Title href="/">Results</Title>
 				<p>Training ride results.</p>
 
-				<Grid container direction="row" alignItems="center" spacing={2}>
+				<Grid container direction={isBreakpoint ? 'row' : 'column'} alignItems="center" spacing={2}>
 					<InfoCard
 						defaultName={defaultName}
 						onChangeName={handleNameChange}
