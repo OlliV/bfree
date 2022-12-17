@@ -99,7 +99,7 @@ export function smartDistanceUnitFormat(distanceUnit: keyof UnitConv, dMeters: n
 				return makePretty(v, 2);
 			}
 		case 'm':
-			v = doConv(distanceUnitConv.m, dMeters)
+			v = doConv(distanceUnitConv.m, dMeters);
 			return makePretty(v, 0);
 		case 'mi':
 			v = doConv(distanceUnitConv.mi, dMeters);
