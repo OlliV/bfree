@@ -11,8 +11,8 @@ export default function Home() {
 	return (
 		<Container maxWidth="md">
 			<MyHead title="Cycling App" />
-			<Box sx={{ left: 0, width: '100%', height: '15%' }} overflow="hidden" position="absolute">
-				<Image src="/images/bfree.jpg" alt="Bfree forever" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+			<Box sx={{ width: '100%', height: '764px', left: '0px', top: '0px' }} overflow="hidden" position="absolute">
+				<Image src="/images/bfree.jpg" alt="Bfree forever" fill objectFit="cover" />
 			</Box>
 			<Box position="relative">
 				<Title disableBack className={styles.title}>Bfree</Title>
@@ -31,9 +31,9 @@ export default function Home() {
 				</Grid>
 			</Box>
 
-			<footer className={styles.footer}>
+			<Box sx={{ left: 0, width: '100%' }} position="absolute" bottom="0px" m="auto" display="flex" justifyContent="center">
 				<b>Bfree</b>&nbsp;2022
-			</footer>
+			</Box>
 		</Container>
 	);
 }
