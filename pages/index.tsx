@@ -15,7 +15,9 @@ export default function Home() {
 				<Image src="/images/bfree.jpg" alt="Bfree forever" fill objectFit="cover" />
 			</Box>
 			<Box position="relative">
-				<Title disableBack className={styles.title}>Bfree</Title>
+				<Title disableBack className={styles.title}>
+					Bfree
+				</Title>
 				<p>&nbsp;</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
@@ -31,7 +33,14 @@ export default function Home() {
 				</Grid>
 			</Box>
 
-			<Box sx={{ left: 0, width: '100%' }} position="absolute" bottom="0px" m="auto" display="flex" justifyContent="center">
+			<Box
+				sx={{ left: 0, width: '100%' }}
+				position="absolute"
+				bottom="0px"
+				m="auto"
+				display="flex"
+				justifyContent="center"
+			>
 				<b>Bfree</b>&nbsp;2022
 			</Box>
 		</Container>
