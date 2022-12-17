@@ -1,7 +1,7 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { Box } from '@mui/system';
-import Image from 'next/legacy/image';
+import Image from 'next/image';
 import MenuCard from '../components/MenuCard';
 import MyHead from '../components/MyHead';
 import Title from '../components/Title';
@@ -12,7 +12,15 @@ export default function Home() {
 		<Container maxWidth="md">
 			<MyHead title="Cycling App" />
 			<Box sx={{ width: '100%', height: '764px', left: '0px', top: '0px' }} overflow="hidden" position="absolute">
-				<Image src="/images/bfree.jpg" alt="Bfree forever" fill objectFit="cover" />
+				<Image
+					src="/images/bfree.jpg"
+					alt="Bfree forever"
+					fill
+					style={{
+						maxWidth: '100%',
+						objectFit: 'cover',
+					}}
+				/>
 			</Box>
 			<Box position="relative">
 				<Title disableBack className={styles.title}>
