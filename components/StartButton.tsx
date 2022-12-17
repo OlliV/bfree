@@ -41,7 +41,7 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 	const [showWarning, setShowWarning] = useState(false);
 	const [btDevice_smart_trainer] = useGlobalState('btDevice_smart_trainer');
 
-	const handleOnClick = (e) => {
+	const handleOnClick = (e: React.MouseEvent<HTMLElement>) => {
 		if (disabled) {
 			e.preventDefault();
 		} else if (!btDevice_smart_trainer) {

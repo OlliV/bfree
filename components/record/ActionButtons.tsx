@@ -32,9 +32,9 @@ export function RecordActionButtons({
 	onClickSplit,
 	onClickEnd,
 }: {
-	onClickPause: () => void;
-	onClickSplit: () => void;
-	onClickEnd: () => void;
+	onClickPause: (e?: React.MouseEvent<HTMLElement>) => void;
+	onClickSplit: (e?: React.MouseEvent<HTMLElement>) => void;
+	onClickEnd: (e?: React.MouseEvent<HTMLElement>) => void;
 }) {
 	return (
 		<StyledBox>
