@@ -14,7 +14,8 @@ const weightInfo = 'User weight is used to calculate the gravitational resistanc
 const ftpInfo = 'FTP is used by predefined workouts to generate the optimal exercise for every rider.';
 
 const textFieldStyle: SxPropsTheme = {
-	width: '11ch',
+	width: '25ch',
+	paddingBottom: '1ex',
 };
 
 function Weight() {
@@ -121,7 +122,7 @@ function HeartRate() {
 
 	return (
 		<StyledParam title="Heart Rate" image="/images/cards/tempo.jpg">
-			<Container className={classes.form}>
+			<Container>
 				<TextField
 					autoComplete="off"
 					value={tmpRest}

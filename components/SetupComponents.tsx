@@ -31,7 +31,9 @@ const makeStyles = ({ theme }: { theme: Theme }) => ({
 	},
 
 	[`& .${classes.setupCard}`]: {
-		height: '6em',
+		maxWidth: '64vw',
+		minHeight: '6em',
+		maxHeight: '10em',
 	},
 
 	[`& .${classes.media}`]: {
