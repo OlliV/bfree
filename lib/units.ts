@@ -81,11 +81,11 @@ function doConv(conv: ValueOf<UnitConv>, dMeters: number): [number, string] {
 	return [conv.convTo(dMeters), conv.name];
 }
 
-function makePretty(v: ReturnType<typeof doConv>) {
-	return `${v[0]} ${[1]}`;
+function makePretty(v: ReturnType<typeof doConv>, fd: number) {
+	return `${v[0].toFixed(fd)} ${v[1]}`;
 }
 
-export function smartDistanceUnitConv(distanceUnit: keyof UnitConv, dMeters: number | null): string {
+export function smartDistanceUnitFormat(distanceUnit: keyof UnitConv, dMeters: number | null): string {
 	let v: ReturnType<typeof doConv>;
 
 	if (typeof dMeters !== 'number') {
@@ -96,27 +96,23 @@ export function smartDistanceUnitConv(distanceUnit: keyof UnitConv, dMeters: num
 		case 'km':
 			v = doConv(distanceUnitConv.km, dMeters);
 			if (v[0] >= 1) {
-				return makePretty(v);
+				return makePretty(v, 2);
 			}
 		case 'm':
-			return `${dMeters} m`;
+			v = doConv(distanceUnitConv.m, dMeters)
+			return makePretty(v, 0);
 		case 'mi':
 			v = doConv(distanceUnitConv.mi, dMeters);
 			if (v[0] >= 1.0) {
-				return makePretty(v);
+				return makePretty(v, 2);
 			}
 		case 'yd':
 			v = doConv(distanceUnitConv.yd, dMeters);
 			if (distanceUnit == 'yd' || v[0] >= 1.0) {
-				return makePretty(v);
+				return makePretty(v, 2);
 			}
 		case 'ft':
 			v = doConv(distanceUnitConv.ft, dMeters);
-			if (distanceUnit == 'ft' || v[0] >= 1.0) {
-				return makePretty(v);
-			}
-		case 'in':
-			v = doConv(distanceUnitConv.in, dMeters);
-			return makePretty(v);
+			return makePretty(v, 0);
 	}
 }

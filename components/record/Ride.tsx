@@ -9,7 +9,7 @@ import { useMediaQuery } from '@mui/material';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { getElapsedTimeStr } from '../../lib/format';
 import { useGlobalState } from '../../lib/global';
-import { smartDistanceUnitConv } from '../../lib/units';
+import { smartDistanceUnitFormat } from '../../lib/units';
 
 const valueStyle: SxPropsTheme = {
 	float: 'right',
@@ -27,7 +27,7 @@ function InfoDesktop() {
 			<br />
 			<b>Lap time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
 			<br />
-			<b>Ride distance:</b> <Box sx={valueStyle}>{smartDistanceUnitConv(distanceUnit, rideDistance)}</Box>
+			<b>Ride distance:</b> <Box sx={valueStyle}>{smartDistanceUnitFormat(distanceUnit, rideDistance)}</Box>
 			<br />
 			<b>Lap distance:</b> <Box sx={valueStyle}>--</Box>
 		</Container>
@@ -46,7 +46,7 @@ function InfoMobile() {
 			<br />
 			<Box sx={valueStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
 			<br />
-			<Box sx={valueStyle}>{smartDistanceUnitConv(distanceUnit, rideDistance)}</Box>
+			<Box sx={valueStyle}>{smartDistanceUnitFormat(distanceUnit, rideDistance)}</Box>
 			<br />
 			<b>Lap</b>
 			<br />
