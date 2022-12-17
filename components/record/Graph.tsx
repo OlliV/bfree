@@ -14,7 +14,7 @@ const classes = {
 const StyledCard = styled(Card)(({ theme }) => ({
 	[`& .${classes.graphContainer}`]: {
 		display: 'flex',
-		height: '35vh',
+		height: '25vh',
 		width: '100%',
 		background: 'white',
 		transition: '0.3s',
