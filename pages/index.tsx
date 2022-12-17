@@ -23,7 +23,7 @@ export default function Home() {
 				/>
 			</Box>
 			<Box position="relative">
-				<Title disableBack className={styles.title}>
+				<Title disableBack>
 					Bfree
 				</Title>
 				<p>&nbsp;</p>
