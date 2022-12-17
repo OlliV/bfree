@@ -10,16 +10,8 @@ import RollingResistance from '../../components/RollingResistance';
 import Title from '../../components/Title';
 
 const PREFIX = 'free';
-const classes = {
-	startButton: `${PREFIX}-startButton`,
-};
 
-const StyledContainer = styled(Container)(({ theme }) => ({
-	[`& .${classes.startButton}`]: {
-		position: 'fixed',
-		bottom: 10,
-	},
-}));
+const StyledContainer = styled(Container)(({ theme }) => ({}));
 
 function makeStartUrl(resistanceMode: string, rollingResistance: number) {
 	if (resistanceMode === 'slope') {
@@ -57,7 +49,15 @@ export default function RideFree() {
 					)}
 				</Grid>
 			</Box>
-			<Box width="50%" className={classes.startButton}>
+			<Box
+				sx={{ left: 0, width: '100%' }}
+				position="sticky"
+				bottom="0px"
+				m="auto"
+				display="flex"
+				justifyContent="center"
+				padding="1ex"
+			>
 				<StartButton disabled={!resistanceMode} href={makeStartUrl(resistanceMode, rollingResistance)} />
 			</Box>
 		</StyledContainer>

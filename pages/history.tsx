@@ -16,6 +16,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { useRouter } from 'next/router';
+import { useMediaQuery } from '@mui/material';
 import { useState, useEffect } from 'react';
 import MyHead from '../components/MyHead';
 import MyModal from '../components/MyModal';
@@ -229,6 +230,7 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 
 export default function History() {
 	const router = useRouter();
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
 	const [logs, setLogs] = useState(() => getActivityLogs());
 	const handleChange = () => setLogs(getActivityLogs());
 
@@ -240,7 +242,7 @@ export default function History() {
 		<StyledContainer maxWidth="sm">
 			<MyHead title="Previous Rides" />
 			<Box>
-				<Title href="/">Previous Rides</Title>
+				<Title href="/">{isBreakpoint ? 'Previous Rides' : 'Rides'}</Title>
 				<p>Manage and export previous rides.</p>
 
 				<Grid container direction="column" alignItems="center" spacing={2}>

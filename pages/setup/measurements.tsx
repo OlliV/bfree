@@ -7,6 +7,7 @@ import Container from '@mui/material/Container';
 import DialogContentText from '@mui/material/DialogContentText';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';
@@ -55,11 +56,13 @@ function DaqSourceCard({ title, image, configName, sourceTypes }) {
 }
 
 export default function SetupMeasurements() {
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
+
 	return (
 		<Container maxWidth="md">
 			<MyHead title="Measurements" />
 			<Box>
-				<Title href="/setup">Measurements</Title>
+				<Title href="/setup">{isBreakpoint ? 'Measurements' : 'Meas...'}</Title>
 				<p>Select measurement sources for recording.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

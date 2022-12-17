@@ -76,7 +76,7 @@ export default function RollingResistance({
 	}, [setRollingResistance]);
 
 	return (
-		<StyledGrid item xs={4}>
+		<StyledGrid item>
 			<Card variant="outlined">
 				<CardMedia className={classes.media} image={getTrackImg(rollingResistance)} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">

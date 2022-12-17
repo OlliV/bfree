@@ -39,7 +39,7 @@ export default function ResistanceMode({ mode, setMode }: { mode: string; setMod
 	};
 
 	return (
-		<StyledGrid item xs={4}>
+		<StyledGrid item>
 			<Card variant="outlined">
 				<CardMedia
 					className={classes.media}
