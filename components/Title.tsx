@@ -30,7 +30,7 @@ export default function Title({
 }: {
 	disableBack?: boolean;
 	href?: string;
-	className: string;
+	className?: string;
 	children: any;
 }) {
 	const router = useRouter();
