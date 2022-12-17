@@ -1,3 +1,4 @@
+import BatteryUnknownIcon from '@mui/icons-material/BatteryUnknown';
 import Battery0Icon from '@mui/icons-material/BatteryAlert';
 import Battery20Icon from '@mui/icons-material/Battery20';
 import Battery30Icon from '@mui/icons-material/Battery30';
@@ -17,7 +18,9 @@ const style: SxPropsTheme = {
 export default function BatteryLevel({ batteryLevel }: { batteryLevel: number }) {
 	return (
 		<Tooltip title={`${batteryLevel} %`} describeChild={true} enterTouchDelay={10}>
-			{batteryLevel < 20 ? (
+			{ batteryLevel < 0 ? (
+				<BatteryUnknownIcon sx={style} />
+			) : batteryLevel < 20 ? (
 				<Battery0Icon sx={style} />
 			) : batteryLevel < 30 ? (
 				<Battery20Icon sx={style} />
