@@ -2,6 +2,7 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
 import IconStart from '@mui/icons-material/PlayArrow';
+import IconStartDisabled from '@mui/icons-material/PlayDisabled';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -63,7 +64,7 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 				<BottomNavigationAction
 					className={disabled ? classes.buttonDisabled : classes.button}
 					label="Start"
-					icon={<IconStart />}
+					icon={disabled ? <IconStartDisabled /> : <IconStart />}
 					onClick={handleOnClick}
 				/>
 				<WarningDialog
