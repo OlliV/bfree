@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import IconTimelapse from '@mui/icons-material/Timelapse';
 import Typography from '@mui/material/Typography';
+import { useMediaQuery } from '@mui/material';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { getElapsedTimeStr } from '../../lib/format';
 import { useGlobalState } from '../../lib/global';
@@ -14,11 +15,50 @@ const valueStyle: SxPropsTheme = {
 	float: 'right',
 };
 
-export default function Ride() {
+function InfoDesktop() {
 	const distanceUnit = useGlobalState('unitDistance')[0];
 	const [elapsedTime] = useGlobalState('elapsedTime');
 	const [elapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideDistance] = useGlobalState('rideDistance');
+
+	return (
+		<Container>
+			<b>Ride time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
+			<br />
+			<b>Lap time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
+			<br />
+			<b>Ride distance:</b> <Box sx={valueStyle}>{smartDistanceUnitConv(distanceUnit, rideDistance)}</Box>
+			<br />
+			<b>Lap distance:</b> <Box sx={valueStyle}>--</Box>
+		</Container>
+	);
+}
+
+function InfoMobile() {
+	const distanceUnit = useGlobalState('unitDistance')[0];
+	const [elapsedTime] = useGlobalState('elapsedTime');
+	const [elapsedLapTime] = useGlobalState('elapsedLapTime');
+	const [rideDistance] = useGlobalState('rideDistance');
+
+	return (
+		<Container>
+			<b>Total</b>
+			<br />
+			<Box sx={valueStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
+			<br />
+			<Box sx={valueStyle}>{smartDistanceUnitConv(distanceUnit, rideDistance)}</Box>
+			<br />
+			<b>Lap</b>
+			<br />
+			<Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
+			<br />
+			<Box sx={valueStyle}>--</Box>
+		</Container>
+	);
+}
+
+export default function Ride() {
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
 
 	// TODO meters & km based on length
 	// TODO lap distance
@@ -28,18 +68,9 @@ export default function Ride() {
 			<Card variant="outlined">
 				<CardContent sx={{ height: '10em' }}>
 					<Typography gutterBottom variant="h5" component="h2">
-						<IconTimelapse sx={{ fontSize: '18px !important' }} /> Time &amp; Distance
+						<IconTimelapse sx={{ fontSize: '18px !important' }} /> {isBreakpoint ? 'Time & Distance' : ''}
 					</Typography>
-					<Container>
-						<b>Ride time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedTime)}</Box>
-						<br />
-						<b>Lap time:</b> <Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
-						<br />
-						<b>Ride distance:</b>{' '}
-						<Box sx={valueStyle}>{smartDistanceUnitConv(distanceUnit, rideDistance)}</Box>
-						<br />
-						<b>Lap distance:</b> <Box sx={valueStyle}>--</Box>
-					</Container>
+					{isBreakpoint ? <InfoDesktop /> : <InfoMobile />}
 				</CardContent>
 			</Card>
 		</Grid>

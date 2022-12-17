@@ -7,6 +7,7 @@ import IconResistance from '@mui/icons-material/FitnessCenter';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState, useMemo } from 'react';
+import { useMediaQuery } from '@mui/material';
 import { useGlobalState, ControlParams } from '../../lib/global';
 import {
 	stdBikeFrontalArea,
@@ -105,9 +106,10 @@ export default function ResistanceControl({
 	resistance: Resistance;
 	rollingResistance?: number;
 }) {
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
 	const { resistanceControlName, resistanceStep, maxResistance, resistanceUnit, defaultResistance } =
 		params[resistance];
-	const marks = r2marks[resistance];
+	const marks = isBreakpoint ? r2marks[resistance] : null;
 	const [smartTrainerControl] = useGlobalState('smart_trainer_control');
 	const [_controlParams, setControlParams] = useGlobalState('control_params');
 	const [bike] = useGlobalState('bike');
@@ -175,7 +177,7 @@ export default function ResistanceControl({
 			<Card variant="outlined">
 				<CardContent className={classes.resistanceControlCard}>
 					<Typography id="resistance-control" gutterBottom variant="h5" component="h2">
-						<IconResistance className={classes.inlineIcon} /> {resistanceControlName}
+						<IconResistance className={classes.inlineIcon} /> {isBreakpoint ? resistanceControlName : ''}
 					</Typography>
 					<Container>
 						<ResistanceSlider

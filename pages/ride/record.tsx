@@ -10,10 +10,12 @@ import IconSplit from '@mui/icons-material/Timer';
 import IconStop from '@mui/icons-material/Stop';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
+import { useMediaQuery } from '@mui/material';
 import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
 import MyHead from '../../components/MyHead';
 import MeasurementCard from '../../components/record/MeasurementCard';
+import MeasurementColorCard from '../../components/record/MeasurementColorCard';
 import WorkoutController from '../../components/record/WorkoutController';
 import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
 import DummyCard from '../../components/record/DummyCard';
@@ -122,7 +124,7 @@ function DataGraph() {
 
 function FreeRideDashboard() {
 	const router = useRouter();
-
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
 	const [logger] = useGlobalState('currentActivityLog');
 	const { resistance } = router.query;
 	const rollingResistance = Number(router.query.rollingResistance);
@@ -142,10 +144,22 @@ function FreeRideDashboard() {
 				) : (
 					<DummyCard />
 				)}
-				<MeasurementCard type="cycling_cadence" />
-				<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} />
-				<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} />
-				<MeasurementCard type="heart_rate" ribbonColor={classes.colorHeartRate} />
+				{isBreakpoint ? (
+					[
+						<MeasurementCard type="cycling_cadence" key="1" />,
+						<MeasurementCard type="cycling_speed" ribbonColor={classes.colorSpeed} key="2" />,
+						<MeasurementCard type="cycling_power" ribbonColor={classes.colorPower} key="3" />,
+						<MeasurementCard type="heart_rate" ribbonColor={classes.colorHeartRate} key="4" />,
+					]
+				) : (
+					<MeasurementColorCard
+						colors={{
+							heart_rate: measurementColors[0],
+							power: measurementColors[1],
+							speed: measurementColors[2],
+						}}
+					/>
+				)}
 				<DataGraph />
 			</Grid>
 		</Box>

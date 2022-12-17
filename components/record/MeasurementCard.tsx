@@ -9,6 +9,7 @@ import IconHeart from '@mui/icons-material/Favorite';
 import IconPower from '@mui/icons-material/OfflineBolt';
 import IconSpeed from '@mui/icons-material/Speed';
 import Typography from '@mui/material/Typography';
+import { useMediaQuery } from '@mui/material';
 import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } from '../../lib/measurements';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { ReactElement, useState, useEffect, useMemo } from 'react';
@@ -69,33 +70,33 @@ const iconStyle: SxPropsTheme = {
 	fontSize: '18px !important',
 };
 
-function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
+function getContentByType(classes, minimal: boolean, speedUnit: UnitConv[''], type: Measurement) {
 	/* eslint-disable react/jsx-key */
 	const contentByType: { [K in Measurement]: [ReactElement, (m: any) => DisplayValue, number] } = {
 		cycling_cadence: [
 			<span>
-				<IconCadence sx={iconStyle} /> Cadence
+				<IconCadence sx={iconStyle} /> {minimal ? '' : 'Cadence'}
 			</span>,
 			(m: CscMeasurements) => ({ value: m ? m.cadence : NaN, unit: 'RPM' }),
 			0,
 		],
 		cycling_power: [
 			<span>
-				<IconPower sx={iconStyle} /> Power
+				<IconPower sx={iconStyle} /> {minimal ? '' : 'Power'}
 			</span>,
 			(m: any) => ({ value: m ? m.power : NaN, unit: 'W' }),
 			0,
 		],
 		cycling_speed: [
 			<span>
-				<IconSpeed sx={iconStyle} /> Speed
+				<IconSpeed sx={iconStyle} /> {minimal ? '' : 'Speed'}
 			</span>,
 			(m: CscMeasurements) => ({ value: m && m.speed ? speedUnit.convTo(m.speed) : NaN, unit: speedUnit.name }),
 			1,
 		],
 		heart_rate: [
 			<span>
-				<IconHeart sx={iconStyle} /> Heart Rate
+				<IconHeart sx={iconStyle} /> {minimal ? '' : 'Heart Rate'}
 			</span>,
 			(m: HrmMeasurements) => ({ value: m ? m.heartRate : NaN, unit: 'BPM' }),
 			1,
@@ -107,8 +108,12 @@ function getContentByType(classes, speedUnit: UnitConv[''], type: Measurement) {
 }
 
 export default function MeasurementCard({ type, ribbonColor }: { type: Measurement; ribbonColor?: string }) {
+	const isBreakpoint = useMediaQuery('(min-width:800px)');
 	const speedUnit = speedUnitConv[useGlobalState('unitSpeed')[0]];
-	const [title, fn, digits] = useMemo(() => getContentByType(classes, speedUnit, type), [classes, type, speedUnit]);
+	const [title, fn, digits] = useMemo(
+		() => getContentByType(classes, !isBreakpoint, speedUnit, type),
+		[classes, type, speedUnit]
+	);
 	const m = useMeasurementByType(type);
 	const { value, unit } = fn(m);
 	const [{ avg, max }, setAgg] = useState({ avg: 0, max: NaN, n: 0 });
