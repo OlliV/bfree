@@ -1,38 +1,37 @@
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
+import IconStart from '@mui/icons-material/PlayArrow';
 import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
-import Link from 'next/link';
-import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
-import { CardContent } from '@mui/material';
 import { useState } from 'react';
 import { useGlobalState } from '../lib/global';
 import WarningDialog from './WarningDialog';
 
 const PREFIX = 'StartButton';
 const classes = {
+	bottomActions: `${PREFIX}-bottomActions`,
 	button: `${PREFIX}-button`,
 	buttonDisabled: `${PREFIX}-buttonDisabled`,
-	center: `${PREFIX}-center`,
 };
 
-const StyledGrid = styled(Grid)(({ theme }) => ({
+const StyledBox = styled(Box)(({ theme }) => ({
+	[`& .${classes.bottomActions}`]: {
+		position: 'fixed',
+		left: 0,
+		bottom: 0,
+		width: '100vw',
+	},
+
 	[`& .${classes.button}`]: {
 		'&:hover': {
-			backgroundColor: 'lightgrey',
+			color: 'lightgrey',
 		},
 	},
 
 	[`& .${classes.buttonDisabled}`]: {
+		color: 'lightgrey',
 		cursor: 'not-allowed',
-	},
-
-	[`& .${classes.center}`]: {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'bottom',
-		height: '3ex',
 	},
 }));
 
@@ -59,27 +58,24 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 	};
 
 	return (
-		<StyledGrid item xs={12}>
-			<Link href={href} onClick={handleOnClick}>
-				<Card variant="outlined" className={disabled ? classes.buttonDisabled : classes.button}>
-					<CardContent>
-						<Box className={classes.center}>
-							<Typography gutterBottom variant="h5" component="h2">
-								Start
-							</Typography>
-						</Box>
-					</CardContent>
-				</Card>
-			</Link>
-			<WarningDialog
-				title={'Continue without a smart trainer?'}
-				show={showWarning}
-				handleCancel={handleCancel}
-				handleContinue={handleContinue}
-			>
-				There is currently no connection to a smart trainer and therefore trainer control functions will not
-				function.
-			</WarningDialog>
-		</StyledGrid>
+		<StyledBox>
+			<BottomNavigation showLabels className={classes.bottomActions}>
+				<BottomNavigationAction
+					className={disabled ? classes.buttonDisabled : classes.button}
+					label="Start"
+					icon={<IconStart />}
+					onClick={handleOnClick}
+				/>
+				<WarningDialog
+					title={'Continue without a smart trainer?'}
+					show={showWarning}
+					handleCancel={handleCancel}
+					handleContinue={handleContinue}
+				>
+					There is currently no connection to a smart trainer and therefore trainer control functions will not
+					function.
+				</WarningDialog>
+			</BottomNavigation>
+		</StyledBox>
 	);
 }

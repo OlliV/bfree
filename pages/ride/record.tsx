@@ -1,28 +1,24 @@
-import BottomNavigation from '@mui/material/BottomNavigation';
 import { styled } from '@mui/material/styles';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import DefaultErrorPage from 'next/error';
 import Grid from '@mui/material/Grid';
-import IconPause from '@mui/icons-material/Pause';
-import IconSplit from '@mui/icons-material/Timer';
-import IconStop from '@mui/icons-material/Stop';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
 import { useMediaQuery } from '@mui/material';
 import FlightRecorder from '../../components/record/FlightRecorder';
 import Graph, { SeriesDataPoint, Series } from '../../components/record/Graph';
-import MyHead from '../../components/MyHead';
-import MeasurementCard from '../../components/record/MeasurementCard';
-import WorkoutController from '../../components/record/WorkoutController';
-import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
 import DummyCard from '../../components/record/DummyCard';
+import MeasurementCard from '../../components/record/MeasurementCard';
+import MyHead from '../../components/MyHead';
+import PauseModal from '../../components/record/PauseModal';
+import ResistanceControl, { Resistance } from '../../components/record/ResistanceControl';
 import Ride from '../../components/record/Ride';
 import Stopwatch from '../../components/record/Stopwatch';
 import Title from '../../components/Title';
-import PauseModal from '../../components/record/PauseModal';
+import WorkoutController from '../../components/record/WorkoutController';
 import { Lap, LapTriggerMethod } from '../../lib/activity_log';
+import { RecordActionButtons } from '../../components/record/ActionButtons';
 import { speedUnitConv } from '../../lib/units';
 import { useGlobalState } from '../../lib/global';
 
@@ -32,7 +28,6 @@ const classes = {
 	colorPower: `${PREFIX}-colorPower`,
 	colorSpeed: `${PREFIX}-colorSpeed`,
 	colorHeartRate: `${PREFIX}-colorHeartRate`,
-	bottomActions: `${PREFIX}-bottomActions`,
 	pauseStopwatch: `${PREFIX}-pauseStopwatch`,
 };
 
@@ -47,13 +42,6 @@ const StyledContainer = styled(Container)(({ theme }) => ({
 
 	[`& .${classes.colorHeartRate}`]: {
 		background: measurementColors[0],
-	},
-
-	[`& .${classes.bottomActions}`]: {
-		position: 'fixed',
-		left: 0,
-		bottom: 0,
-		width: '100vw',
 	},
 
 	[`& .${classes.pauseStopwatch}`]: {
@@ -311,13 +299,7 @@ export default function RideRecord() {
 						isPaused={ridePaused === 0 || ridePaused === -1}
 					/>
 				</PauseModal>
-				<Box className={classes.bottomActions}>
-					<BottomNavigation showLabels>
-						<BottomNavigationAction label="Pause" icon={<IconPause />} onClick={pauseRide} />
-						<BottomNavigationAction label="Split" icon={<IconSplit />} onClick={handleSplit} />
-						<BottomNavigationAction label="End" icon={<IconStop />} onClick={handleEndRide} />
-					</BottomNavigation>
-				</Box>
+				<RecordActionButtons onClickPause={pauseRide} onClickSplit={handleSplit} onClickEnd={handleEndRide} />
 			</StyledContainer>
 		);
 	}

@@ -9,7 +9,7 @@ import IconPower from '@mui/icons-material/OfflineBolt';
 import IconSpeed from '@mui/icons-material/Speed';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 
-const PREFIX = 'ResistanceControl';
+const PREFIX = 'MeasurementColorCard';
 const classes = {
 	root: `${PREFIX}-root`,
 	thumb: `${PREFIX}-thumb`,
