@@ -1,7 +1,7 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { Box } from '@mui/system';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import MenuCard from '../components/MenuCard';
 import MyHead from '../components/MyHead';
 import Title from '../components/Title';
