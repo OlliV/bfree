@@ -239,7 +239,7 @@ export default function History() {
 	}, []);
 
 	return (
-		<StyledContainer maxWidth="sm">
+		<StyledContainer maxWidth="md">
 			<MyHead title="Previous Rides" />
 			<Box>
 				<Title href="/">{isBreakpoint ? 'Previous Rides' : 'Rides'}</Title>
