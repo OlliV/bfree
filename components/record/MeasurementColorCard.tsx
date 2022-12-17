@@ -48,8 +48,8 @@ export default function MeasurementColorCard({
 }) {
 	return (
 		<Container>
-			<IconPower sx={{ ...iconStyle, color: colors.power }} />
 			<IconSpeed sx={{ ...iconStyle, color: colors.speed }} />
+			<IconPower sx={{ ...iconStyle, color: colors.power }} />
 			<IconHeart sx={{ ...iconStyle, color: colors.heart_rate }} />
 		</Container>
 	);
