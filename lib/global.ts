@@ -30,13 +30,13 @@ export type ControlParams = {
 	slope?: number;
 };
 
-export const sensorNames: {[k in SensorType]: string} = {
-	'cycling_cadence': 'cadence sensor',
-	'cycling_power': 'power sensor',
-	'cycling_speed': 'speed sensor',
-	'cycling_speed_and_cadence': 'speed and cadence sensor',
-	'heart_rate': 'heart rate sensor',
-	'smart_trainer': 'smart trainer',
+export const sensorNames: { [k in SensorType]: string } = {
+	cycling_cadence: 'cadence sensor',
+	cycling_power: 'power sensor',
+	cycling_speed: 'speed sensor',
+	cycling_speed_and_cadence: 'speed and cadence sensor',
+	heart_rate: 'heart rate sensor',
+	smart_trainer: 'smart trainer',
 };
 
 export const cadenceSourceTypes: SensorSourceType[] = [

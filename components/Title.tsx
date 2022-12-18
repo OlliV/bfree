@@ -16,7 +16,6 @@ import BatteryLevel from './BatteryLevel';
 import { GlobalState, sensorNames, SensorType, useGlobalState } from '../lib/global';
 import { TrainerMeasurements } from '../lib/measurements';
 
-
 type Notification = {
 	severity: AlertColor;
 	icon?: React.ReactNode;
@@ -93,12 +92,19 @@ const batteryPoweredSensors: SensorType[] = [
 
 function useBatteryLevelAlerts(): Notification[] {
 	// eslint-disable-next-line react-hooks/rules-of-hooks
-	const sensors: [ sensorType: string, battLevel: number ][] = batteryPoweredSensors.map((sensorType) => [sensorType, useGlobalState(`batt_${sensorType}` as keyof GlobalState)[0]]);
+	const sensors: [sensorType: string, battLevel: number][] = batteryPoweredSensors.map((sensorType) => [
+		sensorType,
+		useGlobalState(`batt_${sensorType}` as keyof GlobalState)[0],
+	]);
 
-	const getIcon = (l: number) => (<BatteryLevel batteryLevel={l}/>);
+	const getIcon = (l: number) => <BatteryLevel batteryLevel={l} />;
 	return sensors
 		.filter(([_, battLevel]) => battLevel >= 0 && battLevel <= 20)
-		.map(([sensorType, battLevel], i) => ({ severity: 'warning', icon:  getIcon(battLevel), text: `Low battery: ${sensorNames[sensorType]}` }));
+		.map(([sensorType, battLevel], i) => ({
+			severity: 'warning',
+			icon: getIcon(battLevel),
+			text: `Low battery: ${sensorNames[sensorType]}`,
+		}));
 }
 
 function Notifications() {
@@ -106,10 +112,9 @@ function Notifications() {
 	const [clearedNotifications, setClearedNotifications] = useState<string[]>([]);
 	const [smartTrainerStatus] = useGlobalState('smart_trainer');
 	const batteryLevelAlerts = useBatteryLevelAlerts();
-	const notifications: Notification[] = [
-		...getSmartTrainerWarns(smartTrainerStatus),
-		...batteryLevelAlerts
-	].filter(({text}) => !clearedNotifications.includes(text));
+	const notifications: Notification[] = [...getSmartTrainerWarns(smartTrainerStatus), ...batteryLevelAlerts].filter(
+		({ text }) => !clearedNotifications.includes(text)
+	);
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -147,7 +152,16 @@ function Notifications() {
 				<Stack sx={{ width: '100%' }} spacing={1}>
 					{notifications.length ? (
 						notifications.map((msg, i) => (
-							<Alert icon={msg.icon} severity={msg.severity} onClose={msg.permanent ? undefined : () => setClearedNotifications([...clearedNotifications, msg.text])} key={`notification_${i}`}>
+							<Alert
+								icon={msg.icon}
+								severity={msg.severity}
+								onClose={
+									msg.permanent
+										? undefined
+										: () => setClearedNotifications([...clearedNotifications, msg.text])
+								}
+								key={`notification_${i}`}
+							>
 								{msg.text}
 							</Alert>
 						))
