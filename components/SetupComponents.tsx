@@ -112,7 +112,7 @@ export function UnsignedConfigParam({
 				id="outlined-basic"
 				label={label}
 				InputProps={{
-					endAdornment: unit ? (<InputAdornment position="end">{unit}</InputAdornment>) : undefined,
+					endAdornment: unit ? <InputAdornment position="end">{unit}</InputAdornment> : undefined,
 				}}
 				variant="outlined"
 			/>

@@ -35,11 +35,15 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 	return (
 		<BottomNavi>
 			<BottomNavigationAction
-				sx={disabled ? {color: 'lightgrey', cursor: 'not-allowed'} : {
-					'&:hover': {
-						color: 'lightgrey',
-					},
-				}}
+				sx={
+					disabled
+						? { color: 'lightgrey', cursor: 'not-allowed' }
+						: {
+								'&:hover': {
+									color: 'lightgrey',
+								},
+						  }
+				}
 				label="Start"
 				icon={disabled ? <IconStartDisabled /> : <IconStart />}
 				onClick={handleOnClick}

@@ -153,49 +153,53 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						smart_trainer: '6e40fec1-b5a3-f393-e0a9-e50e24dcca9e', // TACX ANT+ FE-C over BLE
 					};
 
-					const newBtDevice = await pairDevice(srvMap[props.sensorType], async ({ device, server }) => {
-						// Get battery level just once
-						try {
-							setBatteryLevel(await readBatteryLevel(server));
-							startBatteryLevelNotifications(server, setGloblBatteryLevel);
-						} catch (err) {
-							console.log(`Device ${device.name} doesn't support battery_level`);
-						}
-
-						try {
-							if (props.sensorType === 'cycling_power') {
-								await startCyclingPowerMeasurementNotifications(server, setSensorValue);
-							} else if (
-								['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(
-									props.sensorType
-								)
-							) {
-								await startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
-							} else if (props.sensorType === 'heart_rate') {
-								await startHRMNotifications(server, setSensorValue);
-							} else if (props.sensorType === 'smart_trainer') {
-								const controller = await createSmartTrainerController(server, setSensorValue);
-								await controller.startNotifications();
-
-								const { weight: userWeightKg } = getGlobalState('rider');
-								const { weight: bikeWeightKg, wheelCircumference } = getGlobalState('bike');
-								await controller.sendUserConfiguration({
-									userWeightKg,
-									bikeWeightKg,
-									wheelCircumference,
-								});
-
-								setSmartTrainerControl(controller);
-							} else {
-								console.error('Invalid sensor type');
+					const newBtDevice = await pairDevice(
+						srvMap[props.sensorType],
+						async ({ device, server }) => {
+							// Get battery level just once
+							try {
+								setBatteryLevel(await readBatteryLevel(server));
+								startBatteryLevelNotifications(server, setGloblBatteryLevel);
+							} catch (err) {
+								console.log(`Device ${device.name} doesn't support battery_level`);
 							}
-						} catch (err) {
-							setInfo({ message: `${err}`, severity: 'error' });
+
+							try {
+								if (props.sensorType === 'cycling_power') {
+									await startCyclingPowerMeasurementNotifications(server, setSensorValue);
+								} else if (
+									['cycling_speed_and_cadence', 'cycling_cadence', 'cycling_speed'].includes(
+										props.sensorType
+									)
+								) {
+									await startCyclingSpeedAndCadenceMeasurementNotifications(server, setSensorValue);
+								} else if (props.sensorType === 'heart_rate') {
+									await startHRMNotifications(server, setSensorValue);
+								} else if (props.sensorType === 'smart_trainer') {
+									const controller = await createSmartTrainerController(server, setSensorValue);
+									await controller.startNotifications();
+
+									const { weight: userWeightKg } = getGlobalState('rider');
+									const { weight: bikeWeightKg, wheelCircumference } = getGlobalState('bike');
+									await controller.sendUserConfiguration({
+										userWeightKg,
+										bikeWeightKg,
+										wheelCircumference,
+									});
+
+									setSmartTrainerControl(controller);
+								} else {
+									console.error('Invalid sensor type');
+								}
+							} catch (err) {
+								setInfo({ message: `${err}`, severity: 'error' });
+							}
+						},
+						() => {
+							// Unpair if we can't reconnect.
+							unpairDevice();
 						}
-					}, () => {
-						// Unpair if we can't reconnect.
-						unpairDevice();
-					});
+					);
 
 					const { device } = newBtDevice;
 					console.log(`> Name: ${device.name}\n> Id: ${device.id}\n> Connected: ${device.gatt.connected}`);

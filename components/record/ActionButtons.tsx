@@ -8,7 +8,7 @@ const buttonStyle = {
 	'&:hover': {
 		color: 'lightgrey',
 	},
-}
+};
 
 export function RecordActionButtons({
 	onClickPause,
@@ -21,24 +21,9 @@ export function RecordActionButtons({
 }) {
 	return (
 		<BottomNavi>
-				<BottomNavigationAction
-					sx={buttonStyle}
-					label="Pause"
-					icon={<IconPause />}
-					onClick={onClickPause}
-				/>
-				<BottomNavigationAction
-					sx={buttonStyle}
-					label="Split"
-					icon={<IconSplit />}
-					onClick={onClickSplit}
-				/>
-				<BottomNavigationAction
-					sx={buttonStyle}
-					label="End"
-					icon={<IconStop />}
-					onClick={onClickEnd}
-				/>
+			<BottomNavigationAction sx={buttonStyle} label="Pause" icon={<IconPause />} onClick={onClickPause} />
+			<BottomNavigationAction sx={buttonStyle} label="Split" icon={<IconSplit />} onClick={onClickSplit} />
+			<BottomNavigationAction sx={buttonStyle} label="End" icon={<IconStop />} onClick={onClickEnd} />
 		</BottomNavi>
 	);
 }

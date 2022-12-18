@@ -116,9 +116,9 @@ export default function SetupBike() {
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<StyledParam title="Bike Parameters" info={bikeInfo} image="/images/cards/patent.jpg">
 						<FormControl className={classes.form}>
-							<BikeType/>
-							<WheelCircumference/>
-							<BikeWeight/>
+							<BikeType />
+							<WheelCircumference />
+							<BikeWeight />
 						</FormControl>
 					</StyledParam>
 				</Grid>

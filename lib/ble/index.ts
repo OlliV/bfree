@@ -24,14 +24,18 @@ async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServ
 		// TODO The typing of exponentialBackoff() is not correct
 		return server as BluetoothRemoteGATTServer;
 	} catch (err) {
-		throw(err);
+		throw err;
 	}
 }
 
 /*
  * @param connectCb is called on the initial connect as well as on reconnects. This allows restarting the notifications.
  */
-export async function pairDevice(service: BluetoothServiceType, connectCb: (dev: BtDevice) => Promise<void>, onDisconnectedCb: () => void) {
+export async function pairDevice(
+	service: BluetoothServiceType,
+	connectCb: (dev: BtDevice) => Promise<void>,
+	onDisconnectedCb: () => void
+) {
 	const options = {
 		//acceptAllDevices: true,
 		filters: [{ services: [service] }],
