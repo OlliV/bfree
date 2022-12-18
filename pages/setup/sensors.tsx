@@ -192,6 +192,9 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						} catch (err) {
 							setInfo({ message: `${err}`, severity: 'error' });
 						}
+					}, () => {
+						// Unpair if we can't reconnect.
+						unpairDevice();
 					});
 
 					const { device } = newBtDevice;

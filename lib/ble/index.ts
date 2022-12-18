@@ -24,15 +24,14 @@ async function connect(device: BluetoothDevice): Promise<BluetoothRemoteGATTServ
 		// TODO The typing of exponentialBackoff() is not correct
 		return server as BluetoothRemoteGATTServer;
 	} catch (err) {
-		time(`Failed to reconnect (${device.name}).`);
-		return null;
+		throw(err);
 	}
 }
 
 /*
  * @param connectCb is called on the initial connect as well as on reconnects. This allows restarting the notifications.
  */
-export async function pairDevice(service: BluetoothServiceType, connectCb: (dev: BtDevice) => Promise<void>) {
+export async function pairDevice(service: BluetoothServiceType, connectCb: (dev: BtDevice) => Promise<void>, onDisconnectedCb: () => void) {
 	const options = {
 		//acceptAllDevices: true,
 		filters: [{ services: [service] }],
@@ -41,7 +40,7 @@ export async function pairDevice(service: BluetoothServiceType, connectCb: (dev:
 
 	const device = await navigator.bluetooth.requestDevice(options);
 	const onDisconnected = (e) => {
-		console.log('> Bluetooth Device disconnected'); // TODO Show the name
+		console.log(`> Bluetooth Device disconnected`); // TODO Show the name
 		connect(device)
 			.then(async (server) => {
 				const btDevice = {
@@ -51,11 +50,20 @@ export async function pairDevice(service: BluetoothServiceType, connectCb: (dev:
 
 				await connectCb(btDevice);
 			})
-			.catch(console.error);
+			.catch((err) => {
+				console.error(`> Bluetooth Device "${device.name}" reconnect failed: `, err);
+				onDisconnectedCb();
+			});
 	};
 
 	device.addEventListener('gattserverdisconnected', onDisconnected);
-	const server = await connect(device);
+	let server: BluetoothRemoteGATTServer | null;
+	try {
+		server = await connect(device);
+	} catch (err) {
+		console.error('> Bluetooth Device connect failed');
+		server = null;
+	}
 	connectCb({
 		device,
 		server,
