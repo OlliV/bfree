@@ -47,6 +47,8 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 		} else if (!btDevice_smart_trainer) {
 			e.preventDefault();
 			setShowWarning(true);
+		} else {
+			router.push(href);
 		}
 	};
 
