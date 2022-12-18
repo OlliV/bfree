@@ -1,12 +1,16 @@
 import Avatar from '@mui/material/Avatar';
+import Badge from '@mui/material/Badge';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
+import IconDelete from '@mui/icons-material/Delete';
 import IconDownload from '@mui/icons-material/GetApp';
 import IconMoreVert from '@mui/icons-material/MoreVert';
 import Menu from '@mui/material/Menu';
@@ -17,7 +21,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { red } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, MutableRefObject } from 'react';
+import BottomNavi from '../components/BottomNavi';
 import MyHead from '../components/MyHead';
 import MyModal from '../components/MyModal';
 import Title from '../components/Title';
@@ -150,7 +155,10 @@ function EditModal({
 	);
 }
 
-function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1]; onChange: () => void }) {
+type Log = ReturnType<typeof getActivityLogs>[1];
+type WeakLogMap = MutableRefObject<WeakMap<Log, boolean>>;
+
+function RideCard({ log, onChange, onSelect }: { log: Log; onChange: () => void; onSelect: (v: boolean) => void }) {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showEditModal, setShowEditModal] = useState(false);
 	const name = log.logger.getName();
@@ -165,11 +173,6 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 	const handleEdit = () => {
 		setAnchorEl(null);
 		setShowEditModal(true);
-	};
-	const handleDelete = () => {
-		setAnchorEl(null);
-		deleteActivityLog(log.id);
-		onChange();
 	};
 	const handleDownload = () => {
 		const { logger } = log;
@@ -204,7 +207,6 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 								onClose={handleClose}
 							>
 								<MenuItem onClick={handleEdit}>Edit</MenuItem>
-								<MenuItem onClick={handleDelete}>Delete</MenuItem>
 							</Menu>
 						</div>
 					}
@@ -221,6 +223,10 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 					<IconButton aria-label="download" onClick={handleDownload} size="large">
 						<IconDownload />
 					</IconButton>
+					<Checkbox
+						color="default"
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSelect(e.target.checked)}
+					/>
 				</CardActions>
 			</Card>
 			<EditModal open={showEditModal} onClose={() => setShowEditModal(false)} logger={log.logger} />
@@ -231,11 +237,24 @@ function RideCard({ log, onChange }: { log: ReturnType<typeof getActivityLogs>[1
 export default function History() {
 	const router = useRouter();
 	const isBreakpoint = useMediaQuery('(min-width:800px)');
-	const [logs, setLogs] = useState(() => getActivityLogs());
-	const handleChange = () => setLogs(getActivityLogs());
+	const [logs, setLogs] = useState<ReturnType<typeof getActivityLogs>>([]);
+	const selectionRef = useRef(new WeakMap<Log, Boolean>());
+	const [selectionCount, setSelectionCount] = useState(0);
+	const handleChange = () => {
+		setLogs(getActivityLogs());
+	};
+	const massDeletion = () => {
+		const q = logs.filter((log) => selectionRef.current.has(log));
+		setSelectionCount(selectionCount - q.length); // RFE Will this go out of sync if deletion fails?
+		q.forEach(({ id }) => {
+			deleteActivityLog(id);
+		});
+		handleChange();
+	};
 
 	useEffect(() => {
-		setLogs(getActivityLogs());
+		handleChange();
+		setSelectionCount(logs.reduce((acc, cur) => acc + +selectionRef.current.has(cur), 0));
 	}, []);
 
 	return (
@@ -247,10 +266,39 @@ export default function History() {
 
 				<Grid container direction="column" alignItems="center" spacing={2}>
 					{logs.map((log) => (
-						<RideCard log={log} onChange={handleChange} key={log.id} />
+						<RideCard
+							log={log}
+							onChange={handleChange}
+							onSelect={(v: boolean) => {
+								if (v) {
+									selectionRef.current.set(log, true);
+									setSelectionCount(selectionCount + 1);
+								} else {
+									selectionRef.current.delete(log);
+									setSelectionCount(selectionCount - 1);
+								}
+							}}
+							key={log.id}
+						/>
 					))}
 				</Grid>
 			</Box>
+			<BottomNavi>
+			<BottomNavigationAction
+				sx={
+					selectionCount === 0
+						? { color: 'lightgrey', cursor: 'not-allowed' }
+						: {
+								'&:hover': {
+									color: 'lightgrey',
+								},
+						  }
+				}
+				label="Delete"
+				icon={<Badge badgeContent={selectionCount} color="error"><IconDelete/></Badge>}
+				onClick={(e) => { e.preventDefault(); {if (selectionCount > 0) massDeletion() }}}
+			/>
+			</BottomNavi>
 		</StyledContainer>
 	);
 }
