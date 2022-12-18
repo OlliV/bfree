@@ -82,10 +82,17 @@ function Notifications() {
 	const id = open ? 'simple-popover' : undefined;
 
 	return (
-		<IconButton size="large" aria-label={`show ${notifications.length} new notifications`} color="inherit">
-			<Badge badgeContent={notifications.length} color="error" onClick={handleClick}>
-				<NotificationsIcon />
-			</Badge>
+		<Box>
+			<IconButton
+				size="large"
+				aria-label={`show ${notifications.length} new notifications`}
+				color="inherit"
+				onClick={handleClick}
+			>
+				<Badge badgeContent={notifications.length} color="error">
+					<NotificationsIcon />
+				</Badge>
+			</IconButton>
 			<Popover
 				id={id}
 				open={open}
@@ -97,14 +104,18 @@ function Notifications() {
 				}}
 			>
 				<Stack sx={{ width: '100%' }} spacing={1}>
-					{notifications.map(([s, v], i) => (
-						<Alert severity={s} key={`notification_${i}`}>
-							{v}
-						</Alert>
-					))}
+					{notifications.length ? (
+						notifications.map(([s, v], i) => (
+							<Alert severity={s} key={`notification_${i}`}>
+								{v}
+							</Alert>
+						))
+					) : (
+						<Typography sx={{ p: 2 }}>No notifications</Typography>
+					)}
 				</Stack>
 			</Popover>
-		</IconButton>
+		</Box>
 	);
 }
 
