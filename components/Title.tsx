@@ -1,11 +1,19 @@
+import Alert from '@mui/material/Alert';
 import AppBar from '@mui/material/AppBar';
+import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import Popover from '@mui/material/Popover';
+import React, { useState } from 'react';
+import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Theme } from '@mui/material/styles';
+import { AlertColor } from '@mui/material/Alert';
+import { TrainerMeasurements } from '../lib/measurements';
 import { styled } from '@mui/material/styles';
+import { useGlobalState } from '../lib/global';
 import { useRouter } from 'next/router';
-//import BatteryLevel from './BatteryLevel';
 
 const PREFIX = 'Title';
 const classes = {
@@ -28,14 +36,75 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
-function BackButton({disable, onClick }: { disable: boolean, onClick?: (e?: React.MouseEvent<HTMLElement>) => void }) {
+function BackButton({ disable, onClick }: { disable: boolean; onClick?: (e?: React.MouseEvent<HTMLElement>) => void }) {
 	return (
 		<StyledTypography>
 			<span className={disable ? classes.arrowDisabled : classes.arrow} onClick={onClick}>
-				&larr;
-				&nbsp;
+				&larr; &nbsp;
 			</span>
 		</StyledTypography>
+	);
+}
+
+function getSmartTrainerWarns(smartTrainerStatus: null | TrainerMeasurements): [AlertColor, string][] {
+	const warns: [AlertColor, string][] = [];
+
+	const { calStatus } = smartTrainerStatus || ({ calStatus: {} } as TrainerMeasurements);
+	if (calStatus.powerCalRequired) {
+		warns.push(['warning', 'Trainer power calibration required']);
+	}
+	if (calStatus.resistanceCalRequired) {
+		warns.push(['warning', 'Trainer resistance calibration required']);
+	}
+	if (calStatus.userConfigRequired) {
+		warns.push(['warning', 'Trainer user configuration required']);
+	}
+
+	return warns;
+}
+
+function Notifications() {
+	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+	const [smartTrainerStatus] = useGlobalState('smart_trainer');
+	const notifications: [AlertColor, string][] = [];
+
+	notifications.push(...getSmartTrainerWarns(smartTrainerStatus));
+
+	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
+	const open = Boolean(anchorEl);
+	const id = open ? 'simple-popover' : undefined;
+
+	return (
+		<IconButton size="large" aria-label={`show ${notifications.length} new notifications`} color="inherit">
+			<Badge badgeContent={notifications.length} color="error" onClick={handleClick}>
+				<NotificationsIcon />
+			</Badge>
+			<Popover
+				id={id}
+				open={open}
+				anchorEl={anchorEl}
+				onClose={handleClose}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+			>
+				<Stack sx={{ width: '100%' }} spacing={1}>
+					{notifications.map(([s, v], i) => (
+						<Alert severity={s} key={`notification_${i}`}>
+							{v}
+						</Alert>
+					))}
+				</Stack>
+			</Popover>
+		</IconButton>
 	);
 }
 
@@ -65,18 +134,14 @@ export default function Title({
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 			<AppBar position="fixed" elevation={0} sx={{ left: 0, width: '100vw' }}>
-				<Toolbar >
-					<BackButton disable={disableBack} onClick={goBack}/>
-					<Typography
-						variant="h6"
-						noWrap
-						component="div"
-					>
+				<Toolbar>
+					<BackButton disable={disableBack} onClick={goBack} />
+					<Typography variant="h6" noWrap component="div">
 						{children}
 					</Typography>
 					<Box sx={{ flexGrow: 1 }} />
 					<Box>
-						{/*<BatteryLevel batteryLevel={-1}/>*/}
+						<Notifications />
 					</Box>
 				</Toolbar>
 			</AppBar>

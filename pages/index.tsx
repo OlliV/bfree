@@ -23,9 +23,7 @@ export default function Home() {
 				/>
 			</Box>
 			<Box position="relative">
-				<Title disableBack>
-					Bfree
-				</Title>
+				<Title disableBack>Bfree</Title>
 				<p>&nbsp;</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>

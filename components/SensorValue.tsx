@@ -69,33 +69,16 @@ export function SensorValueSmartTrainer({ sensorValue, className }) {
 
 	let power = '--';
 	let speed = '--';
-	let calRequired: string;
 
 	if (sensorValue) {
 		if (sensorValue.power != null) {
 			power = sensorValue.power;
 		}
 		speed = sensorValue.speed != null ? speedUnit.convTo(sensorValue.speed).toFixed(1) : '--';
-
-		const warns = [];
-		const { calStatus } = sensorValue;
-		if (calStatus.powerCalRequired) {
-			warns.push('Power calibration required');
-		}
-		if (calStatus.resistanceCalRequired) {
-			warns.push('Resistance calibration required');
-		}
-		if (calStatus.userConfigRequired) {
-			warns.push('User configuration required');
-		}
-		if (warns.length > 0) {
-			calRequired = warns.join(', ');
-		}
 	}
 
 	return (
 		<Box>
-			{calRequired ? <SensorWarn text={calRequired} /> : ''}
 			<Typography className={className}>
 				{power}&nbsp;W
 				<br />
