@@ -79,7 +79,7 @@ export async function readBatteryLevel(server: BluetoothRemoteGATTServer) {
 	return value.getUint8(0);
 }
 
-export async function startBatteryLevelNotifications(server: BluetoothRemoteGATTServer, cb) {
+export async function startBatteryLevelNotifications(server: BluetoothRemoteGATTServer, cb: (level: number) => void) {
 	const service = await server.getPrimaryService('battery_service');
 	const characteristic = await service.getCharacteristic('battery_level');
 

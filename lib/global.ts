@@ -30,18 +30,27 @@ export type ControlParams = {
 	slope?: number;
 };
 
+export const sensorNames: {[k in SensorType]: string} = {
+	'cycling_cadence': 'cadence sensor',
+	'cycling_power': 'power sensor',
+	'cycling_speed': 'speed sensor',
+	'cycling_speed_and_cadence': 'speed and cadence sensor',
+	'heart_rate': 'heart rate sensor',
+	'smart_trainer': 'smart trainer',
+};
+
 export const cadenceSourceTypes: SensorSourceType[] = [
 	{
 		id: 'cycling_cadence',
-		name: 'cadence sensor',
+		name: sensorNames['cycling_cadence'],
 	},
 	{
 		id: 'cycling_speed_and_cadence',
-		name: 'speed and cadence sensor',
+		name: sensorNames['cycling_speed_and_cadence'],
 	},
 	{
 		id: 'cycling_power',
-		name: 'power sensor',
+		name: sensorNames['cycling_power'],
 	},
 	{
 		id: 'smart_trainer',
@@ -52,15 +61,15 @@ export const cadenceSourceTypes: SensorSourceType[] = [
 export const speedSourceTypes: SensorSourceType[] = [
 	{
 		id: 'cycling_power',
-		name: 'power sensor',
+		name: sensorNames['cycling_power'],
 	},
 	{
 		id: 'cycling_speed',
-		name: 'speed sensor',
+		name: sensorNames['cycling_speed'],
 	},
 	{
 		id: 'cycling_speed_and_cadence',
-		name: 'speed and cadence sensor',
+		name: sensorNames['cycling_speed_and_cadence'],
 	},
 	{
 		id: 'smart_trainer',
@@ -71,7 +80,7 @@ export const speedSourceTypes: SensorSourceType[] = [
 export const powerSourceTypes: SensorSourceType[] = [
 	{
 		id: 'cycling_power',
-		name: 'power sensor',
+		name: sensorNames['cycling_power'],
 	},
 	{
 		id: 'smart_trainer',
@@ -100,6 +109,13 @@ export type GlobalState = {
 	btDevice_cycling_speed_and_cadence: null | BtDevice;
 	btDevice_heart_rate: null | BtDevice;
 	btDevice_smart_trainer: null | BtDevice;
+	// Battery Levels
+	batt_cycling_cadence: number;
+	batt_cycling_power: number;
+	batt_cycling_speed: number;
+	batt_cycling_speed_and_cadence: number;
+	batt_heart_rate: number;
+	batt_smart_trainer: number;
 	// Measurements
 	cycling_cadence: null | CscMeasurements;
 	cycling_power: null | CppMeasurements;
@@ -147,6 +163,13 @@ const initialState: GlobalState = {
 	btDevice_cycling_speed_and_cadence: null,
 	btDevice_heart_rate: null,
 	btDevice_smart_trainer: null,
+	// Battery Levels
+	batt_cycling_cadence: -1,
+	batt_cycling_power: -1,
+	batt_cycling_speed: -1,
+	batt_cycling_speed_and_cadence: -1,
+	batt_heart_rate: -1,
+	batt_smart_trainer: -1,
 	// Measurements
 	cycling_cadence: null,
 	cycling_power: null,

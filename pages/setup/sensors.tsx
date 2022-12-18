@@ -19,7 +19,7 @@ import { green } from '@mui/material/colors';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { useEffect, useState } from 'react';
 import MyHead from '../../components/MyHead';
-import { BluetoothServiceType, pairDevice, readBatteryLevel } from '../../lib/ble';
+import { BluetoothServiceType, pairDevice, readBatteryLevel, startBatteryLevelNotifications } from '../../lib/ble';
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble/cpp';
 import { startCyclingSpeedAndCadenceMeasurementNotifications } from '../../lib/ble/cscp';
 import { startHRMNotifications } from '../../lib/ble/hrm';
@@ -100,6 +100,8 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 	const [isPairing, setIsPairing] = useState(false);
 	// @ts-ignore
 	const [btDevice, setBtDevice] = useGlobalState(`btDevice_${props.sensorType}`);
+	// @ts-ignore
+	const [_GloblBatteryLevel, setGloblBatteryLevel] = useGlobalState(`batt_${props.sensorType}`);
 	let [info, setInfo] = useState<InfoMessage>(pairedWithMessage(btDevice));
 	const [batteryLevel, setBatteryLevel] = useState(-1);
 	const [sensorValue, setSensorValue] = useGlobalState(props.sensorType);
@@ -155,6 +157,7 @@ function Sensor(props: { children: any; sensorType: SensorType }) {
 						// Get battery level just once
 						try {
 							setBatteryLevel(await readBatteryLevel(server));
+							startBatteryLevelNotifications(server, setGloblBatteryLevel);
 						} catch (err) {
 							console.log(`Device ${device.name} doesn't support battery_level`);
 						}

@@ -10,10 +10,19 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { AlertColor } from '@mui/material/Alert';
-import { TrainerMeasurements } from '../lib/measurements';
 import { styled } from '@mui/material/styles';
-import { useGlobalState } from '../lib/global';
 import { useRouter } from 'next/router';
+import BatteryLevel from './BatteryLevel';
+import { GlobalState, sensorNames, SensorType, useGlobalState } from '../lib/global';
+import { TrainerMeasurements } from '../lib/measurements';
+
+
+type Notification = {
+	severity: AlertColor;
+	icon?: React.ReactNode;
+	permanent?: boolean; // can't be cleared with X, i.e. action is mandatory
+	text: string;
+};
 
 const PREFIX = 'Title';
 const classes = {
@@ -46,29 +55,51 @@ function BackButton({ disable, onClick }: { disable: boolean; onClick?: (e?: Rea
 	);
 }
 
-function getSmartTrainerWarns(smartTrainerStatus: null | TrainerMeasurements): [AlertColor, string][] {
-	const warns: [AlertColor, string][] = [];
+function getSmartTrainerWarns(smartTrainerStatus: null | TrainerMeasurements): Notification[] {
+	const warns: Notification[] = [];
 
 	const { calStatus } = smartTrainerStatus || ({ calStatus: {} } as TrainerMeasurements);
 	if (calStatus.powerCalRequired) {
-		warns.push(['warning', 'Trainer power calibration required']);
+		warns.push({ severity: 'warning', permanent: true, text: 'Trainer power calibration required' });
 	}
 	if (calStatus.resistanceCalRequired) {
-		warns.push(['warning', 'Trainer resistance calibration required']);
+		warns.push({ severity: 'warning', permanent: true, text: 'Trainer resistance calibration required' });
 	}
 	if (calStatus.userConfigRequired) {
-		warns.push(['warning', 'Trainer user configuration required']);
+		warns.push({ severity: 'warning', permanent: true, text: 'Trainer user configuration required' });
 	}
 
 	return warns;
 }
 
+const batteryPoweredSensors: SensorType[] = [
+	'cycling_cadence',
+	'cycling_power',
+	'cycling_speed',
+	'cycling_speed_and_cadence',
+	'heart_rate',
+	'smart_trainer',
+];
+
+function useBatteryLevelAlerts(): Notification[] {
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	const sensors: [ sensorType: string, battLevel: number ][] = batteryPoweredSensors.map((sensorType) => [sensorType, useGlobalState(`batt_${sensorType}` as keyof GlobalState)[0]]);
+
+	const getIcon = (l: number) => (<BatteryLevel batteryLevel={l}/>);
+	return sensors
+		.filter(([_, battLevel]) => battLevel >= 0 && battLevel <= 20)
+		.map(([sensorType, battLevel], i) => ({ severity: 'warning', icon:  getIcon(battLevel), text: `Low battery: ${sensorNames[sensorType]}` }));
+}
+
 function Notifications() {
 	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+	const [clearedNotifications, setClearedNotifications] = useState<string[]>([]);
 	const [smartTrainerStatus] = useGlobalState('smart_trainer');
-	const notifications: [AlertColor, string][] = [];
-
-	notifications.push(...getSmartTrainerWarns(smartTrainerStatus));
+	const batteryLevelAlerts = useBatteryLevelAlerts();
+	const notifications: Notification[] = [
+		...getSmartTrainerWarns(smartTrainerStatus),
+		...batteryLevelAlerts
+	].filter(({text}) => !clearedNotifications.includes(text));
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -105,9 +136,9 @@ function Notifications() {
 			>
 				<Stack sx={{ width: '100%' }} spacing={1}>
 					{notifications.length ? (
-						notifications.map(([s, v], i) => (
-							<Alert severity={s} key={`notification_${i}`}>
-								{v}
+						notifications.map((msg, i) => (
+							<Alert icon={msg.icon} severity={msg.severity} onClose={msg.permanent ? undefined : () => setClearedNotifications([...clearedNotifications, msg.text])} key={`notification_${i}`}>
+								{msg.text}
 							</Alert>
 						))
 					) : (
