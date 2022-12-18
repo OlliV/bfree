@@ -58,7 +58,17 @@ function BackButton({ disable, onClick }: { disable: boolean; onClick?: (e?: Rea
 function getSmartTrainerWarns(smartTrainerStatus: null | TrainerMeasurements): Notification[] {
 	const warns: Notification[] = [];
 
-	const { calStatus } = smartTrainerStatus || ({ calStatus: {} } as TrainerMeasurements);
+	if (!smartTrainerStatus) {
+		return [
+			{
+				severity: 'error',
+				permanent: true,
+				text: 'Smart trainer not connected',
+			},
+		];
+	}
+
+	const { calStatus } = smartTrainerStatus;
 	if (calStatus.powerCalRequired) {
 		warns.push({ severity: 'warning', permanent: true, text: 'Trainer power calibration required' });
 	}
