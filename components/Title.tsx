@@ -91,10 +91,9 @@ const batteryPoweredSensors: SensorType[] = [
 ];
 
 function useBatteryLevelAlerts(): Notification[] {
-	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const sensors: [sensorType: string, battLevel: number][] = batteryPoweredSensors.map((sensorType) => [
 		sensorType,
-		useGlobalState(`batt_${sensorType}` as keyof GlobalState)[0],
+		useGlobalState(`batt_${sensorType}` as keyof GlobalState)[0], // eslint-disable-line react-hooks/rules-of-hooks
 	]);
 
 	const getIcon = (l: number) => <BatteryLevel batteryLevel={l} />;
