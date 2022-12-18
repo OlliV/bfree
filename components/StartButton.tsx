@@ -1,40 +1,11 @@
-import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import Box from '@mui/material/Box';
 import IconStart from '@mui/icons-material/PlayArrow';
 import IconStartDisabled from '@mui/icons-material/PlayDisabled';
-import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useGlobalState } from '../lib/global';
 import WarningDialog from './WarningDialog';
-
-const PREFIX = 'StartButton';
-const classes = {
-	bottomActions: `${PREFIX}-bottomActions`,
-	button: `${PREFIX}-button`,
-	buttonDisabled: `${PREFIX}-buttonDisabled`,
-};
-
-const StyledBox = styled(Box)(({ theme }) => ({
-	[`& .${classes.bottomActions}`]: {
-		position: 'fixed',
-		left: 0,
-		bottom: 0,
-		width: '100vw',
-	},
-
-	[`& .${classes.button}`]: {
-		'&:hover': {
-			color: 'lightgrey',
-		},
-	},
-
-	[`& .${classes.buttonDisabled}`]: {
-		color: 'lightgrey',
-		cursor: 'not-allowed',
-	},
-}));
+import BottomNavi from './BottomNavi';
 
 export default function StartButton({ disabled, href }: { disabled?: boolean; href: string }) {
 	const router = useRouter();
@@ -62,24 +33,26 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 	};
 
 	return (
-		<StyledBox>
-			<BottomNavigation showLabels className={classes.bottomActions}>
-				<BottomNavigationAction
-					className={disabled ? classes.buttonDisabled : classes.button}
-					label="Start"
-					icon={disabled ? <IconStartDisabled /> : <IconStart />}
-					onClick={handleOnClick}
-				/>
-				<WarningDialog
-					title={'Continue without a smart trainer?'}
-					show={showWarning}
-					handleCancel={handleCancel}
-					handleContinue={handleContinue}
-				>
-					There is currently no connection to a smart trainer and therefore trainer control functions will not
-					function.
-				</WarningDialog>
-			</BottomNavigation>
-		</StyledBox>
+		<BottomNavi>
+			<BottomNavigationAction
+				sx={disabled ? {color: 'lightgrey', cursor: 'not-allowed'} : {
+					'&:hover': {
+						color: 'lightgrey',
+					},
+				}}
+				label="Start"
+				icon={disabled ? <IconStartDisabled /> : <IconStart />}
+				onClick={handleOnClick}
+			/>
+			<WarningDialog
+				title={'Continue without a smart trainer?'}
+				show={showWarning}
+				handleCancel={handleCancel}
+				handleContinue={handleContinue}
+			>
+				There is currently no connection to a smart trainer and therefore trainer control functions will not
+				function.
+			</WarningDialog>
+		</BottomNavi>
 	);
 }
