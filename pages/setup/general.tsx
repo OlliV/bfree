@@ -22,14 +22,13 @@ export default function SetupGeneral() {
 					<UnsignedConfigParam
 						title="Sampling Rate"
 						image="/images/cards/tic_tac.jpg"
-						label="Hz"
+						unit="Hz"
 						configName="samplingRate"
 					/>
 					<EnumConfigParam
 						title="Speed"
 						image="/images/cards/limit.jpg"
 						idPrefix="speed-unit"
-						label="unit"
 						items={speedUnits}
 						configName="unitSpeed"
 					/>
@@ -37,7 +36,6 @@ export default function SetupGeneral() {
 						title="Distance"
 						image="/images/cards/road.jpg"
 						idPrefix="distance-unit"
-						label="unit"
 						items={distanceUnits}
 						configName="unitDistance"
 					/>

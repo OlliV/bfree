@@ -1,10 +1,11 @@
 import Card from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
+import IconHelpOutline from '@mui/icons-material/HelpOutline';
+import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -12,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
-import IconHelpOutline from '@mui/icons-material/HelpOutline';
+import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { useGlobalState } from '../lib/global';
 import { isValidUnsigned } from '../lib/validation';
@@ -33,7 +34,7 @@ const makeStyles = ({ theme }: { theme: Theme }) => ({
 	[`& .${classes.setupCard}`]: {
 		maxWidth: '64vw',
 		minHeight: '6em',
-		maxHeight: '10em',
+		maxHeight: '20em',
 	},
 
 	[`& .${classes.media}`]: {
@@ -43,6 +44,7 @@ const makeStyles = ({ theme }: { theme: Theme }) => ({
 	[`& .${classes.form}`]: {
 		'& > *': {
 			width: '25ch',
+			marginBottom: '0.5em',
 		},
 	},
 });
@@ -50,7 +52,7 @@ const makeStyles = ({ theme }: { theme: Theme }) => ({
 export const StyledCard = styled(Card)(makeStyles);
 export const StyledParam = styled(Param)(makeStyles);
 
-function Info({ info }: { info: string }) {
+export function ParamInfo({ info }: { info: string }) {
 	return (
 		<Tooltip title={info}>
 			<IconHelpOutline color="primary" fontSize="small" />
@@ -61,11 +63,11 @@ function Info({ info }: { info: string }) {
 function Param({ title, image, info, children }: { title: string; image: string; info?: string; children: any }) {
 	return (
 		<Grid item xs="auto">
-			<StyledCard variant="outlined">
+			<StyledCard sx={{ minWidth: '30ex' }} variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2" sx={{ marginLeft: '1ex' }}>
 					{title}
-					{info ? <Info info={info} /> : ''}
+					{info ? <ParamInfo info={info} /> : ''}
 				</Typography>
 				<CardContent className={classes.setupCard}>{children}</CardContent>
 			</StyledCard>
@@ -77,11 +79,13 @@ export function UnsignedConfigParam({
 	title,
 	image,
 	label,
+	unit,
 	configName,
 }: {
 	title: string;
 	image: string;
-	label: string;
+	label?: string;
+	unit?: string;
 	configName: string;
 }) {
 	// @ts-ignore
@@ -107,6 +111,9 @@ export function UnsignedConfigParam({
 				onChange={handleChange}
 				id="outlined-basic"
 				label={label}
+				InputProps={{
+					endAdornment: unit ? (<InputAdornment position="end">{unit}</InputAdornment>) : undefined,
+				}}
 				variant="outlined"
 			/>
 		</StyledParam>
@@ -125,7 +132,7 @@ export function EnumConfigParam({
 	idPrefix?: string;
 	title: string;
 	image: string;
-	label: string;
+	label?: string;
 	helpLabel?: string;
 	items: [string, string][];
 	configName: string;

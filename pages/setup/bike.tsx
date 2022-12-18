@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
@@ -9,13 +10,12 @@ import { useState } from 'react';
 import Title from '../../components/Title';
 import MyHead from '../../components/MyHead';
 import { isValidUnsigned } from '../../lib/validation';
-import { classes, StyledParam } from '../../components/SetupComponents';
+import { classes, StyledParam, ParamInfo } from '../../components/SetupComponents';
 import { useGlobalState } from '../../lib/global';
 
-const bikeTypeInfo =
-	'Bike type is used to estimate the drag coefficient which is needed to calculate a realistic wind resistance.';
-const wheelCircumInfo = 'Wheel diameter is used for distance calculation.';
-const bikeWeightInfo = 'Bike weight is used to calculate the gravitational resistance when the slope control is used.';
+const bikeInfo = `Bike type is used to estimate the drag coefficient which is needed to calculate a realistic wind resistance.
+Wheel diameter is used for distance calculation.
+Bike weight is used to calculate the gravitational resistance when the slope control is used.`;
 
 function WheelCircumference() {
 	const [bike, setBike] = useGlobalState('bike');
@@ -35,18 +35,19 @@ function WheelCircumference() {
 	};
 
 	return (
-		<StyledParam title="Wheel Circumference" info={wheelCircumInfo} image="/images/cards/wheel.jpg">
-			<TextField
-				autoComplete="off"
-				className={classes.form}
-				value={tmp}
-				error={!isValidUnsigned(Number(tmp))}
-				onChange={handleChange}
-				id="outlined-basic"
-				label="mm"
-				variant="outlined"
-			/>
-		</StyledParam>
+		<TextField
+			autoComplete="off"
+			className={classes.form}
+			value={tmp}
+			error={!isValidUnsigned(Number(tmp))}
+			onChange={handleChange}
+			id="outlined-basic"
+			label="Wheel Circumference"
+			variant="outlined"
+			InputProps={{
+				endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+			}}
+		/>
 	);
 }
 
@@ -68,18 +69,19 @@ function BikeWeight() {
 	};
 
 	return (
-		<StyledParam title="Bike Weight" info={bikeWeightInfo} image="/images/cards/weight.jpg">
-			<TextField
-				autoComplete="off"
-				className={classes.form}
-				value={tmp}
-				error={!isValidUnsigned(Number(tmp))}
-				onChange={handleChange}
-				id="outlined-basic"
-				label="kg"
-				variant="outlined"
-			/>
-		</StyledParam>
+		<TextField
+			autoComplete="off"
+			className={classes.form}
+			value={tmp}
+			error={!isValidUnsigned(Number(tmp))}
+			onChange={handleChange}
+			id="outlined-basic"
+			label="Bike Weight"
+			variant="outlined"
+			InputProps={{
+				endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+			}}
+		/>
 	);
 }
 
@@ -94,16 +96,12 @@ function BikeType() {
 	};
 
 	return (
-		<StyledParam title="Bike Type" info={bikeTypeInfo} image="/images/cards/patent.jpg">
-			<FormControl className={classes.form}>
-				<Select variant="standard" value={bike.type} onChange={handleChange} defaultValue="road">
-					<MenuItem value="atb">ATB/MTB</MenuItem>
-					<MenuItem value="commuter">Commuter</MenuItem>
-					<MenuItem value="road">Road</MenuItem>
-					<MenuItem value="racing">Racing</MenuItem>
-				</Select>
-			</FormControl>
-		</StyledParam>
+		<Select variant="standard" label="Bike Type" value={bike.type} onChange={handleChange} defaultValue="road">
+			<MenuItem value="atb">ATB/MTB</MenuItem>
+			<MenuItem value="commuter">Commuter</MenuItem>
+			<MenuItem value="road">Road</MenuItem>
+			<MenuItem value="racing">Racing</MenuItem>
+		</Select>
 	);
 }
 
@@ -116,9 +114,13 @@ export default function SetupBike() {
 				<p>Setup the bike measurements.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
-					<WheelCircumference />
-					<BikeWeight />
-					<BikeType />
+					<StyledParam title="Bike Parameters" info={bikeInfo} image="/images/cards/patent.jpg">
+						<FormControl className={classes.form}>
+							<BikeType/>
+							<WheelCircumference/>
+							<BikeWeight/>
+						</FormControl>
+					</StyledParam>
 				</Grid>
 			</Box>
 		</Container>
