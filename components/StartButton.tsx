@@ -48,6 +48,7 @@ export default function StartButton({ disabled, href }: { disabled?: boolean; hr
 			e.preventDefault();
 			setShowWarning(true);
 		} else {
+			e.preventDefault();
 			router.push(href);
 		}
 	};
