@@ -142,7 +142,6 @@ function EditModal({
 							variant="outlined"
 						/>
 						<EditActionButtons
-							style={{ marginTop: 0 }}
 							onClickSave={onClickSave}
 							onClickDiscard={onClickDiscard}
 						/>

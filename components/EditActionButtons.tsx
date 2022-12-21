@@ -1,41 +1,31 @@
 import Container from '@mui/material/Container';
-import { styled } from '@mui/material/styles';
 import Fab from '@mui/material/Fab';
 import IconCancel from '@mui/icons-material/Cancel';
 import IconSave from '@mui/icons-material/Save';
 import IconTimeLine from '@mui/icons-material/Timeline';
 
-const PREFIX = 'EditActionButtons';
-const classes = {
-	actions: `${PREFIX}-actions`,
-};
-
-const StyledContainer = styled(Container)(({ theme }) => ({
-	[`&.${classes.actions}`]: {
-		'& > *': {
-			boxShadow: 'none',
-			margin: theme.spacing(1),
-		},
-		marginRight: '-2em',
-		marginTop: '-3.8em',
-		marginBottom: '1em',
-		textAlign: 'right',
-	},
-}));
-
 export default function EditActionButtons({
-	style,
 	onClickSave,
 	onClickDiscard,
 	onClickPreview,
 }: {
-	style?: any;
 	onClickSave?: (e: any) => void;
 	onClickDiscard?: (e: any) => void;
 	onClickPreview?: (e: any) => void;
 }) {
+	const actionsStyle = {
+		'> *': {
+			boxShadow: 'none',
+			margin: '2pt',
+			marginBottom: '1.5ex',
+			marginTop: '1.5ex',
+		},
+		marginBottom: '1em',
+		textAlign: 'right',
+	};
+
 	return (
-		<StyledContainer style={style || {}} className={classes.actions}>
+		<Container sx={actionsStyle}>
 			{onClickSave ? (
 				<Fab size="small" color="primary" aria-label="save" onClick={onClickSave}>
 					<IconSave />
@@ -58,6 +48,6 @@ export default function EditActionButtons({
 			) : (
 				''
 			)}
-		</StyledContainer>
+		</Container>
 	);
 }
