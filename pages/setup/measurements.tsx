@@ -19,29 +19,39 @@ import {
 	cadenceSourceTypes,
 	powerSourceTypes,
 	speedSourceTypes,
-	useGlobalState
+	useGlobalState,
 } from '../../lib/global';
 import SensorValue from '../../components/SensorValue';
 
 // Config name mapping to plain sensor types.
 // This allows us to show just the expected value using <SensorValue>.
 const configName2sensorType: { [index: string]: SensorType } = {
-	'speedSources': 'cycling_speed',
-	'cadenceSources': 'cycling_cadence',
-	'powerSources': 'cycling_power',
+	speedSources: 'cycling_speed',
+	cadenceSources: 'cycling_cadence',
+	powerSources: 'cycling_power',
 };
 
-function SelectedSensorValue({ configName, selectedSensor }: { configName: keyof typeof configName2sensorType, selectedSensor: SensorType}) {
+function SelectedSensorValue({
+	configName,
+	selectedSensor,
+}: {
+	configName: keyof typeof configName2sensorType;
+	selectedSensor: SensorType;
+}) {
 	const [sensorValue] = useGlobalState(selectedSensor) || [];
 
-	return (
-	<SensorValue
-		sensorType={configName2sensorType[configName]}
-		sensorValue={sensorValue}
-	/>);
+	return <SensorValue sensorType={configName2sensorType[configName]} sensorValue={sensorValue} />;
 }
 
-function ConfigureDialog({ title, configName, sourceTypes }: { title:string, configName: keyof GlobalState, sourceTypes: SensorSourceType[] }) {
+function ConfigureDialog({
+	title,
+	configName,
+	sourceTypes,
+}: {
+	title: string;
+	configName: keyof GlobalState;
+	sourceTypes: SensorSourceType[];
+}) {
 	const [right, setRight] = useGlobalState(configName);
 	const [left, setLeft] = useState(sourceTypes.filter((a) => !right.find((b) => a.id === b.id)));
 
@@ -63,23 +73,40 @@ function ConfigureDialog({ title, configName, sourceTypes }: { title:string, con
 	);
 }
 
-function DaqSourceCard({ title, image, configName, sourceTypes }: { title: string, image: string, configName: keyof GlobalState, sourceTypes: SensorSourceType[] }) {
+function DaqSourceCard({
+	title,
+	image,
+	configName,
+	sourceTypes,
+}: {
+	title: string;
+	image: string;
+	configName: keyof GlobalState;
+	sourceTypes: SensorSourceType[];
+}) {
 	const [selectedSources] = useGlobalState(configName);
 	const primarySource: SensorSourceType | null = selectedSources[0] || null;
 
 	return (
 		<Grid item xs="auto">
-			<StyledCard sx={{ height: '42ex', }} variant="outlined">
+			<StyledCard sx={{ height: '42ex' }} variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2" sx={{ marginLeft: '1ex' }}>
 					{title}
 				</Typography>
 				<CardContent>
 					<Typography gutterBottom sx={{ width: '10em', height: '12ex' }}>
-						<b>Primary source</b><br />
-						{primarySource?.name || 'none'}<br/>
-						<b>Current reading</b><br />
-						{primarySource ? (<SelectedSensorValue configName={configName} selectedSensor={primarySource.id || null} />) : '--'}
+						<b>Primary source</b>
+						<br />
+						{primarySource?.name || 'none'}
+						<br />
+						<b>Current reading</b>
+						<br />
+						{primarySource ? (
+							<SelectedSensorValue configName={configName} selectedSensor={primarySource.id || null} />
+						) : (
+							'--'
+						)}
 					</Typography>
 				</CardContent>
 				<CardActions>

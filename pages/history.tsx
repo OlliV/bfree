@@ -141,10 +141,7 @@ function EditModal({
 							onChange={handleNotesChange}
 							variant="outlined"
 						/>
-						<EditActionButtons
-							onClickSave={onClickSave}
-							onClickDiscard={onClickDiscard}
-						/>
+						<EditActionButtons onClickSave={onClickSave} onClickDiscard={onClickDiscard} />
 					</form>
 				</Grid>
 			) : (
@@ -283,20 +280,29 @@ export default function History() {
 				</Grid>
 			</Box>
 			<BottomNavi>
-			<BottomNavigationAction
-				sx={
-					selectionCount === 0
-						? { color: 'lightgrey', cursor: 'not-allowed' }
-						: {
-								'&:hover': {
-									color: 'lightgrey',
-								},
-						  }
-				}
-				label="Delete"
-				icon={<Badge badgeContent={selectionCount} color="error"><IconDelete/></Badge>}
-				onClick={(e) => { e.preventDefault(); {if (selectionCount > 0) massDeletion() }}}
-			/>
+				<BottomNavigationAction
+					sx={
+						selectionCount === 0
+							? { color: 'lightgrey', cursor: 'not-allowed' }
+							: {
+									'&:hover': {
+										color: 'lightgrey',
+									},
+							  }
+					}
+					label="Delete"
+					icon={
+						<Badge badgeContent={selectionCount} color="error">
+							<IconDelete />
+						</Badge>
+					}
+					onClick={(e) => {
+						e.preventDefault();
+						{
+							if (selectionCount > 0) massDeletion();
+						}
+					}}
+				/>
 			</BottomNavi>
 		</StyledContainer>
 	);
