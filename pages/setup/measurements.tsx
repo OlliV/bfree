@@ -71,7 +71,7 @@ function DaqSourceCard({ title, image, configName, sourceTypes }: { title: strin
 		<Grid item xs="auto">
 			<StyledCard sx={{ height: '42ex', }} variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
-				<Typography gutterBottom variant="h5" component="h2">
+				<Typography gutterBottom variant="h5" component="h2" sx={{ marginLeft: '1ex' }}>
 					{title}
 				</Typography>
 				<CardContent>
