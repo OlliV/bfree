@@ -12,41 +12,78 @@ import Title from '../../components/Title';
 import { classes, StyledCard } from '../../components/SetupComponents';
 import PriorityList from '../../components/PriorityList';
 import SetupDialog from '../../components/SetupDialog';
-import { cadenceSourceTypes, speedSourceTypes, powerSourceTypes, useGlobalState } from '../../lib/global';
+import {
+	GlobalState,
+	SensorSourceType,
+	SensorType,
+	cadenceSourceTypes,
+	powerSourceTypes,
+	speedSourceTypes,
+	useGlobalState
+} from '../../lib/global';
+import SensorValue from '../../components/SensorValue';
 
-function DaqSourceCard({ title, image, configName, sourceTypes }) {
+// Config name mapping to plain sensor types.
+// This allows us to show just the expected value using <SensorValue>.
+const configName2sensorType: { [index: string]: SensorType } = {
+	'speedSources': 'cycling_speed',
+	'cadenceSources': 'cycling_cadence',
+	'powerSources': 'cycling_power',
+};
+
+function SelectedSensorValue({ configName, selectedSensor }: { configName: keyof typeof configName2sensorType, selectedSensor: SensorType}) {
+	const [sensorValue] = useGlobalState(selectedSensor) || [];
+
+	return (
+	<SensorValue
+		sensorType={configName2sensorType[configName]}
+		sensorValue={sensorValue}
+	/>);
+}
+
+function ConfigureDialog({ title, configName, sourceTypes }: { title:string, configName: keyof GlobalState, sourceTypes: SensorSourceType[] }) {
 	const [right, setRight] = useGlobalState(configName);
 	const [left, setLeft] = useState(sourceTypes.filter((a) => !right.find((b) => a.id === b.id)));
 
-	const handleLeftChange = (v) => setLeft(v);
-	const handleRightChange = (v) => setRight(v);
+	const handleLeftChange = (v: SensorSourceType[]) => setLeft(v);
+	const handleRightChange = (v: SensorSourceType[]) => setRight(v);
+
+	return (
+		<SetupDialog btnText="Configure" title={title}>
+			<DialogContentText sx={{ width: '40ch' }}>
+				The sensors on the right side will be used for measurements, prioritized in top-down order.
+			</DialogContentText>
+			<PriorityList
+				leftList={left}
+				rightList={right}
+				handleLeftChange={handleLeftChange}
+				handleRightChange={handleRightChange}
+			/>
+		</SetupDialog>
+	);
+}
+
+function DaqSourceCard({ title, image, configName, sourceTypes }: { title: string, image: string, configName: keyof GlobalState, sourceTypes: SensorSourceType[] }) {
+	const [selectedSources] = useGlobalState(configName);
+	const primarySource: SensorSourceType | null = selectedSources[0] || null;
 
 	return (
 		<Grid item xs="auto">
-			<StyledCard variant="outlined">
+			<StyledCard sx={{ height: '42ex', }} variant="outlined">
 				<CardMedia className={classes.media} image={image} title="Filler image" />
 				<Typography gutterBottom variant="h5" component="h2">
 					{title}
 				</Typography>
-				<CardContent sx={{ height: '12ex' }}>
-					<Typography gutterBottom sx={{ width: '10em' }}>
-						<b>Primary source</b>
-						<br />
-						{right.length > 0 ? right[0].name : 'None'}
+				<CardContent>
+					<Typography gutterBottom sx={{ width: '10em', height: '12ex' }}>
+						<b>Primary source</b><br />
+						{primarySource?.name || 'none'}<br/>
+						<b>Current reading</b><br />
+						{primarySource ? (<SelectedSensorValue configName={configName} selectedSensor={primarySource.id || null} />) : '--'}
 					</Typography>
 				</CardContent>
 				<CardActions>
-					<SetupDialog btnText="Configure" title={title}>
-						<DialogContentText>
-							The sensors on the right side will be used for measurements, prioritized in top-down order.
-						</DialogContentText>
-						<PriorityList
-							leftList={left}
-							rightList={right}
-							handleLeftChange={handleLeftChange}
-							handleRightChange={handleRightChange}
-						/>
-					</SetupDialog>
+					<ConfigureDialog title={title} configName={configName} sourceTypes={sourceTypes} />
 				</CardActions>
 			</StyledCard>
 		</Grid>
@@ -59,7 +96,7 @@ export default function SetupMeasurements() {
 			<MyHead title="Measurements" />
 			<Box>
 				<Title href="/setup">Measurements</Title>
-				<p>Select measurement sources for recording.</p>
+				<p>Select measurement sources for recording rides.</p>
 
 				<Grid container direction="row" alignItems="center" spacing={2}>
 					<DaqSourceCard

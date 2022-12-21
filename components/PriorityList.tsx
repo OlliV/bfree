@@ -79,7 +79,7 @@ export default function PriorityList({
 	};
 
 	const customList = (items: ListItem[]) => (
-		<Paper elevation={1} sx={{ width: '25ch', height: '15em', overflow: 'auto' }}>
+		<Paper elevation={2} sx={{ width: '25ch', height: '15em', overflow: 'auto' }}>
 			<List dense component="div" role="list">
 				{items.map((value) => {
 					const labelId = `${value.id}-label`;
@@ -104,7 +104,7 @@ export default function PriorityList({
 	);
 
 	return (
-		<Grid container spacing={2} alignItems="center" sx={{ margin: 'auto' }}>
+		<Grid container spacing={2} sx={{ marginTop: '1ex' }}>
 			<Grid item>{customList(leftList)}</Grid>
 			<Grid item>
 				<Grid container direction="column" alignItems="center">
