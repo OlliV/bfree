@@ -1,14 +1,15 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import MyHead from '../../components/MyHead';
 import TextField from '@mui/material/TextField';
-import Title from '../../components/Title';
+import MyHead from '../../components/MyHead';
 import SxPropsTheme from '../../lib/SxPropsTheme';
-import { isValidUnsigned } from '../../lib/validation';
-import { useState } from 'react';
+import Title from '../../components/Title';
+import useUserConfigUpdater from '../../lib/useUserConfigUpdater';
 import { classes, StyledParam } from '../../components/SetupComponents';
+import { isValidUnsigned } from '../../lib/validation';
 import { useGlobalState } from '../../lib/global';
+import { useState } from 'react';
 
 const weightInfo = 'User weight is used to calculate the gravitational resistance when the slope control is used.';
 const ftpInfo = 'FTP is used by predefined workouts to generate the optimal exercise for every rider.';
@@ -148,6 +149,8 @@ function HeartRate() {
 }
 
 export default function SetupRider() {
+	useUserConfigUpdater();
+
 	return (
 		<Container maxWidth="md">
 			<MyHead title="Rider" />

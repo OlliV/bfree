@@ -7,10 +7,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import Title from '../../components/Title';
 import MyHead from '../../components/MyHead';
-import { isValidUnsigned } from '../../lib/validation';
+import Title from '../../components/Title';
+import useUserConfigUpdater from '../../lib/useUserConfigUpdater';
 import { classes, StyledParam, ParamInfo } from '../../components/SetupComponents';
+import { isValidUnsigned } from '../../lib/validation';
 import { useGlobalState } from '../../lib/global';
 
 const bikeInfo = `Bike type is used to estimate the drag coefficient which is needed to calculate a realistic wind resistance.
@@ -106,6 +107,8 @@ function BikeType() {
 }
 
 export default function SetupBike() {
+	useUserConfigUpdater();
+
 	return (
 		<Container maxWidth="md">
 			<MyHead title="Bike" />
