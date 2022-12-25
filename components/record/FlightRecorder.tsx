@@ -20,6 +20,8 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 				l.lapSplit(startTime, 'Manual'); // Initial lap
 				setGlobalState('elapsedTime', 0);
 				setGlobalState('elapsedLapTime', 0);
+				setGlobalState('rideDistance', 0);
+				setGlobalState('lapDistance', 0);
 				setLogger(l);
 			} catch (err) {
 				// TODO Show an error to the user
@@ -57,6 +59,7 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 					const power = getCyclingPowerMeasurement();
 					const speed = getCyclingSpeedMeasurement();
 					const heartRate = getHeartRateMeasurement();
+					let lapDistance = getGlobalState('lapDistance');
 					const { slope } = getGlobalState('control_params');
 					//const smartTrainer = getGlobalState('smart_trainer');
 
@@ -80,9 +83,11 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 							(speed.cumulativeWheelRevolutions - wheelRevolutionsOffset) *
 							(bikeParams.wheelCircumference / 1000);
 
+						const distDiff = calculatedDistance - prevCalculatedDistance;
+						lapDistance += distDiff;
+
 						// Calculate the elevation difference.
 						if (slope !== undefined) {
-							const distDiff = calculatedDistance - prevCalculatedDistance;
 							const elevDiff = (slope / 100) * distDiff;
 							altitude += elevDiff;
 						}
@@ -109,8 +114,9 @@ export default function FlightRecorder({ startTime }: { startTime: number }) {
 					offset = now;
 					setGlobalState('elapsedTime', elapsedTime);
 					setGlobalState('elapsedLapTime', elapsedLapTime);
-					// TODO Support lap distance
+
 					setGlobalState('rideDistance', calculatedDistance);
+					setGlobalState('lapDistance', lapDistance);
 
 					console.log(
 						'tick! ' +

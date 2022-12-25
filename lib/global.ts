@@ -132,6 +132,7 @@ export type GlobalState = {
 	elapsedTime: number;
 	elapsedLapTime: number;
 	rideDistance: number;
+	lapDistance: number;
 };
 
 const LOCAL_STORAGE_KEY = 'settings';
@@ -186,6 +187,7 @@ const initialState: GlobalState = {
 	elapsedTime: 0,
 	elapsedLapTime: 0,
 	rideDistance: 0,
+	lapDistance: 0,
 	// Load config from local storage
 	...(typeof window === 'undefined' ? {} : JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))),
 };

@@ -81,6 +81,7 @@ export default function RideResults() {
 			setGlobalState('elapsedTime', 0);
 			setGlobalState('elapsedLapTime', 0);
 			setGlobalState('rideDistance', 0);
+			setGlobalState('lapDistance', 0);
 		};
 	}, []);
 

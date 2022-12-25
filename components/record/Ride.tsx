@@ -20,6 +20,7 @@ function InfoDesktop() {
 	const [elapsedTime] = useGlobalState('elapsedTime');
 	const [elapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideDistance] = useGlobalState('rideDistance');
+	const [lapDistance] = useGlobalState('lapDistance');
 
 	return (
 		<Container>
@@ -29,7 +30,7 @@ function InfoDesktop() {
 			<br />
 			<b>Ride distance:</b> <Box sx={valueStyle}>{smartDistanceUnitFormat(distanceUnit, rideDistance)}</Box>
 			<br />
-			<b>Lap distance:</b> <Box sx={valueStyle}>--</Box>
+			<b>Lap distance:</b> <Box sx={valueStyle}>{smartDistanceUnitFormat(distanceUnit, lapDistance)}</Box>
 		</Container>
 	);
 }
@@ -39,6 +40,7 @@ function InfoMobile() {
 	const [elapsedTime] = useGlobalState('elapsedTime');
 	const [elapsedLapTime] = useGlobalState('elapsedLapTime');
 	const [rideDistance] = useGlobalState('rideDistance');
+	const [lapDistance] = useGlobalState('lapDistance');
 
 	return (
 		<Container>
@@ -52,7 +54,7 @@ function InfoMobile() {
 			<br />
 			<Box sx={valueStyle}>{getElapsedTimeStr(elapsedLapTime)}</Box>
 			<br />
-			<Box sx={valueStyle}>--</Box>
+			<Box sx={valueStyle}>{smartDistanceUnitFormat(distanceUnit, lapDistance)}</Box>
 		</Container>
 	);
 }
