@@ -5,7 +5,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useEffect, useMemo } from 'react';
 import ExportCard from '../../components/ExportCard';
-import InfoCard from '../../components/InfoCard';
 import MyHead from '../../components/MyHead';
 import Title from '../../components/Title';
 import downloadBlob from '../../lib/download_blob';
@@ -94,19 +93,13 @@ export default function RideResults() {
 				<p>Training ride results.</p>
 
 				<Grid container direction={isBreakpoint ? 'row' : 'column'} alignItems="center" spacing={2}>
-					<InfoCard
+					<ExportCard
 						defaultName={defaultName}
 						onChangeName={handleNameChange}
 						defaultNotes={defaultNotes}
 						onChangeNotes={handleNotesChange}
-					/>
-					<ExportCard
-						title="Export Data"
-						cardContentClassName={classes.exportCard}
 						onClickTCX={handleTCXExport}
-					>
-						Here you can download the activity log as a file for importing to other services.
-					</ExportCard>
+					/>
 				</Grid>
 			</Box>
 		</StyledContainer>
