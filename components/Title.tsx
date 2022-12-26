@@ -23,34 +23,24 @@ type Notification = {
 	text: string;
 };
 
-const PREFIX = 'Title';
-const classes = {
-	arrow: `${PREFIX}-arrow`,
-	arrowDisabled: `${PREFIX}-arrowDisabled`,
+const sxArrowEnabled = {
+	'&:hover': {
+		color: 'grey',
+		cursor: 'pointer',
+	},
 };
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
-	[`& .${classes.arrow}`]: {
-		'&:hover': {
-			color: 'grey',
-			cursor: 'pointer',
-		},
-	},
-
-	[`& .${classes.arrowDisabled}`]: {
-		visibility: 'hidden',
-	},
-}));
+const sxArrowDisabled = {
+	visibility: 'hidden',
+};
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 function BackButton({ disable, onClick }: { disable: boolean; onClick?: (e?: React.MouseEvent<HTMLElement>) => void }) {
 	return (
-		<StyledTypography>
-			<span className={disable ? classes.arrowDisabled : classes.arrow} onClick={onClick}>
-				&larr; &nbsp;
-			</span>
-		</StyledTypography>
+		<Typography sx={disable ? sxArrowDisabled : sxArrowEnabled} onClick={onClick}>
+			&larr; &nbsp;
+		</Typography>
 	);
 }
 
@@ -210,7 +200,6 @@ export default function Title({
 					</Box>
 				</Toolbar>
 			</AppBar>
-			<Offset />
 		</Box>
 	);
 }
