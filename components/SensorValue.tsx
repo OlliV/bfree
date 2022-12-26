@@ -1,6 +1,4 @@
 import Box from '@mui/material/Box';
-import IconReportProblem from '@mui/icons-material/ReportProblem';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { SensorType, useGlobalState } from '../lib/global';
 import { speedUnitConv } from '../lib/units';
@@ -51,16 +49,6 @@ export function SensorValueCS({ sensorValue, className }) {
 
 export function SensorValueHRM({ sensorValue, className }) {
 	return <Typography className={className}>{sensorValue ? sensorValue.heartRate : '--'}&nbsp;BPM</Typography>;
-}
-
-export function SensorWarn({ text }: { text: string }) {
-	return (
-		<Box sx={{ position: 'absolute', width: '1em', right: 0.5, zIndex: 10 }}>
-			<Tooltip title={text} describeChild={true} enterTouchDelay={10}>
-				<IconReportProblem />
-			</Tooltip>
-		</Box>
-	);
 }
 
 export function SensorValueSmartTrainer({ sensorValue, className }) {
