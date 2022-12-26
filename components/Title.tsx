@@ -200,6 +200,7 @@ export default function Title({
 					</Box>
 				</Toolbar>
 			</AppBar>
+			<Offset />
 		</Box>
 	);
 }
