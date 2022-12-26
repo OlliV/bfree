@@ -1,15 +1,16 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { CppMeasurements, CscMeasurements, HrmMeasurements } from '../lib/measurements';
 import { SensorType, useGlobalState } from '../lib/global';
 import { speedUnitConv } from '../lib/units';
 
-export function SensorValueCC({ sensorValue, className }) {
+export function SensorValueCC({ sensorValue, className }: { sensorValue: CscMeasurements | null; className: string }) {
 	const cadence = sensorValue && sensorValue.cadence !== null ? Math.round(sensorValue.cadence) : '--';
 
 	return <Typography className={className}>{cadence}&nbsp;RPM</Typography>;
 }
 
-export function SensorValueCP({ sensorValue, className }) {
+export function SensorValueCP({ sensorValue, className }: { sensorValue: CppMeasurements | null; className: string }) {
 	return (
 		<Typography className={className}>
 			{sensorValue && sensorValue.power !== null ? sensorValue.power : '--'}&nbsp;W
@@ -19,7 +20,7 @@ export function SensorValueCP({ sensorValue, className }) {
 	);
 }
 
-export function SensorValueCSC({ sensorValue, className }) {
+export function SensorValueCSC({ sensorValue, className }: { sensorValue: CscMeasurements | null; className: string }) {
 	const [unitSpeed] = useGlobalState('unitSpeed');
 
 	const speedUnit = speedUnitConv[unitSpeed];
@@ -35,7 +36,7 @@ export function SensorValueCSC({ sensorValue, className }) {
 	);
 }
 
-export function SensorValueCS({ sensorValue, className }) {
+export function SensorValueCS({ sensorValue, className }: { sensorValue: CscMeasurements | null; className: string }) {
 	const [unitSpeed] = useGlobalState('unitSpeed');
 	const speedUnit = speedUnitConv[unitSpeed];
 	const speed = sensorValue ? speedUnit.convTo(sensorValue.speed).toFixed(1) : '--';
@@ -47,7 +48,7 @@ export function SensorValueCS({ sensorValue, className }) {
 	);
 }
 
-export function SensorValueHRM({ sensorValue, className }) {
+export function SensorValueHRM({ sensorValue, className }: { sensorValue: HrmMeasurements | null; className: string }) {
 	return <Typography className={className}>{sensorValue ? sensorValue.heartRate : '--'}&nbsp;BPM</Typography>;
 }
 

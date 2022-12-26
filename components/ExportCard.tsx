@@ -14,10 +14,10 @@ export default function ExportCard({
 	onChangeNotes,
 	onClickTCX,
 }: {
-	defaultName: string,
-	onChangeName: OutlinedInputProps['onChange'],
-	defaultNotes: string,
-	onChangeNotes: OutlinedInputProps['onChange'],
+	defaultName: string;
+	onChangeName: OutlinedInputProps['onChange'];
+	defaultNotes: string;
+	onChangeNotes: OutlinedInputProps['onChange'];
 	onClickTCX: () => void;
 }) {
 	return (

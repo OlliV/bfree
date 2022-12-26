@@ -8,7 +8,7 @@ export default function MenuCard({ title, href, children }: { title: string; hre
 	return (
 		<Grid item xs={12}>
 			<Link href={href || '/'}>
-				<Card variant="outlined" sx={{ '&:hover': {  backgroundColor: 'lightgrey' } }}>
+				<Card variant="outlined" sx={{ '&:hover': { backgroundColor: 'lightgrey' } }}>
 					<CardContent>
 						<Typography gutterBottom variant="h5" component="h2">
 							{title}&nbsp;&rarr;

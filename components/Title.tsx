@@ -99,7 +99,11 @@ function useBatteryLevelAlerts(): Notification[] {
 
 function useHeartRateAlerts() {
 	const meas = useHeartRateMeasurement();
-	const [{ heartRate: { max: maxHeartRate }}] = useGlobalState('rider');
+	const [
+		{
+			heartRate: { max: maxHeartRate },
+		},
+	] = useGlobalState('rider');
 	const alerts: Notification[] = [];
 
 	if (meas) {
@@ -127,15 +131,24 @@ function useNotifications(): [Notification[], (notification: Notification) => vo
 	const [smartTrainerStatus] = useGlobalState('smart_trainer');
 	const batteryLevelAlerts = useBatteryLevelAlerts();
 	const heartRateAlerts = useHeartRateAlerts();
-	const notifications: Notification[] = [...getSmartTrainerWarns(smartTrainerStatus), ...batteryLevelAlerts, ...heartRateAlerts].filter(
-		({ text }) => !clearedNotifications.includes(text)
-	);
-	const clearNotification = (notification: Notification) => setClearedNotifications([...clearedNotifications, notification.text]);
+	const notifications: Notification[] = [
+		...getSmartTrainerWarns(smartTrainerStatus),
+		...batteryLevelAlerts,
+		...heartRateAlerts,
+	].filter(({ text }) => !clearedNotifications.includes(text));
+	const clearNotification = (notification: Notification) =>
+		setClearedNotifications([...clearedNotifications, notification.text]);
 
 	return [notifications, clearNotification];
 }
 
-function Notifications({ notifications, clearNotification }: { notifications: Notification[], clearNotification: (notifications: Notification) => void }) {
+function Notifications({
+	notifications,
+	clearNotification,
+}: {
+	notifications: Notification[];
+	clearNotification: (notifications: Notification) => void;
+}) {
 	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -177,11 +190,7 @@ function Notifications({ notifications, clearNotification }: { notifications: No
 							<Alert
 								icon={msg.icon}
 								severity={msg.severity}
-								onClose={
-									msg.permanent
-										? undefined
-										: () => clearNotification(msg)
-								}
+								onClose={msg.permanent ? undefined : () => clearNotification(msg)}
 								key={`notification_${i}`}
 							>
 								{msg.text}
