@@ -14,7 +14,7 @@ import { Measurement, CscMeasurements, HrmMeasurements, useMeasurementByType } f
 import SxPropsTheme from '../../lib/SxPropsTheme';
 import { ReactElement, useState, useEffect, useMemo } from 'react';
 import { UnitConv, speedUnitConv } from '../../lib/units';
-import { useGlobalState } from '../../lib/global';
+import { getGlobalState, useGlobalState } from '../../lib/global';
 
 const PREFIX = 'MeasurementCard';
 
@@ -115,6 +115,7 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 		[classes, type, speedUnit]
 	);
 	const m = useMeasurementByType(type);
+	const limitMax = useGlobalState('rider')[0].heartRate.max; // TODO Avoid having this for every meas
 	const { value, unit } = fn(m);
 	const [{ avg, max }, setAgg] = useState({ avg: 0, max: NaN, n: 0 });
 
@@ -144,7 +145,21 @@ export default function MeasurementCard({ type, ribbonColor }: { type: Measureme
 
 	return (
 		<StyledGrid item xs={4}>
-			<Card variant="outlined">
+			<Card
+				variant="outlined"
+				sx={
+					type === 'heart_rate' && value > limitMax // TODO Could be more generic
+						? {
+								animation: 'blinker 1s linear infinite',
+								'@keyframes blinker': {
+									'50%': {
+										backgroundColor: '#ffaeae', // TODO ribbonColor should be passed as a string
+									},
+								},
+						  }
+						: undefined
+				}
+			>
 				<CardHeader className={`${classes.cardHeader} ${ribbonColor || ''}`} />
 				<CardContent className={classes.card}>
 					<Typography gutterBottom variant="h5" component="h2">
