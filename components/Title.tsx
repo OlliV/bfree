@@ -3,6 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
+import IconHeart from '@mui/icons-material/Favorite';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Popover from '@mui/material/Popover';
 import React, { useState } from 'react';
@@ -14,7 +15,7 @@ import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import BatteryLevel from './BatteryLevel';
 import { GlobalState, sensorNames, SensorType, useGlobalState } from '../lib/global';
-import { TrainerMeasurements } from '../lib/measurements';
+import { TrainerMeasurements, useHeartRateMeasurement } from '../lib/measurements';
 
 type Notification = {
 	severity: AlertColor;
@@ -96,14 +97,46 @@ function useBatteryLevelAlerts(): Notification[] {
 		}));
 }
 
-function Notifications() {
-	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+function useHeartRateAlerts() {
+	const meas = useHeartRateMeasurement();
+	const [{ heartRate: { max: maxHeartRate }}] = useGlobalState('rider');
+	const alerts: Notification[] = [];
+
+	if (meas) {
+		if (!meas.contactDetected) {
+			alerts.push({
+				severity: 'error',
+				icon: <IconHeart />,
+				text: 'No contact detected',
+			});
+		}
+		if (meas.heartRate > maxHeartRate) {
+			alerts.push({
+				severity: 'warning',
+				icon: <IconHeart />,
+				text: 'Set max heart rate exceeded',
+			});
+		}
+	}
+
+	return alerts;
+}
+
+function useNotifications(): [Notification[], (notification: Notification) => void] {
 	const [clearedNotifications, setClearedNotifications] = useState<string[]>([]);
 	const [smartTrainerStatus] = useGlobalState('smart_trainer');
 	const batteryLevelAlerts = useBatteryLevelAlerts();
-	const notifications: Notification[] = [...getSmartTrainerWarns(smartTrainerStatus), ...batteryLevelAlerts].filter(
+	const heartRateAlerts = useHeartRateAlerts();
+	const notifications: Notification[] = [...getSmartTrainerWarns(smartTrainerStatus), ...batteryLevelAlerts, ...heartRateAlerts].filter(
 		({ text }) => !clearedNotifications.includes(text)
 	);
+	const clearNotification = (notification: Notification) => setClearedNotifications([...clearedNotifications, notification.text]);
+
+	return [notifications, clearNotification];
+}
+
+function Notifications({ notifications, clearNotification }: { notifications: Notification[], clearNotification: (notifications: Notification) => void }) {
+	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -147,7 +180,7 @@ function Notifications() {
 								onClose={
 									msg.permanent
 										? undefined
-										: () => setClearedNotifications([...clearedNotifications, msg.text])
+										: () => clearNotification(msg)
 								}
 								key={`notification_${i}`}
 							>
@@ -175,6 +208,7 @@ export default function Title({
 	children: any;
 }) {
 	const router = useRouter();
+	const [notifications, clearNotification] = useNotifications();
 
 	const goBack = (e: React.MouseEvent<HTMLElement>) => {
 		if (disableBack) {
@@ -196,7 +230,7 @@ export default function Title({
 					</Typography>
 					<Box sx={{ flexGrow: 1 }} />
 					<Box>
-						<Notifications />
+						<Notifications notifications={notifications} clearNotification={clearNotification} />
 					</Box>
 				</Toolbar>
 			</AppBar>
