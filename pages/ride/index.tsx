@@ -20,6 +20,9 @@ export default function Ride() {
 					<MenuCard title="Workout" href="/ride/workout">
 						Predefined workout profiles.
 					</MenuCard>
+					<MenuCard title="Map Ride" href="/ride/map">
+						Ride along a route on a map.
+					</MenuCard>
 					<MenuCard title="Virtual Ride" href="/ride/virtual">
 						Virtual ride with a recorded profile and video.
 					</MenuCard>
