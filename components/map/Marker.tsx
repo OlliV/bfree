@@ -2,8 +2,8 @@
 import L from 'leaflet';
 import { Marker, Popup } from 'react-leaflet';
 import { useEffect } from 'react';
-import MarkerIcon from '../node_modules/leaflet/dist/images/marker-icon.png';
-import MarkerShadow from '../node_modules/leaflet/dist/images/marker-shadow.png';
+import MarkerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png';
+import MarkerShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png';
 
 export default function MapMarker({ map, position }) {
 	useEffect(() => {
