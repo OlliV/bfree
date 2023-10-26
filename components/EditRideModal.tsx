@@ -56,10 +56,10 @@ export default function EditModal({
 							onChange={handleNameChange}
 							sx={{
 								width: '40ch',
-								pb: '2.5em'
+								pb: '2.5em',
 							}}
 						/>
-						<br/>
+						<br />
 						<TextField
 							id="act-notes"
 							label="Notes"
@@ -70,7 +70,7 @@ export default function EditModal({
 							variant="outlined"
 							fullWidth
 							sx={{
-								pb: '2.5em'
+								pb: '2.5em',
 							}}
 						/>
 						<EditActionButtons onClickSave={onClickSave} onClickDiscard={onClickDiscard} />
