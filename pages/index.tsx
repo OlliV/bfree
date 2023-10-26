@@ -47,7 +47,7 @@ export default function Home() {
 				display="flex"
 				justifyContent="center"
 			>
-				<b>Bfree</b>&nbsp;2022
+				<b>Bfree</b>&nbsp;2023
 			</Box>
 		</Container>
 	);
