@@ -16,7 +16,7 @@ export default function EditActionButtons({
 	const actionsStyle = {
 		'> *': {
 			boxShadow: 'none',
-			margin: '2pt',
+			margin: '3pt',
 			marginBottom: '1.5ex',
 			marginTop: '1.5ex',
 		},

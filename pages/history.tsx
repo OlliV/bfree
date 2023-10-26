@@ -15,7 +15,6 @@ import IconDownload from '@mui/icons-material/GetApp';
 import IconMoreVert from '@mui/icons-material/MoreVert';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { red } from '@mui/material/colors';
@@ -24,11 +23,10 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import BottomNavi from '../components/BottomNavi';
 import MyHead from '../components/MyHead';
-import MyModal from '../components/MyModal';
 import Title from '../components/Title';
-import EditActionButtons from '../components/EditActionButtons';
+import EditRideModal from '../components/EditRideModal';
 import downloadBlob from '../lib/download_blob';
-import { createActivityLog, deleteActivityLog, getActivityLogs, saveActivityLog } from '../lib/activity_log';
+import { deleteActivityLog, getActivityLogs } from '../lib/activity_log';
 
 const PREFIX = 'history';
 const classes = {
@@ -38,7 +36,6 @@ const classes = {
 	expand: `${PREFIX}-expand`,
 	expandOpen: `${PREFIX}-expandOpen`,
 	avatar: `${PREFIX}-avatar`,
-	nameField: `${PREFIX}-nameField`,
 };
 
 const StyledContainer = styled(Container)(({ theme }) => ({
@@ -75,84 +72,9 @@ const StyledContainer = styled(Container)(({ theme }) => ({
 	[`& .${classes.avatar}`]: {
 		backgroundColor: red[500],
 	},
-
-	[`& .${classes.nameField}`]: {
-		paddingBottom: '2.5em',
-	},
 }));
 
-const editModalStyle = {
-	width: '20em',
-	height: '30em',
-};
-
-function EditModal({
-	open,
-	onClose,
-	logger,
-}: {
-	open: boolean;
-	onClose: () => void;
-	logger: ReturnType<typeof createActivityLog>;
-}) {
-	const [newName, setNewName] = useState(() => logger.getName());
-	const [newNotes, setNewNotes] = useState(() => logger.getNotes());
-
-	const handleNameChange = (e) => {
-		setNewName(e.target.value);
-	};
-	const handleNotesChange = (e) => {
-		setNewNotes(e.target.value);
-	};
-	const onClickSave = () => {
-		logger.setName(newName);
-		logger.setNotes(newNotes);
-		saveActivityLog(logger);
-		onClose();
-	};
-	const onClickDiscard = (e: any) => {
-		onClose();
-	};
-
-	return (
-		<MyModal
-			title="Edit Ride"
-			description="Here you can edit the activity metadata."
-			modalStyle={editModalStyle}
-			open={open}
-			onClose={onClose}
-		>
-			{open ? (
-				<Grid item>
-					<form onSubmit={onClickSave}>
-						<TextField
-							id="act-name"
-							label="Activity Name"
-							defaultValue={logger.getName()}
-							onChange={handleNameChange}
-							className={classes.nameField}
-						/>
-						<TextField
-							id="act-notes"
-							label="Notes"
-							multiline
-							rows={4}
-							defaultValue={logger.getNotes()}
-							onChange={handleNotesChange}
-							variant="outlined"
-						/>
-						<EditActionButtons onClickSave={onClickSave} onClickDiscard={onClickDiscard} />
-					</form>
-				</Grid>
-			) : (
-				''
-			)}
-		</MyModal>
-	);
-}
-
 type Log = ReturnType<typeof getActivityLogs>[1];
-type WeakLogMap = MutableRefObject<WeakMap<Log, boolean>>;
 
 function RideCard({ log, onChange, onSelect }: { log: Log; onChange: () => void; onSelect: (v: boolean) => void }) {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -225,7 +147,7 @@ function RideCard({ log, onChange, onSelect }: { log: Log; onChange: () => void;
 					/>
 				</CardActions>
 			</Card>
-			<EditModal open={showEditModal} onClose={() => setShowEditModal(false)} logger={log.logger} />
+			<EditRideModal open={showEditModal} onClose={() => setShowEditModal(false)} logger={log.logger} />
 		</Grid>
 	);
 }
