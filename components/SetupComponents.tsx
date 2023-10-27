@@ -14,7 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Theme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useGlobalState } from '../lib/global';
 import { isValidUnsigned } from '../lib/validation';
 
@@ -60,7 +60,7 @@ export function ParamInfo({ info }: { info: string }) {
 	);
 }
 
-function Param({ title, image, info, children }: { title: string; image: string; info?: string; children: any }) {
+function Param({ title, image, info, children }: { title: string; image: string; info?: string; children: ReactNode }) {
 	return (
 		<Grid item xs="auto">
 			<StyledCard sx={{ minWidth: '30ex' }} variant="outlined">

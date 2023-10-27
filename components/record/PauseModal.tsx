@@ -1,6 +1,7 @@
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import { ReactNode } from 'react';
 import SxPropsTheme from '../../lib/SxPropsTheme';
 
 const style: SxPropsTheme = {
@@ -16,7 +17,15 @@ const style: SxPropsTheme = {
 	textAlign: 'center',
 };
 
-export default function PauseModal({ show, onClose, children }: { show: boolean; onClose: () => void; children: any }) {
+export default function PauseModal({
+	show,
+	onClose,
+	children,
+}: {
+	show: boolean;
+	onClose: () => void;
+	children: ReactNode;
+}) {
 	return (
 		<Modal
 			aria-labelledby="pause-modal-title"

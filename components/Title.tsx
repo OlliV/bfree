@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import IconHeart from '@mui/icons-material/Favorite';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Popover from '@mui/material/Popover';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -214,7 +214,7 @@ export default function Title({
 	disableBack?: boolean;
 	href?: string;
 	className?: string;
-	children: any;
+	children: ReactNode;
 }) {
 	const router = useRouter();
 	const [notifications, clearNotification] = useNotifications();

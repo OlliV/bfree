@@ -17,7 +17,7 @@ import Title from '../../components/Title';
 import Typography from '@mui/material/Typography';
 import { green } from '@mui/material/colors';
 import SxPropsTheme from '../../lib/SxPropsTheme';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import MyHead from '../../components/MyHead';
 import { BluetoothServiceType, pairDevice, readBatteryLevel, startBatteryLevelNotifications } from '../../lib/ble';
 import { startCyclingPowerMeasurementNotifications } from '../../lib/ble/cpp';
@@ -70,7 +70,7 @@ function ActionButton({
 	wait: boolean;
 	onClick?: () => void;
 	disabled?: boolean;
-	children: any;
+	children: ReactNode;
 }) {
 	return (
 		<Box>
@@ -82,7 +82,7 @@ function ActionButton({
 	);
 }
 
-function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Severity; children: any }) {
+function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: Severity; children: ReactNode }) {
 	return (
 		<CardContent>
 			<Alert severity={severity}>{children}</Alert>
@@ -90,7 +90,7 @@ function SensorStatus({ wait, severity, children }: { wait?: boolean; severity: 
 	);
 }
 
-function Sensor(props: { children: any; sensorType: SensorType }) {
+function Sensor(props: { children: ReactNode; sensorType: SensorType }) {
 	const pairedWithMessage = (btd): InfoMessage => ({
 		message: btd ? `Paired with\n${btd.device.name}` : 'Not configured',
 		severity: 'info',
