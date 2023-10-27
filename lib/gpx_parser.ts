@@ -3,7 +3,7 @@ type Coord = {
 	lon: number;
 };
 type Trackpoint = Coord & {
-	ele: number;
+	ele?: number;
 };
 type Segment = {
 	trackpoints: Trackpoint[];
@@ -13,10 +13,17 @@ type Track = {
 	segments: Segment[];
 };
 type Routepoint = Coord;
-type Waypoint = Coord;
+type Route = {
+	name?: string;
+	routepoints: Routepoint[];
+};
+type Waypoint = Coord & {
+	name?: string;
+	ele?: number;
+};
 export type CourseData = {
 	tracks: Track[];
-	routePoints: Routepoint[];
+	routes: Route[];
 	waypoints: Waypoint[];
 };
 
@@ -47,13 +54,22 @@ function getElValue(el: HTMLCollectionOf<Element>) {
 	return el[0].childNodes[0].nodeValue;
 }
 
+function parseTrackpoint(el: Element): Trackpoint {
+	const trackpoint: Trackpoint = {
+		lat: parseFloat(el.getAttribute('lat')),
+		lon: parseFloat(el.getAttribute('lon')),
+	};
+	const ele = parseFloat(getElValue(el.getElementsByTagName('ele')));
+	if (!Number.isNaN(ele)) {
+		trackpoint.ele = ele;
+	}
+
+	return trackpoint;
+}
+
 function parseTrackpoints(trackpoints: HTMLCollectionOf<Element>): Trackpoint[] {
 	return [
-		...elIter<Trackpoint>(trackpoints, (trackpoint) => ({
-			lat: parseFloat(trackpoint.getAttribute('lat')),
-			lon: parseFloat(trackpoint.getAttribute('lon')),
-			ele: parseFloat(getElValue(trackpoint.getElementsByTagName('ele'))),
-		})),
+		...elIter<Trackpoint>(trackpoints, parseTrackpoint),
 	];
 }
 
@@ -74,17 +90,45 @@ function parseTracks(tracks: HTMLCollectionOf<Element>): Track[] {
 	];
 }
 
+function parseRoutepoints(routepoints: HTMLCollectionOf<Element>):  Routepoint[] {
+	return [
+		...elIter<Routepoint>(routepoints, (routepoint) => ({
+			lat: parseFloat(routepoint.getAttribute('lat')),
+			lon: parseFloat(routepoint.getAttribute('lon')),
+		})),
+	];
+}
+
+function parseRoutes(routes: HTMLCollectionOf<Element>): Route[] {
+	return [
+		...elIter<Route>(routes, (route) => ({
+			name: getElValue(route.getElementsByTagName('name')),
+			routepoints: parseRoutepoints(route.getElementsByTagName('rtept')),
+		})),
+	];
+}
+
+function parseWaypoints(waypoints: HTMLCollectionOf<Element>): Waypoint[] {
+	return [
+		...elIter<Waypoint>(waypoints, (waypoint) => ({
+			name: getElValue(waypoint.getElementsByTagName('name')),
+			lat: parseFloat(waypoint.getAttribute('lat')),
+			lon: parseFloat(waypoint.getAttribute('lon')),
+		})),
+	];
+}
+
 export function gpxDocument2obj(doc: Document): CourseData {
 	return {
 		tracks: parseTracks(doc.documentElement.getElementsByTagName('trk')),
-		routePoints: [],
-		waypoints: [],
+		routes: parseRoutes(doc.documentElement.getElementsByTagName('rte')),
+		waypoints: parseWaypoints(doc.documentElement.getElementsByTagName('wpt')),
 	};
 }
 
 export function getMapBounds(obj: CourseData) {
 	// TODO support all tracks and segments
-	const points = [...obj.tracks[0].segments[0].trackpoints, ...obj.routePoints, ...obj.waypoints];
+	const points = [...obj.tracks[0].segments[0].trackpoints, ...obj.routes[0].routepoints, ...obj.waypoints];
 	const lats = points.map(({ lat }) => lat);
 	const lons = points.map(({ lon }) => lon);
 	return {
