@@ -45,26 +45,24 @@ function MyLocationButton({ setPosition }) {
 	);
 }
 
-function Courses({ map, courses }: { map: any, courses: CourseData[] }) {
-	return (
-		<>
-			{courses.map((course: CourseData, i: number) => {
-			})}
-		</>
-	);
+function Courses({ map, courses }: { map: any; courses: CourseData[] }) {
+	return <>{courses.map((course: CourseData, i: number) => {})}</>;
 }
 
 export default function RideMap() {
 	const [map, setMap] = useState(null);
-	const [coord, setCoord] = useState([51.505, -0.09]);
+	const [coord, setCoord] = useState<[number, number]>([51.505, -0.09]);
 	const [course, setCourse] = useState<CourseData>();
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
 
 	useEffect(() => {
-		if (bounds) {
-			map.fitBounds([[bounds.minlat, bounds.minlon], [bounds.maxlat, bounds.maxlon]]);
+		if (map && bounds) {
+			map.fitBounds([
+				[bounds.minlat, bounds.minlon],
+				[bounds.maxlat, bounds.maxlon],
+			]);
 		}
-	}, [bounds]);
+	}, [map, bounds]);
 
 	const importGpx = (file: File) => {
 		parseGpxFile2Document(file)
@@ -95,8 +93,8 @@ export default function RideMap() {
 				</Stack>
 
 				<DynamicMap center={coord} setMap={setMap}>
-					<DynamicMapMarker map={map} position={coord} />
-					{ course ? <DynamicCourse map={map} course={course} /> : <></> }
+					<DynamicMapMarker position={coord}>You are here.</DynamicMapMarker>
+					{course ? <DynamicCourse map={map} course={course} /> : <></>}
 				</DynamicMap>
 
 				<Grid container direction="row" alignItems="center" spacing={2}></Grid>

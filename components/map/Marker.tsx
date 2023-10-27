@@ -1,17 +1,11 @@
 'use client';
 import L from 'leaflet';
 import { Marker, Popup } from 'react-leaflet';
-import { useEffect } from 'react';
 import MarkerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png';
 import MarkerShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png';
+import { ReactNode } from 'react';
 
-export default function MapMarker({ map, position }) {
-	useEffect(() => {
-		if (map) {
-			map.flyTo(position, map.getZoom());
-		}
-	}, [map, position]);
-
+export default function MapMarker({ position, children }: { position: [number, number]; children?: ReactNode }) {
 	return (
 		<Marker
 			position={position}
@@ -28,10 +22,7 @@ export default function MapMarker({ map, position }) {
 				})
 			}
 		>
-			<Popup>
-				You are here.
-				{`${position}`}
-			</Popup>
+			<Popup>{children}</Popup>
 		</Marker>
 	);
 }

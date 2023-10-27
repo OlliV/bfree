@@ -1,16 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Polyline } from 'react-leaflet';
-import {CourseData} from '../../lib/gpx_parser';
+import { useEffect, useMemo } from 'react';
+import {  CircleMarker, Polyline } from 'react-leaflet';
+import AntPath from '../../components/map/AntPath';
+import { CourseData } from '../../lib/gpx_parser';
 
-export default function MapCourse({ map, course }: {map: any, course: CourseData}) {
-	const { trackpoints } = course?.tracks[0]?.segments[0] || {trackpoints: []};
-	const polyline = useMemo(() => trackpoints.map(({lat, lon}) => [lat, lon]), [trackpoints]);
+export default function MapCourse({ map, course }: { map: any; course: CourseData }) {
+	const { trackpoints } = course?.tracks[0]?.segments[0] || { trackpoints: [] };
+	const polyline = useMemo<[number, number][]>(() => trackpoints.map(({ lat, lon }) => [lat, lon]), [trackpoints]);
+	const first = polyline[0];
+	const last = polyline[polyline.length - 1];
 
 	useEffect(() => {
 		if (map && polyline.length > 0) {
 			map.flyTo(polyline[0], map.getZoom());
 		}
-	}, [,map, polyline]);
+	}, [map, polyline]);
 
-	return <Polyline pathOptions={{ color: 'black' }} positions={polyline} />;
+	return (
+		<>
+			{/* @ts-ignore*/}
+			{first ? <CircleMarker center={first} radius={20} pathOptions={{ color: 'blue' }} /> : null}
+			{/* @ts-ignore */}
+			{last ? <CircleMarker center={last} radius={20} pathOptions={{ color: 'red' }} /> : null}
+			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: '1200' }}/>
+		</>
+		);
 }
+			//<Polyline pathOptions={{ color: 'black' }} positions={polyline} />

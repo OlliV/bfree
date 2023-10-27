@@ -11,12 +11,12 @@ type Segment = {
 type Track = {
 	name?: string;
 	segments: Segment[];
-}
+};
 type Routepoint = Coord;
 type Waypoint = Coord;
 export type CourseData = {
 	tracks: Track[];
-	routePoints: Routepoint[],
+	routePoints: Routepoint[];
 	waypoints: Waypoint[];
 };
 
@@ -85,8 +85,8 @@ export function gpxDocument2obj(doc: Document): CourseData {
 export function getMapBounds(obj: CourseData) {
 	// TODO support all tracks and segments
 	const points = [...obj.tracks[0].segments[0].trackpoints, ...obj.routePoints, ...obj.waypoints];
-	const lats = points.map(({lat}) => lat);
-	const lons = points.map(({lon}) => lon);
+	const lats = points.map(({ lat }) => lat);
+	const lons = points.map(({ lon }) => lon);
 	return {
 		minlat: Math.min(...lats),
 		maxlat: Math.max(...lats),
