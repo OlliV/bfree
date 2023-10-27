@@ -8,7 +8,6 @@ import MarkerShadow from '../../node_modules/leaflet/dist/images/marker-shadow.p
 export default function MapMarker({ map, position }) {
 	useEffect(() => {
 		if (map) {
-			console.log('fly to ', position);
 			map.flyTo(position, map.getZoom());
 		}
 	}, [map, position]);

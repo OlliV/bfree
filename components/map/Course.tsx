@@ -1,37 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Polyline } from 'react-leaflet';
+import {CourseData} from '../../lib/gpx_parser';
 
-const mintrackpointdelta = 0.0001;
-
-export default function MapCourse({ map, course }) {
-	const { trackpoints } = course?.tracks[0]?.segments[0] || [];
-	const [polyline, setPolyline] = useState([]);
+export default function MapCourse({ map, course }: {map: any, course: CourseData}) {
+	const { trackpoints } = course?.tracks[0]?.segments[0] || {trackpoints: []};
+	const polyline = useMemo(() => trackpoints.map(({lat, lon}) => [lat, lon]), [trackpoints]);
 
 	useEffect(() => {
-		const pointArray = [];
-
-		if (trackpoints.length > 0) {
-			let lastlon = parseFloat(trackpoints[0].lon);
-			let lastlat = parseFloat(trackpoints[0].lat);
-
-			pointArray.push([lastlon, lastlat]);
-
-			for (let i = 1; i < trackpoints.length; i++) {
-				const lon = parseFloat(trackpoints[i].lon);
-				const lat = parseFloat(trackpoints[i].lat);
-
-				const latdiff = lat - lastlat;
-				const londiff = lon - lastlon;
-				if (Math.sqrt(latdiff * latdiff + londiff * londiff) > mintrackpointdelta) {
-					lastlon = lon;
-					lastlat = lat;
-					pointArray.push([lat, lon]);
-				}
-			}
+		if (map && polyline.length > 0) {
+			map.flyTo(polyline[0], map.getZoom());
 		}
-
-		setPolyline(pointArray);
-	}, [trackpoints]);
+	}, [,map, polyline]);
 
 	return <Polyline pathOptions={{ color: 'black' }} positions={polyline} />;
 }
