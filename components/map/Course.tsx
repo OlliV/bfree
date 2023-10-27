@@ -3,8 +3,8 @@ import { Polyline } from 'react-leaflet';
 
 const mintrackpointdelta = 0.0001;
 
-export default function MapTrack({ map, track }) {
-	const { trackpoints } = track?.tracks[0]?.segments[0] || [];
+export default function MapCourse({ map, course }) {
+	const { trackpoints } = course?.tracks[0]?.segments[0] || [];
 	const [polyline, setPolyline] = useState([]);
 
 	useEffect(() => {
