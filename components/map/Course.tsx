@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import {  CircleMarker, Polyline } from 'react-leaflet';
+import { CircleMarker } from 'react-leaflet';
 import AntPath from '../../components/map/AntPath';
 import { CourseData } from '../../lib/gpx_parser';
 
@@ -21,8 +21,7 @@ export default function MapCourse({ map, course }: { map: any; course: CourseDat
 			{first ? <CircleMarker center={first} radius={20} pathOptions={{ color: 'blue' }} /> : null}
 			{/* @ts-ignore */}
 			{last ? <CircleMarker center={last} radius={20} pathOptions={{ color: 'red' }} /> : null}
-			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: '1200' }}/>
+			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: 2000 }}/>
 		</>
 		);
 }
-			//<Polyline pathOptions={{ color: 'black' }} positions={polyline} />

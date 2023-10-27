@@ -8,7 +8,7 @@ export interface AntPathProps extends LayerProps {
 		reverse?: boolean;
 		hardwareAccelerated?: true;
 		pulseColor?: string;
-		delay?: string;
+		delay?: number;
 		dashArray?: [number, number] | string;
 	};
 }
