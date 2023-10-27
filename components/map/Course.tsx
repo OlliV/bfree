@@ -21,7 +21,7 @@ export default function MapCourse({ map, course }: { map: any; course: CourseDat
 			{first ? <CircleMarker center={first} radius={20} pathOptions={{ color: 'blue' }} /> : null}
 			{/* @ts-ignore */}
 			{last ? <CircleMarker center={last} radius={20} pathOptions={{ color: 'red' }} /> : null}
-			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: 2000 }}/>
+			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: 2000 }} />
 		</>
-		);
+	);
 }
