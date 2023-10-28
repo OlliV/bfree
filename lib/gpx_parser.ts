@@ -131,7 +131,6 @@ export function getMapBounds(obj: CourseData) {
 		...obj.tracks.map(({segments}) => segments).flat(1).map(({trackpoints}) => trackpoints).flat(1),
 		...obj.routes.map(({routepoints}) => routepoints).flat(1),
 		...obj.waypoints];
-	console.log(points);
 	const lats = points.map(({ lat }) => lat);
 	const lons = points.map(({ lon }) => lon);
 	return {
