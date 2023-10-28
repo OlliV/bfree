@@ -27,11 +27,15 @@ const DynamicCourse = dynamic<CourseArg>(() => import('../../../components/map/C
 	ssr: false,
 });
 
-function MyLocationButton({ setPosition }) {
+function MyLocationButton({ map, setPosition }) {
 	const getMyLocation = () => {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition((position) => {
-				setPosition([position.coords.latitude, position.coords.longitude]);
+				const pos = [position.coords.latitude, position.coords.longitude];
+				setPosition(pos);
+				if (map) {
+					map.flyTo(pos, map.getZoom());
+				}
 			});
 		} else {
 			console.log('Geolocation is not supported by this browser.');
@@ -45,14 +49,10 @@ function MyLocationButton({ setPosition }) {
 	);
 }
 
-function Courses({ map, courses }: { map: any; courses: CourseData[] }) {
-	return <>{courses.map((course: CourseData, i: number) => {})}</>;
-}
-
 export default function RideMap() {
 	const [map, setMap] = useState(null);
 	const [coord, setCoord] = useState<[number, number]>([51.505, -0.09]);
-	const [course, setCourse] = useState<CourseData>();
+	const [course, setCourse] = useState<CourseData|null>(null);
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
 
 	useEffect(() => {
@@ -88,8 +88,9 @@ export default function RideMap() {
 						pb: '1ex',
 					}}
 				>
-					<MyLocationButton setPosition={setCoord} />
+					<MyLocationButton map={map} setPosition={setCoord} />
 					<ImportFileButton onFile={importGpx}>Import GPX</ImportFileButton>
+					<Button variant="contained" color="secondary" onClick={() => setCourse(null)}>Clear Map</Button>
 				</Stack>
 
 				<DynamicMap center={coord} setMap={setMap}>
