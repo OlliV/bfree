@@ -1,23 +1,23 @@
-type Coord = {
+export type Coord = {
 	lat: number;
 	lon: number;
 };
-type Trackpoint = Coord & {
+export type Trackpoint = Coord & {
 	ele?: number;
 };
-type Segment = {
+export type Segment = {
 	trackpoints: Trackpoint[];
 };
-type Track = {
+export type Track = {
 	name?: string;
 	segments: Segment[];
 };
-type Routepoint = Coord;
-type Route = {
+export type Routepoint = Coord;
+export type Route = {
 	name?: string;
 	routepoints: Routepoint[];
 };
-type Waypoint = Coord & {
+export type Waypoint = Coord & {
 	name?: string;
 	ele?: number;
 };
@@ -68,9 +68,7 @@ function parseTrackpoint(el: Element): Trackpoint {
 }
 
 function parseTrackpoints(trackpoints: HTMLCollectionOf<Element>): Trackpoint[] {
-	return [
-		...elIter<Trackpoint>(trackpoints, parseTrackpoint),
-	];
+	return [...elIter<Trackpoint>(trackpoints, parseTrackpoint)];
 }
 
 function parseSegments(segments: HTMLCollectionOf<Element>): Segment[] {
@@ -90,7 +88,7 @@ function parseTracks(tracks: HTMLCollectionOf<Element>): Track[] {
 	];
 }
 
-function parseRoutepoints(routepoints: HTMLCollectionOf<Element>):  Routepoint[] {
+function parseRoutepoints(routepoints: HTMLCollectionOf<Element>): Routepoint[] {
 	return [
 		...elIter<Routepoint>(routepoints, (routepoint) => ({
 			lat: parseFloat(routepoint.getAttribute('lat')),
@@ -128,9 +126,14 @@ export function gpxDocument2obj(doc: Document): CourseData {
 
 export function getMapBounds(obj: CourseData) {
 	const points = [
-		...obj.tracks.map(({segments}) => segments).flat(1).map(({trackpoints}) => trackpoints).flat(1),
-		...obj.routes.map(({routepoints}) => routepoints).flat(1),
-		...obj.waypoints];
+		...obj.tracks
+			.map(({ segments }) => segments)
+			.flat(1)
+			.map(({ trackpoints }) => trackpoints)
+			.flat(1),
+		...obj.routes.map(({ routepoints }) => routepoints).flat(1),
+		...obj.waypoints,
+	];
 	const lats = points.map(({ lat }) => lat);
 	const lons = points.map(({ lon }) => lon);
 	return {
