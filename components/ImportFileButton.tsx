@@ -7,6 +7,7 @@ export default function ImportFileButton({
 	children,
 	onFile,
 	color,
+	disabled,
 }: {
 	children?: ReactNode | ReactNode[];
 	onFile: (file: File) => void;
@@ -14,6 +15,7 @@ export default function ImportFileButton({
 		'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning',
 		ButtonPropsColorOverrides
 	>;
+	disabled?: boolean;
 }) {
 	const uploadInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -23,8 +25,16 @@ export default function ImportFileButton({
 
 	return (
 		<InputLabel htmlFor="import-file" hidden>
-			<input ref={uploadInputRef} id="import-file" name="import-file" type="file" onChange={onChange} hidden />
-			<Button color={color || 'secondary'} variant="contained" component="span">
+			<input
+				ref={uploadInputRef}
+				id="import-file"
+				name="import-file"
+				type="file"
+				onChange={onChange}
+				hidden
+				disabled={disabled}
+			/>
+			<Button color={color || 'secondary'} variant="contained" component="span" disabled={disabled}>
 				{children}
 			</Button>
 		</InputLabel>
