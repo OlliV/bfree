@@ -127,8 +127,11 @@ export function gpxDocument2obj(doc: Document): CourseData {
 }
 
 export function getMapBounds(obj: CourseData) {
-	// TODO support all tracks and segments
-	const points = [...obj.tracks[0].segments[0].trackpoints, ...obj.routes[0].routepoints, ...obj.waypoints];
+	const points = [
+		...obj.tracks.map(({segments}) => segments).flat(1).map(({trackpoints}) => trackpoints).flat(1),
+		...obj.routes.map(({routepoints}) => routepoints).flat(1),
+		...obj.waypoints];
+	console.log(points);
 	const lats = points.map(({ lat }) => lat);
 	const lons = points.map(({ lon }) => lon);
 	return {
