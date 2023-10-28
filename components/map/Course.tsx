@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import { CircleMarker } from 'react-leaflet';
+import { useMap, CircleMarker } from 'react-leaflet';
 import AntPath from '../../components/map/AntPath';
 import MapWaypoint from './Waypoint';
 import { CourseData } from '../../lib/gpx_parser';
 
-export default function MapCourse({ map, course }: { map: any; course: CourseData }) {
+export default function MapCourse({ course }: { course: CourseData }) {
+	const map = useMap();
 	const { trackpoints } = course?.tracks[0]?.segments[0] || { trackpoints: [] };
 	const waypoints = course?.waypoints || [];
 	const polyline = useMemo<[number, number][]>(() => trackpoints.map(({ lat, lon }) => [lat, lon]), [trackpoints]);
@@ -25,7 +26,11 @@ export default function MapCourse({ map, course }: { map: any; course: CourseDat
 			{last ? <CircleMarker center={last} radius={20} pathOptions={{ color: 'red' }} /> : null}
 			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: 2000 }} />
 			<>
-				{waypoints.map(({lat, lon, name}, i: number) => <MapWaypoint key={i} position={[lat, lon]}>{name}</MapWaypoint>)}
+				{waypoints.map(({ lat, lon, name }, i: number) => (
+					<MapWaypoint key={i} position={[lat, lon]}>
+						{name}
+					</MapWaypoint>
+				))}
 			</>
 		</>
 	);
