@@ -94,7 +94,7 @@ export default function MapEditCourse({
 			/>
 			<>
 				{initTrackpoints.map((pos, i) => (
-					<Polyline positions={initTrackpoints} />
+					<Polyline key={i} positions={initTrackpoints} />
 				))}
 			</>
 			<>
