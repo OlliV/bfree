@@ -8,7 +8,7 @@ function trackSegmentsToPolylines(segments: Segment[]) {
 	return segments.map((seg) => seg.trackpoints.map(({ lat, lon }) => [lat, lon]));
 }
 
-function Segment({polyline}) {
+function Segment({ polyline }) {
 	const first = polyline[0];
 	const last = polyline[polyline.length - 1];
 
@@ -16,13 +16,15 @@ function Segment({polyline}) {
 		return null;
 	}
 
-	return (<>
-		{/* @ts-ignore*/}
-		<CircleMarker center={first} radius={20} pathOptions={{ color: 'blue' }} />
-		{/* @ts-ignore*/}
-		<CircleMarker center={last} radius={20} pathOptions={{ color: 'red' }} />
-		<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: 2000 }} />
-	</>);
+	return (
+		<>
+			{/* @ts-ignore*/}
+			<CircleMarker center={first} radius={20} pathOptions={{ color: 'blue' }} />
+			{/* @ts-ignore*/}
+			<CircleMarker center={last} radius={20} pathOptions={{ color: 'red' }} />
+			<AntPath positions={polyline} options={{ hardwareAccelerated: true, delay: 2000 }} />
+		</>
+	);
 }
 
 export default function MapCourse({ course }: { course: CourseData }) {

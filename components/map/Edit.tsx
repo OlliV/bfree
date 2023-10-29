@@ -63,10 +63,10 @@ export default function MapEditCourse({
 			if (layer instanceof L.Polyline) {
 				// @ts-ignore
 				if (layer._latlngs && layer._latlngs.length > 0) {
-					// @ts-ignore
 					updateTrackSegment(
 						newCourse,
 						seg++,
+						// @ts-ignore
 						layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng }))
 					);
 				}
