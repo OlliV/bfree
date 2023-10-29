@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useRef, useMemo } from 'react';
+import L from 'leaflet';
 import { FeatureGroup, Circle, Polyline } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { createMarkerIcon } from './Marker';
@@ -33,6 +34,7 @@ export default function MapEditCourse({
 	initialCourse?: CourseData;
 	setCourse?: (o: CourseData) => void;
 }) {
+	const featureGroupRef = useRef();
 	const [initStr] = useState(() =>
 		JSON.stringify(
 			initialCourse || {
@@ -44,70 +46,49 @@ export default function MapEditCourse({
 	);
 	const init = useMemo<CourseData>(() => JSON.parse(initStr), [initStr]);
 	const initTrackpoints = useMemo(() => courseToTrackpoints(init), [init]);
-	const createEvent = (e) => {
-		const { layerType, layer } = e;
-		console.log('created', e);
-		switch (layerType) {
-			case 'polyline':
-				// TODO How to alt?
-				setCourse(
-					updateTrackSegment(
-						JSON.parse(initStr),
-						0,
-						layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng }))
-					)
-				);
-				break;
-			case 'marker':
-				break;
-			default:
-				console.error(`Layer type not supported: ${layerType}`);
-		}
-	};
 	const editEvent = (e) => {
-		console.log('edited', e);
-		for (const [key, layer] of Object.entries(e.layers._layers)) {
-			console.log(layer);
-			// @ts-ignore
-			if (layer._latlngs) {
-				// Polyline
-				// TODO Detect which segment was changed
-				setCourse(
-					updateTrackSegment(
-						JSON.parse(initStr),
-						0,
-						// @ts-ignore
-						layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng }))
-					)
-				);
+		if (!featureGroupRef.current) {
+			return;
+		}
+
+		const newCourse = JSON.parse(initStr);
+		let seg = 0;
+		let wp = 0;
+
+		newCourse.tracks = [{ segments: [] }];
+		newCourse.waypoints = [];
+
+		// @ts-ignore
+		for (const [_key, layer] of Object.entries(featureGroupRef.current.getLayers())) {
+			if (layer instanceof L.Polyline) {
 				// @ts-ignore
-			} else if (layer._latlng) {
-				// Marker
-				console.log('marker');
-			} else {
-				console.error('Layer type not supported');
+				if (layer._latlngs && layer._latlngs.length > 0) {
+					// @ts-ignore
+					updateTrackSegment(newCourse, seg++, layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng })));
+				}
+			} else if (layer instanceof L.Marker) {
+				// @ts-ignore
+				newCourse.waypoints[wp++] = { lat: layer._latlng.lat, lon: layer._latlng.lng };
 			}
 		}
-	};
-	const deleteEvent = (e) => {
-		// TODO
-		console.log('deleted', e);
+
+		setCourse(newCourse);
 	};
 
 	return (
-		<FeatureGroup>
+		<FeatureGroup ref={featureGroupRef}>
 			<EditControl
 				position="topleft"
 				draw={{
 					polygon: false,
-					rectangle: false,
-					circle: false,
-					circlemarker: false,
-					marker: { icon: createMarkerIcon() },
+						rectangle: false,
+						circle: false,
+						circlemarker: false,
+						marker: { icon: createMarkerIcon() },
 				}}
-				onCreated={createEvent}
+				onCreated={editEvent}
 				onEdited={editEvent}
-				onDeleted={deleteEvent}
+				onDeleted={editEvent}
 			/>
 			<Polyline positions={initTrackpoints} />
 			<>
