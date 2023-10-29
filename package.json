@@ -1,6 +1,11 @@
 {
   "name": "bfree",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=18.18.0",
+    "os": ["darwin", "linux"],
+    "cpu": ["x64", "arm"]
+  },
   "private": true,
   "scripts": {
     "dev": "NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED:-1} next dev",
