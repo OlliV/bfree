@@ -4,7 +4,19 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import Box from '@mui/material/Box';
 import 'leaflet/dist/leaflet.css';
 
-const OpenStreetMap = ({ children, center, width, height, setMap }: { children?: ReactNode; center: number[]; width: string; height: string; setMap: any; }) => {
+const OpenStreetMap = ({
+	children,
+	center,
+	width,
+	height,
+	setMap,
+}: {
+	children?: ReactNode;
+	center: number[];
+	width: string;
+	height: string;
+	setMap: any;
+}) => {
 	return (
 		<Box>
 			<MapContainer

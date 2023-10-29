@@ -72,7 +72,7 @@ export default function RideMap() {
 	const mapSize = {
 		width: '70vw',
 		height: '70vh',
-	}
+	};
 
 	useEffect(() => {
 		if (
@@ -117,7 +117,7 @@ export default function RideMap() {
 			} else {
 				setCourseName('Untitled');
 			}
-		})()
+		})();
 	};
 
 	return (
@@ -135,20 +135,25 @@ export default function RideMap() {
 						<Typography variant="h6">{courseName}</Typography>
 					</Grid>
 					<Grid item xs={6}>
-							<ButtonGroup variant="contained">
-								<CreateCourse newCourse={newCourse} />
-								<MyLocationButton map={map} setPosition={setCoord} />
-								<Button variant="contained" color="secondary" onClick={() => setCourse(null)} disabled={editMode}>
-									Clear Map
-								</Button>
-								<FormGroup>
-									<FormControlLabel
-										control={<Switch size="medium" onChange={(e) => setEditMode(e.target.checked)} />}
-										label="Edit"
-										sx={{ ml: 1, textTransform: 'uppercase', }}
-									/>
-								</FormGroup>
-							</ButtonGroup>
+						<ButtonGroup variant="contained">
+							<CreateCourse newCourse={newCourse} />
+							<MyLocationButton map={map} setPosition={setCoord} />
+							<Button
+								variant="contained"
+								color="secondary"
+								onClick={() => setCourse(null)}
+								disabled={editMode}
+							>
+								Clear Map
+							</Button>
+							<FormGroup>
+								<FormControlLabel
+									control={<Switch size="medium" onChange={(e) => setEditMode(e.target.checked)} />}
+									label="Edit"
+									sx={{ ml: 1, textTransform: 'uppercase' }}
+								/>
+							</FormGroup>
+						</ButtonGroup>
 					</Grid>
 					<Grid item xs={4}>
 						<CourseList height={mapSize.height} />
