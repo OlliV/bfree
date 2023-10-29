@@ -21,6 +21,7 @@ import CourseList from '../../../components/CourseList';
 import StartButton from '../../../components/StartButton';
 import CreateCourse from '../../../components/CreateCourse';
 import { CourseData, getMapBounds, gpxDocument2obj, parseGpxFile2Document } from '../../../lib/gpx_parser';
+import { PersistedCourse, saveCourse } from '../../../lib/course_storage';
 
 type OpenStreetMapArg = Parameters<typeof OpenStreetMap>[0];
 type MapMarkerArg = Parameters<typeof MapMarker>[0];
@@ -75,12 +76,13 @@ export default function RideMap() {
 		width: '70vw',
 		height: '70vh',
 	};
+	const [changeCount, setChangeCount] = useState<number>(0);
 
 	useEffect(() => {
 		if (
 			map &&
 			bounds &&
-			[bounds.minlat, bounds.minlon, bounds.maxlat, bounds.maxlon].some((v) => Number.isFinite(v))
+			[bounds.minlat, bounds.minlon, bounds.maxlat, bounds.maxlon].every((v) => Number.isFinite(v))
 		) {
 			map.fitBounds([
 				[bounds.minlat, bounds.minlon],
@@ -106,21 +108,36 @@ export default function RideMap() {
 	};
 	const newCourse = (name: string, file: File) => {
 		(async () => {
-			let data: CourseData | null;
+			let data: CourseData;
 
 			if (file) {
 				data = await importGpx(file);
+			} else {
+				data = {
+					tracks: [],
+					routes: [],
+					waypoints: [],
+				};
+				setCourse(null);
 			}
 			if (name) {
-				setCourseName(name);
+				// NOP
 			} else if (data && data.routes.length && data.routes[0].name) {
-				setCourseName(data.routes[0].name);
+				name = data.routes[0].name;
 			} else if (data && data.tracks.length && data.tracks[0].name) {
-				setCourseName(data.tracks[0].name);
+				name = data.tracks[0].name;
 			} else {
-				clearCourseName();
+				name = DEFAULT_COURSE_NAME;
 			}
+			setCourseName(name);
+
+			await saveCourse(name, '', data);
+			setChangeCount(changeCount + 1);
 		})();
+	};
+	const selectCourse = (persistedCourse: PersistedCourse) => {
+		setCourse(persistedCourse.course);
+		setCourseName(persistedCourse.name);
 	};
 
 	return (
@@ -162,7 +179,7 @@ export default function RideMap() {
 						</ButtonGroup>
 					</Grid>
 					<Grid item xs={4}>
-						<CourseList height={mapSize.height} />
+						<CourseList height={mapSize.height} changeId={changeCount} onSelectCourse={selectCourse} />
 					</Grid>
 
 					<Grid item xs={8}>

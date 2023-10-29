@@ -22,7 +22,14 @@ export function arrayBufferToBase64(buf: ArrayBuffer): string {
 	if (typeof window === 'undefined') {
 		return Buffer.from(buf).toString('base64');
 	} else {
-		return window.btoa(String.fromCharCode.apply(null, new Uint8Array(buf)));
+		// "Uncaught RangeError: Maximum call stack size exceeded"
+		//return window.btoa(String.fromCharCode.apply(null, new Uint8Array(buf)));
+		// The following version should work for longer inputs, util it doesn't
+		return window.btoa(
+			new Uint8Array(buf).reduce(function (data, byte) {
+				return data + String.fromCharCode(byte);
+			}, '')
+		);
 	}
 }
 

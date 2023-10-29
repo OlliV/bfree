@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -6,9 +7,18 @@ import IconButton from '@mui/material/IconButton';
 import IconDelete from '@mui/icons-material/Delete';
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { PersistedCourse, deleteCourse, getCourses } from '../lib/course_storage';
 
 function renderRow(props: ListChildComponentProps) {
-	const { index, style } = props;
+	const { data, index, style } = props;
+	const course = data.courses[index];
+
+	const deleteThis = () => {
+		if (course) {
+			deleteCourse(course.id);
+			data.setLastDel(Date.now());
+		}
+	};
 
 	return (
 		<ListItem
@@ -17,19 +27,34 @@ function renderRow(props: ListChildComponentProps) {
 			component="div"
 			disablePadding
 			secondaryAction={
-				<IconButton edge="end" aria-label="delete">
+				<IconButton edge="end" aria-label="delete" onClick={deleteThis}>
 					<IconDelete />
 				</IconButton>
 			}
 		>
-			<ListItemButton>
-				<ListItemText primary={`Item ${index + 1}`} />
+			<ListItemButton
+				onClick={() => {
+					if (course) data.onSelectCourse(course);
+				}}
+			>
+				<ListItemText primary={course?.name || '<Load error>'} />
 			</ListItemButton>
 		</ListItem>
 	);
 }
 
-export default function CourseList({ height }: { height: string }) {
+export default function CourseList({
+	height,
+	changeId,
+	onSelectCourse,
+}: {
+	height: string;
+	changeId: number;
+	onSelectCourse: (persistedCourse: PersistedCourse) => void;
+}) {
+	const [lastDel, setLastDel] = useState(0);
+	const courses = useMemo(getCourses, [lastDel, changeId]);
+
 	return (
 		<Box sx={{ width: '100%', height, maxWidth: 360, bgcolor: 'background.paper' }}>
 			<AutoSizer>
@@ -38,8 +63,9 @@ export default function CourseList({ height }: { height: string }) {
 						height={size.height}
 						width={size.width}
 						itemSize={46}
-						itemCount={200}
+						itemCount={courses.length}
 						overscanCount={5}
+						itemData={{ courses, setLastDel, onSelectCourse }}
 					>
 						{renderRow}
 					</FixedSizeList>

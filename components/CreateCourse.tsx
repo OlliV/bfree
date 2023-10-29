@@ -10,13 +10,15 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
 export default function CreateCourseDialog({ newCourse }: { newCourse: (name: string, file: File) => void }) {
+	const nameRef = useRef();
 	const uploadInputRef = useRef<HTMLInputElement | null>(null);
 	const [open, setOpen] = useState(false);
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
 	const handleCreate = () => {
-		newCourse('', uploadInputRef.current?.files[0] || null);
+		// @ts-ignore
+		newCourse(nameRef?.current?.value || '', uploadInputRef.current?.files[0] || null);
 		setOpen(false);
 	};
 	const handleCancel = () => {
@@ -42,6 +44,7 @@ export default function CreateCourseDialog({ newCourse }: { newCourse: (name: st
 							label="Course Name"
 							fullWidth
 							variant="standard"
+							inputRef={nameRef}
 						/>
 						<InputLabel htmlFor="import-file" hidden>
 							<input ref={uploadInputRef} id="import-file" name="import-file" type="file" />

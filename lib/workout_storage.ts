@@ -92,6 +92,10 @@ export async function saveWorkout(name: string, notes: string, script: string, t
 }
 
 export async function toggleWorkoutFav(id: string) {
+	if (!id.startsWith('workout:')) {
+		throw new Error('Not a workout');
+	}
+
 	const raw = localStorage.getItem(id);
 
 	if (!raw) {
@@ -105,6 +109,10 @@ export async function toggleWorkoutFav(id: string) {
 }
 
 export function readWorkout(id: string): WorkoutScript {
+	if (!id.startsWith('workout:')) {
+		throw new Error('Not a workout');
+	}
+
 	const raw = localStorage.getItem(id);
 
 	if (!raw) {
@@ -126,7 +134,7 @@ export function readWorkout(id: string): WorkoutScript {
 
 export function deleteWorkout(id: string) {
 	if (!id.startsWith('workout:')) {
-		throw new Error('The given id is not a workout script id');
+		throw new Error('Not a workout');
 	}
 
 	localStorage.removeItem(id);
