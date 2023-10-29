@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "engines": {
     "node": ">=18.18.0",
-    "os": ["darwin", "linux"],
-    "cpu": ["x64", "arm"]
+    "os": [
+      "darwin",
+      "linux"
+    ],
+    "cpu": [
+      "x64",
+      "arm"
+    ]
   },
   "private": true,
   "scripts": {
@@ -31,6 +37,8 @@
     "react-hooks-global-state": "2.1.0",
     "react-leaflet": "4.2.1",
     "react-leaflet-draw": "^0.20.4",
+    "react-virtualized-auto-sizer": "^1.0.20",
+    "react-window": "^1.8.9",
     "sharp": "0.31.2"
   },
   "devDependencies": {

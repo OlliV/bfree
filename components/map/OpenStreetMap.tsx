@@ -1,16 +1,16 @@
 'use client';
-import 'leaflet/dist/leaflet.css';
+import { ReactNode } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import Box from '@mui/material/Box';
-import { ReactNode } from 'react';
+import 'leaflet/dist/leaflet.css';
 
-const OpenStreetMap = ({ children, center, setMap }: { children?: ReactNode; center: number[]; setMap: any }) => {
+const OpenStreetMap = ({ children, center, width, height, setMap }: { children?: ReactNode; center: number[]; width: string; height: string; setMap: any; }) => {
 	return (
 		<Box>
 			<MapContainer
 				style={{
-					height: '70vh',
-					width: '70vw',
+					width,
+					height,
 				}}
 				// @ts-ignore
 				center={center}
@@ -23,7 +23,6 @@ const OpenStreetMap = ({ children, center, setMap }: { children?: ReactNode; cen
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
-
 				{children}
 			</MapContainer>
 		</Box>

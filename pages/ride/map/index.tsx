@@ -1,13 +1,15 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Container from '@mui/material/Container';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Typography from '@mui/material/Typography';
 import IconHome from '@mui/icons-material/Home';
 import MyHead from '../../../components/MyHead';
 import Title from '../../../components/Title';
@@ -15,7 +17,9 @@ import OpenStreetMap from '../../../components/map/OpenStreetMap';
 import MapMarker from '../../../components/map/Marker';
 import Course from '../../../components/map/Course';
 import MapEditCourse from '../../../components/map/Edit';
-import ImportFileButton from '../../../components/ImportFileButton';
+import CourseList from '../../../components/CourseList';
+import StartButton from '../../../components/StartButton';
+import CreateCourse from '../../../components/CreateCourse';
 import { CourseData, getMapBounds, gpxDocument2obj, parseGpxFile2Document } from '../../../lib/gpx_parser';
 
 type OpenStreetMapArg = Parameters<typeof OpenStreetMap>[0];
@@ -63,7 +67,12 @@ export default function RideMap() {
 	const [editMode, setEditMode] = useState(false);
 	const [coord, setCoord] = useState<[number, number]>([51.505, -0.09]);
 	const [course, setCourse] = useState<CourseData | null>(null);
+	const [courseName, setCourseName] = useState<string>();
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
+	const mapSize = {
+		width: '70vw',
+		height: '70vh',
+	}
 
 	useEffect(() => {
 		if (
@@ -78,14 +87,37 @@ export default function RideMap() {
 		}
 	}, [map, bounds]);
 
-	const importGpx = (file: File) => {
-		parseGpxFile2Document(file)
-			.then((xmlDoc: Document) => {
-				setCourse(gpxDocument2obj(xmlDoc));
-			})
-			.catch((err) => {
-				console.error('Would be nice to show this:', err);
-			});
+	const importGpx = async (file: File) => {
+		let data: CourseData | null;
+
+		try {
+			const xmlDoc = await parseGpxFile2Document(file);
+
+			data = gpxDocument2obj(xmlDoc);
+			setCourse(data);
+		} catch (err) {
+			console.error('Would be nice to show this:', err);
+		}
+
+		return data;
+	};
+	const newCourse = (name: string, file: File) => {
+		(async () => {
+			let data: CourseData | null;
+
+			if (file) {
+				data = await importGpx(file);
+			}
+			if (name) {
+				setCourseName(name);
+			} else if (data && data.routes.length && data.routes[0].name) {
+				setCourseName(data.routes[0].name);
+			} else if (data && data.tracks.length && data.tracks[0].name) {
+				setCourseName(data.tracks[0].name);
+			} else {
+				setCourseName('Untitled');
+			}
+		})()
 	};
 
 	return (
@@ -95,37 +127,44 @@ export default function RideMap() {
 				<Title href="/ride">Map Ride</Title>
 				<p>Plan your ride.</p>
 
-				<Stack
-					spacing={2}
-					direction="row"
-					sx={{
-						pb: '1ex',
-					}}
-				>
-					<MyLocationButton map={map} setPosition={setCoord} />
-					<ImportFileButton onFile={importGpx} disabled={editMode}>
-						Import GPX
-					</ImportFileButton>
-					<Button variant="contained" color="secondary" onClick={() => setCourse(null)} disabled={editMode}>
-						Clear Map
-					</Button>
-					<FormGroup>
-						<FormControlLabel
-							control={<Switch size="medium" onChange={(e) => setEditMode(e.target.checked)} />}
-							label="Edit"
-						/>
-					</FormGroup>
-				</Stack>
+				<Grid container spacing={2} sx={{ ml: '-20vw', width: '70vw' }}>
+					<Grid item xs={4}>
+						<Typography variant="h6">Courses</Typography>
+					</Grid>
+					<Grid item xs={2}>
+						<Typography variant="h6">{courseName}</Typography>
+					</Grid>
+					<Grid item xs={6}>
+							<ButtonGroup variant="contained">
+								<CreateCourse newCourse={newCourse} />
+								<MyLocationButton map={map} setPosition={setCoord} />
+								<Button variant="contained" color="secondary" onClick={() => setCourse(null)} disabled={editMode}>
+									Clear Map
+								</Button>
+								<FormGroup>
+									<FormControlLabel
+										control={<Switch size="medium" onChange={(e) => setEditMode(e.target.checked)} />}
+										label="Edit"
+										sx={{ ml: 1, textTransform: 'uppercase', }}
+									/>
+								</FormGroup>
+							</ButtonGroup>
+					</Grid>
+					<Grid item xs={4}>
+						<CourseList height={mapSize.height} />
+					</Grid>
 
-				<DynamicMap center={coord} setMap={setMap}>
-					<DynamicMapMarker icon={<IconHome />} position={coord}>
-						You are here.
-					</DynamicMapMarker>
-					{editMode ? <DynamicMapEditCourse initialCourse={course} setCourse={setCourse} /> : null}
-					{course && !editMode ? <DynamicCourse course={course} /> : null}
-				</DynamicMap>
-
-				<Grid container direction="row" alignItems="center" spacing={2}></Grid>
+					<Grid item xs={8}>
+						<DynamicMap center={coord} width={mapSize.width} height={mapSize.height} setMap={setMap}>
+							<DynamicMapMarker icon={<IconHome />} position={coord}>
+								You are here.
+							</DynamicMapMarker>
+							{editMode ? <DynamicMapEditCourse initialCourse={course} setCourse={setCourse} /> : null}
+							{course && !editMode ? <DynamicCourse course={course} /> : null}
+						</DynamicMap>
+					</Grid>
+				</Grid>
+				<StartButton disabled={editMode} href={`/ride/record?type=map&mapId=todo`} />
 			</Box>
 		</Container>
 	);
