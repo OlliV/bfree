@@ -6,7 +6,7 @@ import { renderToString } from 'react-dom/server';
 import MarkerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png';
 import MarkerShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png';
 
-export function createMarkerIcon(icon?: ReactNode ) {
+export function createMarkerIcon(icon?: ReactNode) {
 	if (icon) {
 		return L.divIcon({
 			html: renderToString(icon),
@@ -25,7 +25,15 @@ export function createMarkerIcon(icon?: ReactNode ) {
 	}
 }
 
-export default function MapMarker({ icon, position, children }: { icon?: ReturnType<typeof createMarkerIcon>; position: [number, number]; children?: ReactNode; }) {
+export default function MapMarker({
+	icon,
+	position,
+	children,
+}: {
+	icon?: ReturnType<typeof createMarkerIcon>;
+	position: [number, number];
+	children?: ReactNode;
+}) {
 	return (
 		<Marker
 			position={position}

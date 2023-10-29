@@ -66,8 +66,11 @@ export default function RideMap() {
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
 
 	useEffect(() => {
-		if (map && bounds &&
-			[bounds.minlat, bounds.minlon, bounds.maxlat, bounds.maxlon].some((v) => Number.isFinite(v))) {
+		if (
+			map &&
+			bounds &&
+			[bounds.minlat, bounds.minlon, bounds.maxlat, bounds.maxlon].some((v) => Number.isFinite(v))
+		) {
 			map.fitBounds([
 				[bounds.minlat, bounds.minlon],
 				[bounds.maxlat, bounds.maxlon],
@@ -115,7 +118,9 @@ export default function RideMap() {
 				</Stack>
 
 				<DynamicMap center={coord} setMap={setMap}>
-					<DynamicMapMarker icon={<IconHome/>} position={coord}>You are here.</DynamicMapMarker>
+					<DynamicMapMarker icon={<IconHome />} position={coord}>
+						You are here.
+					</DynamicMapMarker>
 					{editMode ? <DynamicMapEditCourse initialCourse={course} setCourse={setCourse} /> : null}
 					{course && !editMode ? <DynamicCourse course={course} /> : null}
 				</DynamicMap>

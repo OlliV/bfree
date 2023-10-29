@@ -64,7 +64,11 @@ export default function MapEditCourse({
 				// @ts-ignore
 				if (layer._latlngs && layer._latlngs.length > 0) {
 					// @ts-ignore
-					updateTrackSegment(newCourse, seg++, layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng })));
+					updateTrackSegment(
+						newCourse,
+						seg++,
+						layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng }))
+					);
 				}
 			} else if (layer instanceof L.Marker) {
 				// @ts-ignore
@@ -81,10 +85,10 @@ export default function MapEditCourse({
 				position="topleft"
 				draw={{
 					polygon: false,
-						rectangle: false,
-						circle: false,
-						circlemarker: false,
-						marker: { icon: createMarkerIcon() },
+					rectangle: false,
+					circle: false,
+					circlemarker: false,
+					marker: { icon: createMarkerIcon() },
 				}}
 				onCreated={editEvent}
 				onEdited={editEvent}
