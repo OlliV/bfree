@@ -40,6 +40,8 @@ const DynamicMapEditCourse = dynamic<MapEditCourseArg>(() => import('../../../co
 	ssr: false,
 });
 
+const DEFAULT_COURSE_NAME = 'Untitled';
+
 function MyLocationButton({ map, setPosition }) {
 	const getMyLocation = () => {
 		if (navigator.geolocation) {
@@ -67,7 +69,7 @@ export default function RideMap() {
 	const [editMode, setEditMode] = useState(false);
 	const [coord, setCoord] = useState<[number, number]>([51.505, -0.09]);
 	const [course, setCourse] = useState<CourseData | null>(null);
-	const [courseName, setCourseName] = useState<string>();
+	const [courseName, setCourseName] = useState<string>(DEFAULT_COURSE_NAME);
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
 	const mapSize = {
 		width: '70vw',
@@ -87,6 +89,7 @@ export default function RideMap() {
 		}
 	}, [map, bounds]);
 
+	const clearCourseName = () => setCourseName(DEFAULT_COURSE_NAME);
 	const importGpx = async (file: File) => {
 		let data: CourseData | null;
 
@@ -115,7 +118,7 @@ export default function RideMap() {
 			} else if (data && data.tracks.length && data.tracks[0].name) {
 				setCourseName(data.tracks[0].name);
 			} else {
-				setCourseName('Untitled');
+				clearCourseName();
 			}
 		})();
 	};
@@ -141,7 +144,10 @@ export default function RideMap() {
 							<Button
 								variant="contained"
 								color="secondary"
-								onClick={() => setCourse(null)}
+								onClick={() => {
+									setCourse(null);
+									clearCourseName();
+								}}
 								disabled={editMode}
 							>
 								Clear Map

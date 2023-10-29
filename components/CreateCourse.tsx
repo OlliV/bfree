@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import InputLabel from '@mui/material/InputLabel';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 
 export default function CreateCourseDialog({ newCourse }: { newCourse: (name: string, file: File) => void }) {
 	const uploadInputRef = useRef<HTMLInputElement | null>(null);
@@ -30,12 +31,23 @@ export default function CreateCourseDialog({ newCourse }: { newCourse: (name: st
 			<Dialog open={open} onClose={handleCancel}>
 				<DialogTitle>New Course</DialogTitle>
 				<DialogContent>
-					<DialogContentText>To create a new course, please complete this form.</DialogContentText>
-					<TextField autoFocus margin="dense" id="name" label="Course Name" fullWidth variant="standard" />
-					<InputLabel htmlFor="import-file" hidden>
-						<input ref={uploadInputRef} id="import-file" name="import-file" type="file" />
-						GPX
-					</InputLabel>
+					<DialogContentText sx={{ width: '25em' }}>
+						Course name can be read from the imported file by leaving the name field blank.
+					</DialogContentText>
+					<Stack spacing={3}>
+						<TextField
+							autoFocus
+							margin="dense"
+							id="name"
+							label="Course Name"
+							fullWidth
+							variant="standard"
+						/>
+						<InputLabel htmlFor="import-file" hidden>
+							<input ref={uploadInputRef} id="import-file" name="import-file" type="file" />
+							GPX
+						</InputLabel>
+					</Stack>
 				</DialogContent>
 				<DialogActions>
 					<Button color="secondary" onClick={handleCancel}>
