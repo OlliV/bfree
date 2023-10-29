@@ -3,15 +3,13 @@ import L from 'leaflet';
 import { FeatureGroup, Circle, Polyline } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { createMarkerIcon } from './Marker';
-import { CourseData, Trackpoint } from '../../lib/gpx_parser';
+import { CourseData, Segment, Trackpoint } from '../../lib/gpx_parser';
 import MapWaypoint from './Waypoint';
 import '/node_modules/leaflet/dist/leaflet.css';
 import '/node_modules/leaflet-draw/dist/leaflet.draw.css';
 
-function courseToTrackpoints(course: CourseData) {
-	// TODO Support multiple tracks and segments
-	const { trackpoints } = course?.tracks[0]?.segments[0] || { trackpoints: [] };
-	return trackpoints.map(({ lat, lon }) => [lat, lon]);
+function trackSegmentsToPolylines(segments: Segment[]) {
+	return segments.map((seg) => seg.trackpoints.map(({ lat, lon }) => [lat, lon]));
 }
 
 function updateTrackSegment(course: CourseData, i: number, trackpoints: Trackpoint[]) {
@@ -45,7 +43,7 @@ export default function MapEditCourse({
 		)
 	);
 	const init = useMemo<CourseData>(() => JSON.parse(initStr), [initStr]);
-	const initTrackpoints = useMemo(() => courseToTrackpoints(init), [init]);
+	const initTrackpoints = useMemo(() => trackSegmentsToPolylines(init?.tracks[0]?.segments || []), [init]);
 	const editEvent = (e) => {
 		if (!featureGroupRef.current) {
 			return;
@@ -94,7 +92,11 @@ export default function MapEditCourse({
 				onEdited={editEvent}
 				onDeleted={editEvent}
 			/>
-			<Polyline positions={initTrackpoints} />
+			<>
+				{initTrackpoints.map((pos, i) => (
+					<Polyline positions={initTrackpoints} />
+				))}
+			</>
 			<>
 				{init.waypoints.map(({ lat, lon, name }, i: number) => (
 					<MapWaypoint key={i} position={[lat, lon]}>
