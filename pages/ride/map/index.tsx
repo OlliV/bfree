@@ -66,7 +66,8 @@ export default function RideMap() {
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
 
 	useEffect(() => {
-		if (map && bounds) {
+		if (map && bounds &&
+			[bounds.minlat, bounds.minlon, bounds.maxlat, bounds.maxlon].some((v) => Number.isFinite(v))) {
 			map.fitBounds([
 				[bounds.minlat, bounds.minlon],
 				[bounds.maxlat, bounds.maxlon],
