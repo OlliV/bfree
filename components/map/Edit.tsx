@@ -72,11 +72,11 @@ export default function MapEditCourse({
 			if (layer._latlngs) {
 				// Polyline
 				// TODO Detect which segment was changed
-				// @ts-ignore
 				setCourse(
 					updateTrackSegment(
 						JSON.parse(initStr),
 						0,
+						// @ts-ignore
 						layer._latlngs.map((v) => ({ lat: v.lat, lon: v.lng }))
 					)
 				);
