@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -7,7 +8,7 @@ import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { useEffect, useMemo, useState } from 'react';
+import IconHome from '@mui/icons-material/Home';
 import MyHead from '../../../components/MyHead';
 import Title from '../../../components/Title';
 import OpenStreetMap from '../../../components/map/OpenStreetMap';
@@ -113,7 +114,7 @@ export default function RideMap() {
 				</Stack>
 
 				<DynamicMap center={coord} setMap={setMap}>
-					<DynamicMapMarker position={coord}>You are here.</DynamicMapMarker>
+					<DynamicMapMarker icon={<IconHome/>} position={coord}>You are here.</DynamicMapMarker>
 					{editMode ? <DynamicMapEditCourse initialCourse={course} setCourse={setCourse} /> : null}
 					{course && !editMode ? <DynamicCourse course={course} /> : null}
 				</DynamicMap>
