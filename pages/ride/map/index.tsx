@@ -7,12 +7,12 @@ import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
-import Typography from '@mui/material/Typography';
 import IconHome from '@mui/icons-material/Home';
 import MyHead from '../../../components/MyHead';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
 import Title from '../../../components/Title';
+import Typography from '@mui/material/Typography';
 import OpenStreetMap from '../../../components/map/OpenStreetMap';
 import MapMarker from '../../../components/map/Marker';
 import Course from '../../../components/map/Course';
@@ -20,6 +20,7 @@ import MapEditCourse from '../../../components/map/Edit';
 import CourseList from '../../../components/CourseList';
 import StartButton from '../../../components/StartButton';
 import CreateCourse from '../../../components/CreateCourse';
+import Ele from '../../../components/map/Ele';
 import { CourseData, getMapBounds, gpxDocument2obj, parseGpxFile2Document } from '../../../lib/gpx_parser';
 import { PersistedCourse, saveCourse } from '../../../lib/course_storage';
 
@@ -178,8 +179,12 @@ export default function RideMap() {
 							</FormGroup>
 						</ButtonGroup>
 					</Grid>
+
 					<Grid item xs={4}>
-						<CourseList height={mapSize.height} changeId={changeCount} onSelectCourse={selectCourse} />
+						<CourseList height={'50%'} changeId={changeCount} onSelectCourse={selectCourse} />
+						<Paper elevation={0} sx={{ height: '49%', mt: 1 }}>
+							<Ele course={course} />
+						</Paper>
 					</Grid>
 
 					<Grid item xs={8}>
