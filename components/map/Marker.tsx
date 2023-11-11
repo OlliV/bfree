@@ -28,10 +28,12 @@ export function createMarkerIcon(icon?: ReactNode) {
 export default function MapMarker({
 	icon,
 	position,
+	hidden,
 	children,
 }: {
 	icon?: ReturnType<typeof createMarkerIcon>;
 	position: [number, number];
+	hidden?: boolean;
 	children?: ReactNode;
 }) {
 	return (
@@ -39,6 +41,7 @@ export default function MapMarker({
 			position={position}
 			// @ts-ignore
 			icon={createMarkerIcon(icon)}
+			hidden={hidden}
 		>
 			<Popup>{children}</Popup>
 		</Marker>

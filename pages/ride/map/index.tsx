@@ -8,6 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import IconHome from '@mui/icons-material/Home';
+import IconBike from '@mui/icons-material/DirectionsBike';
 import MyHead from '../../../components/MyHead';
 import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';
@@ -69,7 +70,9 @@ function MyLocationButton({ map, setPosition }) {
 export default function RideMap() {
 	const [map, setMap] = useState(null);
 	const [editMode, setEditMode] = useState(false);
-	const [coord, setCoord] = useState<[number, number]>([51.505, -0.09]);
+	const [showMarker, setShowMarker] = useState<boolean>(false);
+	const [markerCoord, setMarkerCoord] = useState<[number, number]>([51.505, -0.09]);
+	const [homeCoord, setHomeCoord] = useState<[number, number]>([51.505, -0.09]);
 	const [course, setCourse] = useState<CourseData | null>(null);
 	const [courseName, setCourseName] = useState<string>(DEFAULT_COURSE_NAME);
 	const bounds = useMemo(() => course && getMapBounds(course), [course]);
@@ -158,7 +161,7 @@ export default function RideMap() {
 					<Grid item xs={6}>
 						<ButtonGroup variant="contained">
 							<CreateCourse newCourse={newCourse} />
-							<MyLocationButton map={map} setPosition={setCoord} />
+							<MyLocationButton map={map} setPosition={setHomeCoord} />
 							<Button
 								variant="contained"
 								color="secondary"
@@ -183,15 +186,24 @@ export default function RideMap() {
 					<Grid item xs={4}>
 						<CourseList height={'50%'} changeId={changeCount} onSelectCourse={selectCourse} />
 						<Paper elevation={0} sx={{ height: '49%', mt: 1 }}>
-							<Ele course={course} />
+							<Ele
+								course={course}
+								showMarker={(en: boolean) => setShowMarker(en)}
+								moveMarker={setMarkerCoord}
+							/>
 						</Paper>
 					</Grid>
 
 					<Grid item xs={8}>
-						<DynamicMap center={coord} width={mapSize.width} height={mapSize.height} setMap={setMap}>
-							<DynamicMapMarker icon={<IconHome />} position={coord}>
+						<DynamicMap center={homeCoord} width={mapSize.width} height={mapSize.height} setMap={setMap}>
+							<DynamicMapMarker icon={<IconHome />} position={homeCoord}>
 								You are here.
 							</DynamicMapMarker>
+							<DynamicMapMarker
+								icon={<IconBike />}
+								position={markerCoord}
+								hidden={!showMarker}
+							></DynamicMapMarker>
 							{editMode ? <DynamicMapEditCourse initialCourse={course} setCourse={setCourse} /> : null}
 							{course && !editMode ? <DynamicCourse course={course} /> : null}
 						</DynamicMap>

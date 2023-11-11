@@ -1,17 +1,13 @@
+import { useMemo } from 'react';
 import { ResponsiveLine, Serie } from '@nivo/line';
 import { CourseData } from '../../lib/gpx_parser';
+import haversine from '../../lib/haversine';
 
-function haversine([lat1, lon1], [lat2, lon2]) {
-	const R = 6371e3; // m
-	const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
-	const φ2 = (lat2 * Math.PI) / 180;
-	const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-	const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-
-	const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-	return R * c; // m
+function findLatLon(
+	data: Array<{ id: any; color?: any; data: { x: number; y: number; pos: [number, number] } }>,
+	x: number
+): [number, number] | undefined {
+	return data.find((el) => el.data.x == x)?.data?.pos;
 }
 
 // make sure parent container have a defined height when using
@@ -19,32 +15,46 @@ function haversine([lat1, lon1], [lat2, lon2]) {
 // no chart will be rendered.
 // website examples showcase many properties,
 // you'll often use just a few of them.
-export default function Ele({ course }: { course?: CourseData }) {
+export default function Ele({
+	course,
+	showMarker,
+	moveMarker,
+}: {
+	course?: CourseData;
+	showMarker(en: boolean): void;
+	moveMarker(pos: [number, number]): void;
+}) {
 	let dist = 0;
-	const data: Serie[] =
-		!course || !course.tracks || course.tracks.length === 0
-			? [
-					{
-						id: 'none',
+	const data: Serie[] = useMemo(
+		() =>
+			!course || !course.tracks || course.tracks.length === 0
+				? [
+						{
+							id: 'none',
+							color: 'hsl(218, 70%, 50%)',
+							data: [
+								{ x: 0, y: 0 },
+								{ x: 1, y: 0 },
+							],
+						},
+				  ]
+				: course.tracks.map((track) => ({
+						id: track.name,
 						color: 'hsl(218, 70%, 50%)',
-						data: [
-							{ x: 0, y: 0 },
-							{ x: 1, y: 0 },
-						],
-					},
-			  ]
-			: course.tracks.map((track) => ({
-					id: track.name,
-					color: 'hsl(218, 70%, 50%)',
-					data: track.segments
-						.map(({ trackpoints: tp }) => tp)
-						.flat(1)
-						.map((tp, i, arr) => ({
-							x: i == 0 ? dist : (dist += haversine([arr[i - 1].lat, arr[i - 1].lon], [tp.lat, tp.lon])),
-							y: tp.ele,
-						})),
-			  }));
-	console.log('lol', data);
+						data: track.segments
+							.map(({ trackpoints: tp }) => tp)
+							.flat(1)
+							.map((tp, i, arr) => ({
+								x:
+									i == 0
+										? dist
+										: (dist += haversine([arr[i - 1].lat, arr[i - 1].lon], [tp.lat, tp.lon])),
+								y: tp.ele,
+								pos: [tp.lat, tp.lon],
+							})),
+				  })),
+		[course]
+	);
 
 	return (
 		<ResponsiveLine
@@ -88,6 +98,12 @@ export default function Ele({ course }: { course?: CourseData }) {
 			enableSlices="x"
 			sliceTooltip={(v) => {
 				const point = v?.slice?.points[0];
+				// @ts-ignore
+				if (point?.data.pos) {
+					// @ts-ignore
+					moveMarker(point.data.pos);
+					showMarker(true);
+				}
 				return point ? `${point.data?.xFormatted}m, ${point.data.yFormatted}m` : '';
 			}}
 			gridXValues={[0, 20, 40, 60, 80, 100, 120]}
@@ -96,3 +112,15 @@ export default function Ele({ course }: { course?: CourseData }) {
 		/>
 	);
 }
+/*
+			onMouseEnter={(point, event) => {
+				// @ts-ignore
+				const pos = findLatLon(data, point.data?.x); if (pos) { moveMarker(pos); showMarker(true); } }}
+			onMouseLeave={(point, event) => showMarker(false)}
+			onMouseMove={(point, event) => {
+				// @ts-ignore
+				const pos = findLatLon(data, point.data?.x);
+				console.log('move', pos)
+				if (pos) moveMarker(pos);
+			}}
+	 */
